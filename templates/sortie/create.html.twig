@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Créer une sortie{% endblock %}
+
+{% block body %}
+    <h1>Créer une sortie</h1>
+
+    {{ form_errors(sortieForm) }}
+    {{ form_start(sortieForm) }}
+    {% if addLieu == true %}
+        {{ form_row(sortieForm.lieuForm) }}
+        {% do sortieForm.lieu.setRendered() %}
+    {% else %}
+        {% do sortieForm.lieuForm.setRendered() %}
+        {{ form_row(sortieForm.lieu) }}
+    {% endif %}
+    {{ form_end(sortieForm) }}
+
+{% endblock %}
