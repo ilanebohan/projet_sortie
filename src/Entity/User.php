@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -40,6 +42,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Site $site = null;
+
+    #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
+    private Collection $sortiesOrganise;
+
+    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'participants')]
+    private Collection $inscriptions;
+
+    public function __construct()
+    {
+        $this->sortiesOrganise = new ArrayCollection();
+        $this->sortiesParticipant = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -161,5 +180,101 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // TODO: Implement getUserIdentifier() method.
         return $this->login;
+    }
+
+    public function getSite(): ?Site
+    {
+        return $this->site;
+    }
+
+    public function setSite(?Site $site): static
+    {
+        $this->site = $site;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getSortiesOrganise(): Collection
+    {
+        return $this->sortiesOrganise;
+    }
+
+    public function addSortiesOrganise(Sortie $sortiesOrganise): static
+    {
+        if (!$this->sortiesOrganise->contains($sortiesOrganise)) {
+            $this->sortiesOrganise->add($sortiesOrganise);
+            $sortiesOrganise->setOrganisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSortiesOrganise(Sortie $sortiesOrganise): static
+    {
+        if ($this->sortiesOrganise->removeElement($sortiesOrganise)) {
+            // set the owning side to null (unless already changed)
+            if ($sortiesOrganise->getOrganisateur() === $this) {
+                $sortiesOrganise->setOrganisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getSortiesParticipant(): Collection
+    {
+        return $this->sortiesParticipant;
+    }
+
+    public function addSortiesParticipant(Sortie $sortiesParticipant): static
+    {
+        if (!$this->sortiesParticipant->contains($sortiesParticipant)) {
+            $this->sortiesParticipant->add($sortiesParticipant);
+            $sortiesParticipant->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSortiesParticipant(Sortie $sortiesParticipant): static
+    {
+        if ($this->sortiesParticipant->removeElement($sortiesParticipant)) {
+            $sortiesParticipant->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Inscription>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(Inscription $inscription): static
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(Inscription $inscription): static
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            $inscription->removeParticipant($this);
+        }
+
+        return $this;
     }
 }
