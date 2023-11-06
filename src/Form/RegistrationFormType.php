@@ -46,7 +46,7 @@ class RegistrationFormType extends AbstractType
             ->add('nom')
             ->add('prenom')
             ->add('telephone')
-            ->add('administrateur', CheckboxType::class)
+            ->add('administrateur', CheckboxType::class, array('required' => false))
             ->add('actif', CheckboxType::class)
             ->add('login')
         ;

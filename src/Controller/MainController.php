@@ -11,6 +11,7 @@ class MainController extends AbstractController
     #[Route('/', name: 'app_main')]
     public function index(): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED', null, 'User tried to access a page without having ROLE_ADMIN');
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',
         ]);
