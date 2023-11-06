@@ -1,3 +1,4 @@
+
 {% extends 'base.html.twig' %}
 
 {% block title %}{{ parent() }} | Accueil{% endblock %}
@@ -8,7 +9,50 @@
         .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
     </style>
 
-    <div class="example-wrapper">
-        <h1>Ceci est la page d'accueil</h1>
+    <div class="DateAndUser">
+        date du jour : {{ DateDuJour }}
+        Participant : {{ app.user.username }}
     </div>
+
+<form action="{{ path('app_main_filter') }}" method="post">
+    <div class="Filter">
+        <h3>Filtrer les sorties</h3>
+
+        <div class = "left">
+
+        site : <select name="site" id="site">
+            <option value="0">Tous</option>
+            {% for site in sites %}
+                <option value="{{ site.id }}">{{ site.nom }}</option>
+            {% endfor %}
+        </select>
+
+        Le nom de la sortie contient : <input type="text" id="searchBar" name="searchBar">
+
+        Entre : <input type="date" id="dateDebut" name="dateDebut"> et <input type="date" id="dateFin" name="dateFin">
+        </div>
+
+        <div class = "middle">
+            <input type="checkbox"> Sorties dont je suis l'organisateur/trice
+            <input type="checkbox"> Sorties auxquelles je suis inscrit/e
+            <input type="checkbox"> Sorties auxquelles je ne suis pas inscrit/e
+            <input type="checkbox"> Sorties passées
+        </div>
+
+        <div class="right">
+            <input type="button" value="Rechercher">
+        </div>
+
+
+    </div>
+
+    <div class="Sorties">
+
+    </div>
+
+
+    <form action="{{ path('sortie_new') }}" method="post">
+        <input type="submit" value="Créer une sortie">
+    </form>
+
 {% endblock %}
