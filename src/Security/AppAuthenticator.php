@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,25 +22,53 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'app_login';
+    private UserRepository $userRepository;
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator)
+    public function __construct(private UrlGeneratorInterface $urlGenerator, UserRepository $userRepository)
     {
+        $this->userRepository = $userRepository;
     }
 
     public function authenticate(Request $request): Passport
     {
-        $email = $request->request->get('email', '');
+        $emailOrUsername  = $request->request->get('email_or_username', '');
 
-        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
+        // if emailOrUsername is email then get user by email
+        if (filter_var($emailOrUsername, FILTER_VALIDATE_EMAIL)) {
+            $user = $this->userRepository->findOneBy(['email' => $emailOrUsername]);
+        }
+        // else if emailOrUsername is username then get user by username
+        else {
+            $user = $this->userRepository->findOneBy(['login' => $emailOrUsername]);
+            $emailOrUsername = $user->getEmail();
+        }
 
-        return new Passport(
-            new UserBadge($email),
-            new PasswordCredentials($request->request->get('password', '')),
-            [
-                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
-                new RememberMeBadge(),
-            ]
-        );
+        // $user to UserInterface type
+        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $emailOrUsername);
+
+        // if checkbox remember me is checked then add RememberMeBadge()
+        if ($request->request->get('_remember_me') == 'on') {
+            return new Passport(
+                new UserBadge($emailOrUsername),
+                new PasswordCredentials($request->request->get('password', '')),
+                [
+                    new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
+                    new RememberMeBadge(),
+                ]
+            );
+        }
+        // else if checkbox remember me is not checked then do not add RememberMeBadge()
+        else
+        {
+            return new Passport(
+                new UserBadge($emailOrUsername),
+                new PasswordCredentials($request->request->get('password', '')),
+                [
+                    new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
+                ]
+            );
+        }
+
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

@@ -42,13 +42,14 @@ class AccessDeniedListener implements EventSubscriberInterface
         // optionally set the custom response
 
         $request = $event->getRequest();
-        if ($request->getRequestUri() == "/") {
-            $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_login')));
 
-        }
-        else
-        {
-            $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_access_denied', ['statusCode' => Response::HTTP_FORBIDDEN])));
+        switch ($request->getRequestUri()){
+            case "/":
+                $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_login')));
+                break;
+            default:
+                $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_access_denied', ['statusCode' => Response::HTTP_FORBIDDEN])));
+                break;
         }
 
         // or stop propagation (prevents the next exception listeners from being called)

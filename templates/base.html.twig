@@ -31,8 +31,9 @@
                         <li><a class="nav-link" href="{{ path('app_login') }}" title="Connexion">Connexion</a></li>
                     {% endif %}
 
-
-                    <h6 style="right:5%;position: absolute;">{% if app.user %} Bonjour  {{ app.user.email }} ! {% endif %}</h6>
+                    {% if app.user %}
+                        <h6 style="right:5%;position: absolute;"> Bonjour  <a href="{{ path('app_main') }}">{{ app.user.login }} ! </a> </h6>
+                        {% endif %}
                 </ul>
             </div>
         </nav>
