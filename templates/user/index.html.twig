@@ -3,8 +3,14 @@
 {% block title %}{{ parent() }} | Inscription{% endblock %}
 
 {% block body %}
-    <h1>Utilisateur {{ user.prenom }} {{ user.nom }}</h1>
 
-    {{ user.email }}
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="{{ asset('uploads/images/' ~ user.imageFilename)  }}" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
+            <p class="card-text">Email : {{ user.email }}</p>
+            <p class="card-text">Téléphone : {{ user.telephone }}</p>
+        </div>
+    </div>
 
 {% endblock %}
