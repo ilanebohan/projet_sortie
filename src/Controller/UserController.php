@@ -33,6 +33,51 @@ class UserController extends AbstractController
             'user'=> $user
         ]);
     }
+    #[Route('/user/delete/{id}', name: 'user_delete', requirements: ['id' => '\d+'])]
+    public function deleteUser(int $id, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $userRepository->findUserById($id);
+        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($user);
+            $entityManager->flush();
+            $messageRetour = 'Utilisateur ' . $user->getLogin()  . ' supprimé';
+        }
+
+        return $this->redirectToRoute('user_list', ['messageRetour'=>$messageRetour], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/user/desactivate/{id}', name: 'user_desactivate', requirements: ['id' => '\d+'])]
+    public function desactivateUser(int $id, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $userRepository->findUserById($id);
+        $user->setActif(false);
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        $user = $userRepository->findUserById($id);
+        $messageRetour = '';
+        if (!$user->isActif())
+        {
+            $messageRetour = 'Utilisateur ' . $user->getLogin()  . ' désactivé';
+        }
+        else
+        {
+            $messageRetour = 'Erreur de lors de la désactivation de ' . $user->getLogin();
+        }
+
+        return $this->redirectToRoute('user_list', ['messageRetour'=>$messageRetour], Response::HTTP_SEE_OTHER);
+    }
+
+
+    #[Route('/user/list', name: 'user_list')]
+    public function listUser(String $messageRetour = null, UserRepository $userRepository): Response
+    {
+        return $this->render('user/list.html.twig', [
+            'controller_name' => 'UserController',
+            'users'=> $userRepository->findAll(),
+            'messageRetour' => $messageRetour
+        ]);
+    }
 
     #[Route('/user/edit', name: 'user_edit')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
