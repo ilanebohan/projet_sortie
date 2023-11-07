@@ -1,0 +1,19 @@
+.loginForm{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.registerForm{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.erreursInscription{
+    color: red;
+    font-size: 0.8em;
+    font-weight: bold;
+}
