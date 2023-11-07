@@ -70,11 +70,11 @@
                     <td>{% if sortie.inscriptions.contains(app.user) %}X{% endif %}</td>
                     <td>{{ sortie.organisateur.nom }}</td>
                     <td>
-                        {% if sortie.etat.libelle == 'Ouverte' and sortie.organisateur == app.user.login %}
+                        {% if sortie.etat.libelle == 'Ouverte' and sortie.organisateur.login == app.user.login %}
                             Afficher - Annuler
-                        {% elseif sortie.etat.libelle == 'Ouverte' and sortie.inscriptions.contains(app.user.login) and not sortie.etat.libelle == 'En cours' %}
+                        {% elseif sortie.etat.libelle == 'Ouverte' and sortie.inscriptions.contains(app.user) and not sortie.etat.libelle == 'En cours' %}
                             Afficher - Se Désister
-                        {% elseif sortie.etat.libelle == 'Création' %}
+                        {% elseif sortie.etat.libelle == 'Créée' %}
                             Modifier - Publier
                         {% else %}
                             Afficher
