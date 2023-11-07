@@ -34,36 +34,40 @@ class UserController extends AbstractController
         ]);
     }
     #[Route('/user/delete/{id}', name: 'user_delete', requirements: ['id' => '\d+'])]
-    public function deleteUser(int $id, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function deleteUser(int $id = null, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $user = $userRepository->findUserById($id);
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($user);
-            $entityManager->flush();
-            $messageRetour = 'Utilisateur ' . $user->getLogin()  . ' supprimé';
-        }
+            $user = $userRepository->findUserById($id);
+                $entityManager->remove($user);
+                $entityManager->flush();
+                $messageRetour = 'Utilisateur ' . $user->getLogin()  . ' supprimé';
+
+                //$messageRetour = 'Erreur de lors de la suppression de ' . $user->getLogin();
+
+
+
 
         return $this->redirectToRoute('user_list', ['messageRetour'=>$messageRetour], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/user/desactivate/{id}', name: 'user_desactivate', requirements: ['id' => '\d+'])]
-    public function desactivateUser(int $id, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function desactivateUser(int $id = null, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $user = $userRepository->findUserById($id);
-        $user->setActif(false);
-        $entityManager->persist($user);
-        $entityManager->flush();
+            $user = $userRepository->findUserById($id);
+            $user->setActif(false);
+            $entityManager->persist($user);
+            $entityManager->flush();
+            $user = $userRepository->findUserById($id);
+            $messageRetour = '';
+            if (!$user->isActif())
+            {
+                $messageRetour = 'Utilisateur ' . $user->getLogin()  . ' désactivé';
+            }
+            else
+            {
+                $messageRetour = 'Erreur de lors de la désactivation de ' . $user->getLogin();
+            }
 
-        $user = $userRepository->findUserById($id);
-        $messageRetour = '';
-        if (!$user->isActif())
-        {
-            $messageRetour = 'Utilisateur ' . $user->getLogin()  . ' désactivé';
-        }
-        else
-        {
-            $messageRetour = 'Erreur de lors de la désactivation de ' . $user->getLogin();
-        }
+
 
         return $this->redirectToRoute('user_list', ['messageRetour'=>$messageRetour], Response::HTTP_SEE_OTHER);
     }
