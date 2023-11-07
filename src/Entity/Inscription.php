@@ -16,10 +16,12 @@ class Inscription
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Sortie::class, inversedBy: 'inscriptions')]
-    private Collection $sortie;
+    private Sortie $sortie;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'inscriptions')]
-    private Collection $participants;
+
+      #[ORM\ManyToMany(targetEntity:User::class, inversedBy:"inscriptions")]
+      #[ORM\JoinTable(name:"inscription_participants")]
+    private $participants;
 
     public function __construct()
     {

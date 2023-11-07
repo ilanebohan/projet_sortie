@@ -8,7 +8,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Site>
- *
  * @method Site|null find($id, $lockMode = null, $lockVersion = null)
  * @method Site|null findOneBy(array $criteria, array $orderBy = null)
  * @method Site[]    findAll()
@@ -41,13 +40,4 @@ class SiteRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Site
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }
