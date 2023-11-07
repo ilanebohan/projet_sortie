@@ -21,6 +21,71 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
+    public function findByFilter($array) : array
+    {
+        #region getInfo
+
+        $idSite = $array['idSite'];
+        $StringSearch = $array['StringSearch'];
+        $DateDebut = $array['DateDebut'];
+        $DateFin = $array['DateFin'];
+        $organisateur = $array['organisateur'];
+        $inscrit = $array['inscrit'];
+        $nonInscrit = $array['nonInscrit'];
+        $SortiePassee = $array['passee'];
+        $userid = $array['userid'];
+
+        #endregion
+
+        $em = $this->getEntityManager();
+        $qb = $em->createQueryBuilder();
+
+        $qb->select('s')
+            ->from('App\Entity\Sortie', 's')
+            ->leftJoin('s.site', 'site')
+            ->leftJoin('s.organisateur', 'organisateur')
+            ->leftJoin('s.inscriptions', 'inscriptions')
+            ->where('s.site = :idSite')
+            ->setParameter('idSite', $idSite);
+
+        if (!empty($StringSearch)) {
+            $qb->andWhere('s.nom LIKE :search')
+                ->setParameter('search', '%' . $StringSearch . '%');
+        }
+
+        if ($DateDebut && $DateFin) {
+            $qb->andWhere('s.dateDebut BETWEEN :startDate AND :endDate')
+                ->setParameter('startDate', $DateDebut)
+                ->setParameter('endDate', $DateFin);
+        }
+
+        if ($organisateur) {
+            $qb->andWhere('organisateur.id = :userId')
+                ->setParameter('userId', $userid);
+        }
+
+        if ($inscrit) {
+            $qb->andWhere(':userId MEMBER OF inscriptions.participant')
+                ->setParameter('userId', $userid);
+        }
+
+        if ($nonInscrit) {
+            $qb->andWhere(':userId NOT MEMBER OF inscriptions.participant')
+                ->setParameter('userId', $userid);
+        }
+
+        if ($SortiePassee) {
+            $qb->andWhere('s.dateFin < :currentDate')
+                ->setParameter('currentDate', new \DateTime());
+        }
+
+        $query = $qb->getQuery();
+
+        return $query->getResult();
+    }
+
+
+
 //    /**
 //     * @return Sortie[] Returns an array of Sortie objects
 //     */
