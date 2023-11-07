@@ -34,6 +34,9 @@
                     {% else%}
                         <li><a class="nav-link" href="{{ path('app_login') }}" title="Connexion">Connexion</a></li>
                     {% endif %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/create">Créer une sortie <span class="sr-only"></span></a>
+                    </li>
 
                     {% if app.user %}
                         <h6 style="right:5%;position: absolute;"> Bonjour  <a href="{{ path('app_main') }}">{{ app.user.login }} ! </a> </h6>
