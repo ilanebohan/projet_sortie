@@ -25,6 +25,8 @@ class SortieRepository extends ServiceEntityRepository
 
     public function findByFilter($array): array
     {
+        #region recup des infos
+
         $idSite = $array['idSite'];
         $StringSearch = $array['StringSearch'];
         $DateDebut = $array['DateDebut'];
@@ -35,6 +37,8 @@ class SortieRepository extends ServiceEntityRepository
         $SortiePassee = $array['SortiePassee'];
         $userid = $array['userid'];
 
+        #endregion
+
         $em = $this->getEntityManager();
         $qb = $em->createQueryBuilder();
 
@@ -43,6 +47,8 @@ class SortieRepository extends ServiceEntityRepository
             ->leftJoin('s.siteOrganisateur', 'site')
             ->leftJoin('s.organisateur', 'organisateur')
             ->leftJoin('s.inscriptions', 'inscriptions');
+
+        #region Filtre
 
         if($idSite != 0) {
             $qb->where('s.siteOrganisateur = :idSite')
@@ -117,6 +123,8 @@ class SortieRepository extends ServiceEntityRepository
                     ->setParameter('currentDate', new \DateTime());
             }
         }
+
+        #endregion
 
         $query = $qb->getQuery();
 
