@@ -34,11 +34,11 @@ class MainController extends AbstractController
     }
 
     #[Route('/home', name: 'app_main_filter')]
-    public function IndexWithFilterForTable(Request $request, EntityManagerInterface $entityManager) : Response
+    public function IndexWithFilterForTable(Request $request, EntityManagerInterface $entityManager): Response
     {
         $Filter = array();
 
-        #region Get Filter
+#region Get Filter
 
         $idSite = $request->get('site');
         $StringSearch = $request->get('searchBar');
@@ -50,22 +50,21 @@ class MainController extends AbstractController
         $SortiePassee = $request->get('passee');
         $userid = $this->getUser()->getId();
 
-        #endregion
+#endregion
 
-        #region Setup ArrayFilter
+#region Setup ArrayFilter
 
-        $Filter->set('idSite', $idSite);
-        $Filter->set('StringSearch', $StringSearch);
-        $Filter->set('DateDebut', $DateDebut);
-        $Filter->set('DateFin', $DateFin);
-        $Filter->set('organisateur', $organisateur);
-        $Filter->set('inscrit', $inscrit);
-        $Filter->set('nonInscrit', $nonInscrit);
-        $Filter->set('SortiePassee', $SortiePassee);
-        $Filter->set('userid', $userid);
+        $Filter['idSite'] = $idSite;
+        $Filter['StringSearch'] = $StringSearch;
+        $Filter['DateDebut'] = $DateDebut;
+        $Filter['DateFin'] = $DateFin;
+        $Filter['organisateur'] = $organisateur;
+        $Filter['inscrit'] = $inscrit;
+        $Filter['nonInscrit'] = $nonInscrit;
+        $Filter['SortiePassee'] = $SortiePassee;
+        $Filter['userid'] = $userid;
 
-        #endregion
-
+#endregion
 
         $Siterepository = $entityManager->getRepository(Site::class);
         $sites = $Siterepository->findAll();

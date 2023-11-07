@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Sortie;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use SebastianBergmann\Environment\Console;
 
 /**
  * @extends ServiceEntityRepository<Sortie>
@@ -21,10 +23,8 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
-    public function findByFilter($array) : array
+    public function findByFilter($array): array
     {
-        #region getInfo
-
         $idSite = $array['idSite'];
         $StringSearch = $array['StringSearch'];
         $DateDebut = $array['DateDebut'];
@@ -32,59 +32,94 @@ class SortieRepository extends ServiceEntityRepository
         $organisateur = $array['organisateur'];
         $inscrit = $array['inscrit'];
         $nonInscrit = $array['nonInscrit'];
-        $SortiePassee = $array['passee'];
+        $SortiePassee = $array['SortiePassee'];
         $userid = $array['userid'];
-
-        #endregion
 
         $em = $this->getEntityManager();
         $qb = $em->createQueryBuilder();
 
         $qb->select('s')
             ->from('App\Entity\Sortie', 's')
-            ->leftJoin('s.site', 'site')
+            ->leftJoin('s.siteOrganisateur', 'site')
             ->leftJoin('s.organisateur', 'organisateur')
-            ->leftJoin('s.inscriptions', 'inscriptions')
-            ->where('s.site = :idSite')
-            ->setParameter('idSite', $idSite);
+            ->leftJoin('s.inscriptions', 'inscriptions');
+
+        if($idSite != 0) {
+            $qb->where('s.siteOrganisateur = :idSite')
+                ->setParameter('idSite', $idSite);
+        }
 
         if (!empty($StringSearch)) {
-            $qb->andWhere('s.nom LIKE :search')
-                ->setParameter('search', '%' . $StringSearch . '%');
+            if($idSite != 0) {
+                $qb->andWhere('site.nom LIKE :search')
+                    ->setParameter('search', '%' . $StringSearch . '%');
+            }else
+            {
+                $qb->Where('site.nom LIKE :search OR s.nom LIKE :search')
+                    ->setParameter('search', '%' . $StringSearch . '%');
+            }
         }
 
         if ($DateDebut && $DateFin) {
-            $qb->andWhere('s.dateDebut BETWEEN :startDate AND :endDate')
-                ->setParameter('startDate', $DateDebut)
-                ->setParameter('endDate', $DateFin);
+            if($idSite != 0  || !empty($StringSearch)) {
+                $qb->andWhere('s.dateDebut BETWEEN :startDate AND :endDate')
+                    ->setParameter('startDate', new \DateTime($DateDebut))
+                    ->setParameter('endDate', new \DateTime($DateFin));
+            }else
+            {
+                $qb->Where('s.dateDebut BETWEEN :startDate AND :endDate')
+                    ->setParameter('startDate', new \DateTime($DateDebut))
+                    ->setParameter('endDate', new \DateTime($DateFin));
+            }
         }
 
         if ($organisateur) {
-            $qb->andWhere('organisateur.id = :userId')
-                ->setParameter('userId', $userid);
+            if($idSite != 0 || !empty($StringSearch) || ($DateDebut || $DateFin)) {
+                $qb->andWhere('organisateur.id = :userId')
+                    ->setParameter('userId', $userid);
+            }else
+            {
+                $qb->Where('organisateur.id = :userId')
+                    ->setParameter('userId', $userid);
+            }
         }
 
         if ($inscrit) {
-            $qb->andWhere(':userId MEMBER OF inscriptions.participant')
-                ->setParameter('userId', $userid);
+            if($idSite != 0 || !empty($StringSearch) || ($DateDebut || $DateFin) || $organisateur) {
+                $qb->andWhere(':user MEMBER OF inscriptions.participants')
+                    ->setParameter('user', $em->getReference(User::class, $userid));
+            }else
+            {
+                $qb->Where(':user MEMBER OF inscriptions.participants')
+                    ->setParameter('user', $em->getReference(User::class, $userid));
+            }
         }
 
         if ($nonInscrit) {
-            $qb->andWhere(':userId NOT MEMBER OF inscriptions.participant')
-                ->setParameter('userId', $userid);
+            if($idSite != 0 || !empty($StringSearch) || ($DateDebut || $DateFin) || $organisateur || $inscrit) {
+                $qb->andWhere(':user NOT MEMBER OF inscriptions.participants')
+                    ->setParameter('user', $em->getReference(User::class, $userid));
+            }else{
+                $qb->Where(':user NOT MEMBER OF inscriptions.participants')
+                    ->setParameter('user', $em->getReference(User::class, $userid));
+            }
         }
 
         if ($SortiePassee) {
-            $qb->andWhere('s.dateFin < :currentDate')
-                ->setParameter('currentDate', new \DateTime());
+            if($idSite != 0 || !empty($StringSearch) || ($DateDebut || $DateFin) || $organisateur || $inscrit || $nonInscrit) {
+                $qb->andWhere('s.dateDebut < :currentDate')
+                    ->setParameter('currentDate', new \DateTime());
+            }else
+            {
+                $qb->Where('s.dateDebut < :currentDate')
+                    ->setParameter('currentDate', new \DateTime());
+            }
         }
 
         $query = $qb->getQuery();
 
         return $query->getResult();
     }
-
-
 
 //    /**
 //     * @return Sortie[] Returns an array of Sortie objects

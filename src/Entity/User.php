@@ -50,8 +50,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
     private Collection $sortiesOrganise;
 
-    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'participants')]
-    private Collection $inscriptions;
+
+    #[ORM\ManyToMany(mappedBy:'participants', targetEntity:Inscription::class)]
+    private $inscriptions;
 
     public function __construct()
     {
