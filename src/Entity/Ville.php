@@ -19,6 +19,11 @@ class Ville
     #[ORM\Column(length: 5)]
     private ?string $codePostal = null;
 
+    public function __toString()
+    {
+        return $this->nom;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

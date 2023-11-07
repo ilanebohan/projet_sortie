@@ -23,6 +23,7 @@ class MainController extends AbstractController
         $sortieRepository = $entityManager->getRepository(Sortie::class);
         $sorties = $sortieRepository->findAll();
 
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED', null, 'User tried to access a page without being authenticated');
 
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',

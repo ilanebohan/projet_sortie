@@ -6,13 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AccessDeniedController extends AbstractController
+class ErrorController extends AbstractController
 {
     #[Route('/accessDenied/{statusCode}', name: 'app_access_denied')]
     public function index($statusCode): Response
     {
-        return $this->render('access_denied/accessDenied.html.twig', [
-            'controller_name' => 'AccessDeniedController',
+        return $this->render('error/error.html.twig', [
+            'controller_name' => 'ErrorController',
             'statusCode' => $statusCode
         ]);
     }

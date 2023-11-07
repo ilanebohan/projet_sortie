@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Modifier mon Profil{% endblock %}
+
+{% block body %}
+    <h1>Modifier mon Profil</h1>
+
+    {{ form_errors(registrationForm) }}
+
+    {{ form_start(registrationForm) }}
+
+    <div class="card" style="width: 18rem;">
+        {% if fileName %}
+            <img class="card-img-top" src="{{ asset('uploads/images/' ~ fileName)  }}" alt="Card image cap">
+            <h5 class="card-title">Modifier mon image :</h5>
+            {{ form_row(registrationForm.image) }}
+        {% else %}
+            <img class="card-img-top" src="{{ asset('uploads/images/defaultImage.png')  }}" alt="Card image cap">
+            <h5 class="card-title">Ajouter une image :{{ form_row(registrationForm.image) }}</h5>
+        {% endif %}
+
+        <div class="card-body">
+            <h5 class="card-title">{{ form_row(registrationForm.nom) }}</h5>
+            <h5 class="card-title">{{ form_row(registrationForm.prenom) }}</h5>
+            <h5 class="card-title">{{ form_row(registrationForm.telephone) }}</h5>
+            <h5 class="card-title">{{ form_row(registrationForm.email) }}</h5>
+            <h5 class="card-title">{{ form_row(registrationForm.login) }}</h5>
+            <h5 class="card-text">{{ form_row(registrationForm.plainPassword.first) }}</h5>
+            <h5 class="card-text">{{ form_row(registrationForm.plainPassword.second) }}</h5>
+
+            {{ form_row(registrationForm.site) }}
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Modifier mon Profil</button>
+    {{ form_end(registrationForm) }}
+{% endblock %}

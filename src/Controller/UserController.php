@@ -2,37 +2,53 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Form\RegistrationFormType;
+use App\Form\EditUserFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\UserRepository;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[IsGranted('ROLE_ADMIN')]
-class RegistrationController extends AbstractController
+class UserController extends AbstractController
 {
-    #[Route('/register', name: 'app_register')]
+    #[Route('/user', name: 'app_user')]
+    public function index(): Response
+    {
+        return $this->render('user/index.html.twig', [
+            'controller_name' => 'UserController',
+        ]);
+    }
+
+    #[Route('/user/details/{id}', name: 'user_details', requirements: ['id' => '\d+'])]
+    public function details(int $id, UserRepository $userRepository): Response
+    {
+        $user = $userRepository->findUserById($id);
+        return $this->render('user/index.html.twig', [
+            'controller_name' => 'UserController',
+            'user'=> $user
+        ]);
+    }
+
+    #[Route('/user/edit', name: 'user_edit')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
     {
-        $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $user = $this->getUser();
+        $form = $this->createForm(EditUserFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
+
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
                     $form->get('plainPassword')->getData()
                 )
             );
-            $user->setActif(true);
 
             $image = $form->get('image')->getData();
 
@@ -41,6 +57,17 @@ class RegistrationController extends AbstractController
                 // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$image->guessExtension();
+
+                $projectDir = $this->getParameter('public_directory').'/uploads/images/'.$user->getImageFilename();
+                $fileSystem = new Filesystem();
+                if($fileSystem->exists($projectDir)){
+                    $fileSystem->remove($projectDir);
+                }
+                else{
+                    $user->setImageFilename($newFilename);
+                }
+
+
 
                 // Move the file to the directory where brochures are stored
                 try {
@@ -64,8 +91,9 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_main');
         }
 
-        return $this->render('registration/register.html.twig', [
+        return $this->render('user/edit.html.twig', [
             'registrationForm' => $form->createView(),
+            'fileName' => $user->getImageFilename()
         ]);
     }
 }
