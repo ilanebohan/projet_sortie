@@ -57,27 +57,32 @@ class SortieRepository extends ServiceEntityRepository
 
         if (!empty($StringSearch)) {
             if($idSite != 0) {
-                $qb->andWhere('site.nom LIKE :search')
+                $qb->andWhere('s.nom LIKE :search')
                     ->setParameter('search', '%' . $StringSearch . '%');
             }else
             {
-                $qb->Where('site.nom LIKE :search OR s.nom LIKE :search')
+                $qb->Where('s.nom LIKE :search')
                     ->setParameter('search', '%' . $StringSearch . '%');
             }
         }
 
         if ($DateDebut && $DateFin) {
 
+            $DateDebutFormat = new \DateTime($DateDebut);
+            $DateFinFormat = new \DateTime($DateFin);
 
             if($idSite != 0  || !empty($StringSearch)) {
-                $qb->andWhere('s.dateDebut BETWEEN :startDate AND :endDate')
-                    ->setParameter('startDate', $DateDebut)
-                    ->setParameter('endDate', $DateFin);
+                $qb->andWhere('s.dateDebut >= :startDate')
+                    ->andWhere('s.dateDebut <= :endDate')
+                    ->setParameter('startDate', $DateDebutFormat->format('y-m-d h-i-s'))
+                    ->setParameter('endDate', $DateFinFormat->format('y-m-d h-i-s'));
+
             }else
             {
-                $qb->Where('s.dateDebut BETWEEN :startDate AND :endDate')
-                    ->setParameter('startDate', $DateDebut)
-                    ->setParameter('endDate',$DateFin);
+                $qb->Where('s.dateDebut >= :startDate')
+                    ->andWhere('s.dateDebut <= :endDate')
+                    ->setParameter('startDate', $DateDebutFormat->format('y-m-d h-i-s'))
+                    ->setParameter('endDate', $DateFinFormat->format('y-m-d h-i-s'));
             }
         }
 

@@ -43,7 +43,7 @@ class MainController extends AbstractController
 
         $idSite = $request->get('site');
         $StringSearch = $request->get('searchBar');
-        $DateDebut = $request->get('dateFin');
+        $DateDebut = $request->get('dateDebut');
         $DateFin = $request->get('dateFin');
         $organisateur = $request->get('organisateur');
         $inscrit = $request->get('inscrit');
@@ -51,7 +51,6 @@ class MainController extends AbstractController
         $SortiePassee = $request->get('passee');
         $userid = $this->getUser()->getId();
 
-        dump($DateDebut, $DateFin, $organisateur, $StringSearch,$inscrit);
 #endregion
 
 #region Setup ArrayFilter
