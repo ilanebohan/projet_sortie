@@ -5,11 +5,14 @@ namespace App\Controller;
 use App\Form\EditUserFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\UserRepository;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class UserController extends AbstractController
 {
@@ -77,7 +80,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/edit', name: 'user_edit')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
         $form = $this->createForm(EditUserFormType::class, $user);
@@ -85,16 +88,45 @@ class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            if($form->get('plainPassword')->getData() == $form->get('confirmation')->getData()){
-                $user->setPassword(
-                    $userPasswordHasher->hashPassword(
-                        $user,
-                        $form->get('plainPassword')->getData()
-                    )
-                );
-            }
-            else{
-                return $this->redirectToRoute('user_edit', array('pwdDifferent' => true));
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                )
+            );
+
+            $image = $form->get('image')->getData();
+
+            if ($image) {
+                $originalFilename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$image->guessExtension();
+
+                $projectDir = $this->getParameter('public_directory').'/uploads/images/'.$user->getImageFilename();
+                $fileSystem = new Filesystem();
+                if($fileSystem->exists($projectDir)){
+                    $fileSystem->remove($projectDir);
+                }
+                else{
+                    $user->setImageFilename($newFilename);
+                }
+
+
+
+                // Move the file to the directory where brochures are stored
+                try {
+                    $image->move(
+                        $this->getParameter('image_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+
+                // updates the 'brochureFilename' property to store the PDF file name
+                // instead of its contents
+                $user->setImageFilename($newFilename);
             }
 
             $entityManager->persist($user);
@@ -106,6 +138,7 @@ class UserController extends AbstractController
 
         return $this->render('user/edit.html.twig', [
             'registrationForm' => $form->createView(),
+            'fileName' => $user->getImageFilename()
         ]);
     }
 }
