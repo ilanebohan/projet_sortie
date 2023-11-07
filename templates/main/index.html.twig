@@ -8,7 +8,86 @@
         .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
     </style>
 
-    <div class="example-wrapper">
-        <h1>Ceci est la page d'accueil</h1>
+    <div class="DateAndUser" style="position: absolute; top: 20; right: 0;">
+    date du jour : {{ DateDuJour|date('Y-m-d') }}<br>
+        Participant : {{ app.user.login }}
+    </div><br>
+
+    <form action="{{ path('app_main_filter') }}" method="post">
+        <div class="Filter">
+            <h3>Filtrer les sorties</h3>
+            <div class="filter-container" style="display: flex;justify-content: space-between;">
+                <div class="left">
+                    site : <select name="site" id="site">
+                        <option value="0">Tous</option>
+                        {% for site in sites %}
+                            <option value="{{ site.id }}">{{ site.nom }}</option>
+                        {% endfor %}
+                    </select><br>
+
+                    Le nom de la sortie contient : <input type="text" id="searchBar" name="searchBar"><br>
+
+                    Entre : <input type="date" id="dateDebut" name="dateDebut"> et <input type="date" id="dateFin" name="dateFin"><br>
+                </div>
+
+                <div class="middle">
+                    <input type="checkbox" id="organisateur" name="organisateur"> Sorties dont je suis l'organisateur/trice<br>
+                    <input type="checkbox" id="inscrit" name="inscrit"> Sorties auxquelles je suis inscrit/e<br>
+                    <input type="checkbox" id="nonInscrit" name="nonInscrit"> Sorties auxquelles je ne suis pas inscrit/e<br>
+                    <input type="checkbox" id="passee" name="passee"> Sorties passées<br>
+                </div>
+
+                <div class="right">
+                    <input type="submit" id="Search" value="Rechercher">
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <div class="Sorties">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Nom de la Sortie</th>
+                <th>Date de la Sortie</th>
+                <th>Clôture</th>
+                <th>Inscrit/Places</th>
+                <th>État</th>
+                <th>Inscrit</th>
+                <th>Organisateur</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for sortie in sorties %}
+                <tr>
+                    <td>{{ sortie.nom }}</td>
+                    <td>{{ sortie.dateDebut|date('Y-m-d H:i') }}</td>
+                    <td>{{ sortie.dateCloture|date('Y-m-d H:i') }}</td>
+                    <td>{{ sortie.inscriptions.count }} / {{ sortie.nbInscriptionsMax }}</td>
+                    <td>{{ sortie.etat.libelle }}</td>
+                    <td>{% if sortie.inscriptions.contains(app.user) %}X{% endif %}</td>
+                    <td>{{ sortie.organisateur.nom }}</td>
+                    <td>
+                        {% if sortie.etat.libelle == 'Ouverte' and sortie.organisateur.login == app.user.login %}
+                            Afficher - Annuler
+                        {% elseif sortie.etat.libelle == 'Ouverte' and sortie.inscriptions.contains(app.user) and not sortie.etat.libelle == 'En cours' %}
+                            Afficher - Se Désister
+                        {% elseif sortie.etat.libelle == 'Créée' %}
+                            Modifier - Publier
+                        {% else %}
+                            Afficher
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
+    <br>
+    <form action="{{ path('app_sortie') }}" method="post">
+        <input type="submit" value="Créer une sortie">
+    </form>
+
 {% endblock %}
