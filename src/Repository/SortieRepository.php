@@ -61,31 +61,33 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($DateDebut && $DateFin) {
+
+
             if($idSite != 0  || !empty($StringSearch)) {
                 $qb->andWhere('s.dateDebut BETWEEN :startDate AND :endDate')
-                    ->setParameter('startDate', new \DateTime($DateDebut))
-                    ->setParameter('endDate', new \DateTime($DateFin));
+                    ->setParameter('startDate', $DateDebut)
+                    ->setParameter('endDate', $DateFin);
             }else
             {
                 $qb->Where('s.dateDebut BETWEEN :startDate AND :endDate')
-                    ->setParameter('startDate', new \DateTime($DateDebut))
-                    ->setParameter('endDate', new \DateTime($DateFin));
+                    ->setParameter('startDate', $DateDebut)
+                    ->setParameter('endDate',$DateFin);
             }
         }
 
         if ($organisateur) {
-            if($idSite != 0 || !empty($StringSearch) || ($DateDebut || $DateFin)) {
-                $qb->andWhere('organisateur.id = :userId')
+            if($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin)) {
+                $qb->andWhere('organisateur = :userId')
                     ->setParameter('userId', $userid);
             }else
             {
-                $qb->Where('organisateur.id = :userId')
+                $qb->Where('organisateur = :userId')
                     ->setParameter('userId', $userid);
             }
         }
 
         if ($inscrit) {
-            if($idSite != 0 || !empty($StringSearch) || ($DateDebut || $DateFin) || $organisateur) {
+            if($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur) {
                 $qb->andWhere(':user MEMBER OF inscriptions.participants')
                     ->setParameter('user', $em->getReference(User::class, $userid));
             }else
@@ -96,7 +98,7 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($nonInscrit) {
-            if($idSite != 0 || !empty($StringSearch) || ($DateDebut || $DateFin) || $organisateur || $inscrit) {
+            if($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit) {
                 $qb->andWhere(':user NOT MEMBER OF inscriptions.participants')
                     ->setParameter('user', $em->getReference(User::class, $userid));
             }else{
@@ -106,7 +108,7 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($SortiePassee) {
-            if($idSite != 0 || !empty($StringSearch) || ($DateDebut || $DateFin) || $organisateur || $inscrit || $nonInscrit) {
+            if($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit || $nonInscrit) {
                 $qb->andWhere('s.dateDebut < :currentDate')
                     ->setParameter('currentDate', new \DateTime());
             }else
