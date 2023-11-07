@@ -23,7 +23,6 @@ class MainController extends AbstractController
         $sortieRepository = $entityManager->getRepository(Sortie::class);
         $sorties = $sortieRepository->findAll();
 
-
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',
             'sites' => $sites,
@@ -50,7 +49,6 @@ class MainController extends AbstractController
         $SortiePassee = $request->get('passee');
         $userid = $this->getUser()->getId();
 
-        dump($DateDebut, $DateFin, $organisateur, $StringSearch,$inscrit);
 #endregion
 
 #region Setup ArrayFilter
