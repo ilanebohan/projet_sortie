@@ -5,7 +5,12 @@
 {% block body %}
 
     <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="{{ asset('uploads/images/' ~ user.imageFilename)  }}" alt="Card image cap">
+        {% if user.imageFilename %}
+            <img class="card-img-top" src="{{ asset('uploads/images/' ~ user.imageFilename)  }}" alt="Card image cap">
+        {% else %}
+            <img class="card-img-top" src="{{ asset('uploads/images/defaultImage.png')  }}" alt="Card image cap">
+        {% endif %}
+
         <div class="card-body">
             <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
             <p class="card-text">Email : {{ user.email }}</p>
