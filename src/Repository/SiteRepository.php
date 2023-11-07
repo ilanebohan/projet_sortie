@@ -21,6 +21,11 @@ class SiteRepository extends ServiceEntityRepository
         parent::__construct($registry, Site::class);
     }
 
+    public function getAllSite(): array
+    {
+        return $this->findAll();
+    }
+
 //    /**
 //     * @return Site[] Returns an array of Site objects
 //     */

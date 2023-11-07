@@ -16,6 +16,11 @@ class Site
     #[ORM\Column(length: 50)]
     private ?string $nom = null;
 
+    public function __toString()
+    {
+        return $this->nom;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
