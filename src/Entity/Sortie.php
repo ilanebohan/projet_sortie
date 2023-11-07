@@ -34,9 +34,6 @@ class Sortie
     #[ORM\Column(length: 500)]
     private ?string $descriptionInfos = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $urlPhoto = null;
-
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $motifAnnulation = null;
 
@@ -52,7 +49,7 @@ class Sortie
     #[ORM\JoinColumn(nullable: false)]
     private ?Site $siteOrganisateur = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Lieu $lieu = null;
 
@@ -138,18 +135,6 @@ class Sortie
     public function setDescriptionInfos(string $descriptionInfos): static
     {
         $this->descriptionInfos = $descriptionInfos;
-
-        return $this;
-    }
-
-    public function getUrlPhoto(): ?string
-    {
-        return $this->urlPhoto;
-    }
-
-    public function setUrlPhoto(?string $urlPhoto): static
-    {
-        $this->urlPhoto = $urlPhoto;
 
         return $this;
     }
