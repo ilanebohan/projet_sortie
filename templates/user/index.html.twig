@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Inscription{% endblock %}
+
+{% block body %}
+    <h1>Utilisateur {{ user.prenom }} {{ user.nom }}</h1>
+
+    {{ user.email }}
+
+{% endblock %}
