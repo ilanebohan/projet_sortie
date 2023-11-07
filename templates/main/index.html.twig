@@ -61,28 +61,28 @@
             </thead>
             <tbody>
             {% for sortie in sorties %}
-            <tr>
-                <td>{{ sortie.nom }}</td>
-                <td>{{ sortie.dateHeureDebut|date('Y-m-d H:i') }}</td>
-                <td>{{ sortie.dateLimiteInscription|date('Y-m-d H:i') }}</td>
-                <td>{{ sortie.infosSortie.nbInscrits }} / {{ sortie.infosSortie.nbInscriptionsMax }}</td>
-                <td>{{ sortie.infosSortie.etat.libelle }}</td>
-                <td>{% if isUserInscrit and not isSortieEnCours %}X{% endif %}</td>
-                <td>{{ sortie.infosSortie.organisateur.nom }}</td>
-                <td>
-                    {% if isSortieEnCours %}
-                        Afficher
-                    {% elseif sortie.infosSortie.etat.libelle == 'Création' %}
-                        Modifier - Publier
-                    {% elseif sortie.infosSortie.etat.libelle == 'Ouvert' and isOrganisateur %}
-                        Afficher - Annuler
-                    {% elseif sortie.infosSortie.etat.libelle == 'Ouvert' and isUserInscrit %}
-                        Afficher - Se Désister
-                    {% else %}
-                        Afficher
-                    {% endif %}
-                </td>
-            </tr>*
+                <tr>
+                    <td>{{ sortie.nom }}</td>
+                    <td>{{ sortie.dateDebut|date('Y-m-d H:i') }}</td>
+                    <td>{{ sortie.dateCloture|date('Y-m-d H:i') }}</td>
+                    <td>{{ sortie.inscriptions.count }} / {{ sortie.nbInscriptionsMax }}</td>
+                    <td>{{ sortie.etat.libelle }}</td>
+                    <td>{% if sortie.inscriptions.contains(app.user) %}X{% endif %}</td>
+                    <td>{{ sortie.organisateur.nom }}</td>
+                    <td>
+                        {% if sortie.etat.libelle == 'Ouvert' and sortie.organisateur == app.user %}
+                            Afficher - Annuler
+                        {% elseif sortie.etat.libelle == 'Ouvert' and sortie.inscriptions.contains(app.user) and not isSortieEnCours %}
+                            Afficher - Se Désister
+                        {% elseif sortie.etat.libelle == 'Création' %}
+                            Modifier - Publier
+                        {% elseif isSortieEnCours %}
+                            Afficher
+                        {% else %}
+                            <!-- Gérer les autres cas si nécessaire -->
+                        {% endif %}
+                    </td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
