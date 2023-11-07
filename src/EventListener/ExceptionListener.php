@@ -26,6 +26,7 @@ class ExceptionListener
         $exception = $event->getThrowable();
         $request = $event->getRequest();
 
+
         if ($exception instanceof AccessDeniedException) {
             switch ($request->getRequestUri()){
                 case "/":
@@ -42,6 +43,7 @@ class ExceptionListener
         }
         else
         {
+            // @TODO : DECOMMENTER AVANT LA PRESENTATION
             //$event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_access_denied', ['statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR])));
         }
 

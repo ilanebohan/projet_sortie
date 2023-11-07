@@ -8,39 +8,85 @@
 
 {% block body %}
 
-
-    {{ form_errors(registrationForm) }}
+    <div class="erreursInscription">
+        {{ form_errors(registrationForm) }}
+    </div>
 
     {{ form_start(registrationForm, { 'attr' : { 'class': 'registerForm' } }) }}
     <h1>Inscription</h1>
-<div class="form-outline mb-4">
-        {{ form_row(registrationForm.email, { 'attr' : { 'class': 'form-control' } }) }}
-</div>
-<div class="form-outline mb-4">
-        {{ form_row(registrationForm.login, { 'attr' : { 'class': 'form-control' } }) }}
-</div>
-<div class="form-outline mb-4">
-    {{ form_row(registrationForm.plainPassword.first, { 'attr' : { 'class': 'form-control' } }) }}
-</div>
-    <div class="form-outline mb-4">
-    {{ form_row(registrationForm.plainPassword.second, { 'attr' : { 'class': 'form-control' } }) }}
-</div>
-<div class="form-outline mb-4">
-        {{ form_row(registrationForm.nom, { 'attr' : { 'class': 'form-control' } }) }}
+
+    <div class="erreursInscription">
+        {{ form_errors(registrationForm.email) }}
     </div>
     <div class="form-outline mb-4">
-        {{ form_row(registrationForm.prenom, { 'attr' : { 'class': 'form-control' } }) }}
+        {{ form_label(registrationForm.email) }}
+        {{ form_widget(registrationForm.email, { 'attr' : { 'class': 'form-control' } }) }}
+</div>
+    <div class="erreursInscription">
+        {{ form_errors(registrationForm.login) }}
     </div>
 <div class="form-outline mb-4">
-        {{ form_row(registrationForm.telephone, { 'attr' : { 'class': 'form-control' } }) }}
+    {{ form_label(registrationForm.login) }}
+        {{ form_widget(registrationForm.login, { 'attr' : { 'class': 'form-control' } }) }}
+</div>
+    <div class="erreursInscription">
+        {{ form_errors(registrationForm.plainPassword.first) }}
+    </div>
+<div class="form-outline mb-4">
+    {{ form_label(registrationForm.plainPassword.first) }}
+    {{ form_widget(registrationForm.plainPassword.first, { 'attr' : { 'class': 'form-control' } }) }}
+</div>
+    <div class="erreursInscription">
+        {{ form_errors(registrationForm.plainPassword.second) }}
+    </div>
+    <div class="form-outline mb-4">
+        {{ form_label(registrationForm.plainPassword.second) }}
+    {{ form_widget(registrationForm.plainPassword.second, { 'attr' : { 'class': 'form-control' } }) }}
+</div>
+    <div class="erreursInscription">
+        {{ form_errors(registrationForm.nom) }}
+    </div>
+<div class="form-outline mb-4">
+    {{ form_label(registrationForm.nom) }}
+        {{ form_widget(registrationForm.nom, { 'attr' : { 'class': 'form-control' } }) }}
+    </div>
+    <div class="erreursInscription">
+        {{ form_errors(registrationForm.prenom) }}
+    </div>
+    <div class="form-outline mb-4">
+        {{ form_label(registrationForm.prenom) }}
+        {{ form_widget(registrationForm.prenom, { 'attr' : { 'class': 'form-control' } }) }}
+    </div>
+    <div class="erreursInscription">
+        {{ form_errors(registrationForm.telephone) }}
+    </div>
+<div class="form-outline mb-4">
+    {{ form_label(registrationForm.telephone) }}
+        {{ form_widget(registrationForm.telephone, { 'attr' : { 'class': 'form-control' } }) }}
         </div>
-<div class="form-outline mb-4">
-        {{ form_row(registrationForm.administrateur, { 'attr' : { 'class': 'form-check-input' } }) }}
-</div>
-<div class="form-outline mb-4">
-        {{ form_row(registrationForm.agreeTerms, { 'attr' : { 'class': 'form-check-input' } }) }}
+    <div class="erreursInscription">
+        {{ form_errors(registrationForm.site) }}
     </div>
-    {{ form_row(registrationForm.site) }}
+<div class="form-outline mb-4">
+    {{ form_label(registrationForm.site) }}
+    {{ form_widget(registrationForm.site, { 'attr' : { 'class': 'form-select' } }) }}
+</div>
+    <div class="erreursInscription">
+        {{ form_errors(registrationForm.administrateur) }}
+    </div>
+<div class="form-outline mb-4">
+    {{ form_label(registrationForm.administrateur) }}
+        {{ form_widget(registrationForm.administrateur, { 'attr' : { 'class': 'form-check-input' } }) }}
+</div>
+    <div class="erreursInscription">
+        {{ form_errors(registrationForm.agreeTerms) }}
+    </div>
+<div class="form-outline mb-4">
+    {{ form_label(registrationForm.agreeTerms) }}
+        {{ form_widget(registrationForm.agreeTerms, { 'attr' : { 'class': 'form-check-input' } }) }}
+    <p>(<a class="" href="/cgu">ici</a>)</p>
+    </div>
+
         <button type="submit" class="btn btn-primary">Inscription</button>
     {{ form_end(registrationForm) }}
 {% endblock %}
