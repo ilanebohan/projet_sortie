@@ -69,7 +69,7 @@ class SortieController extends AbstractController
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
-        if ($user === $sortie->getOrganisateur()
+        if (in_array("ROLE_ADMIN", $user->getRoles()) or $user === $sortie->getOrganisateur()
             && $sortie->getEtat()->getLibelle() == "Ouverte"
             && $sortie->getDateDebut() > new DateTime('now')) {
             $form = $this->createForm(AnnulerSortieType::class,$sortie);
