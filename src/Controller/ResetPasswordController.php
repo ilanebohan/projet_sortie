@@ -152,10 +152,9 @@ class ResetPasswordController extends AbstractController
             //     $translator->trans(ResetPasswordExceptionInterface::MESSAGE_PROBLEM_HANDLE, [], 'ResetPasswordBundle'),
             //     $translator->trans($e->getReason(), [], 'ResetPasswordBundle')
             // ));
-
             return $this->redirectToRoute('app_check_email');
         }
-
+/*
         $email = (new TemplatedEmail())
             ->from(new Address('theo.blanchard2022@campus-eni.fr', 'Reset Password'))
             ->to($user->getEmail())
@@ -164,9 +163,22 @@ class ResetPasswordController extends AbstractController
             ->context([
                 'resetToken' => $resetToken,
             ])
-        ;
+        ;*/
 
-        $mailer->send($email);
+        #region préparation du mail
+        $to  = $user->getEmail();
+        $subject = 'Your password reset request';
+        $message = $this->renderView('reset_password/email.html.twig', [
+            'resetToken' => $resetToken,
+        ]);
+        $headers[] = 'MIME-Version: 1.0';
+        $headers[] = 'Content-type: text/html; charset=iso-8859-1';
+        $from = 'theo.blanchard2022@campus-eni.fr';
+        #endregion
+
+        $t = mail($to, $subject, $message, implode("\r\n", $headers));
+
+        var_dump($t);
 
         // Store the token object in session for retrieval in check-email route.
         $this->setTokenObjectInSession($resetToken);
