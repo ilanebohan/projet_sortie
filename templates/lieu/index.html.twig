@@ -1,11 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Lieu index{% endblock %}
-
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset("css/base.css") }}">
+{% endblock %}
 {% block body %}
-    <h1>Lieu index</h1>
+    <h1>Lieux</h1>
 
-    <table class="table">
+    <table class="table" style="text-align: center;">
         <thead>
             <tr>
                 <th>Id</th>
@@ -31,11 +33,11 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="6">no records found</td>
+                <td colspan="6">Aucun enregistrement trouvé</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_lieu_new') }}">Create new</a>
+    <a href="{{ path('app_lieu_new') }}">Créer</a>
 {% endblock %}
