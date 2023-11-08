@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ parent() }} | Mot de passe oublié{% endblock %}
+
+{% block body %}
+    <h1>Demande de réinitialisation du mot de passe</h1>
+
+        {{ form_errors(form) }}
+        {{ form_start(form) }}
+        {{ form_row(form.email, {'attr': {'class': 'form-control'}}) }}
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+        {{ form_end(form) }}
+
+{% endblock %}
