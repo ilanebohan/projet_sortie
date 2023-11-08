@@ -32,6 +32,19 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('app_main');
     }
 
+    #[Route('/annuler/{id}', name: 'app_sortie_annuler')]
+    public function annuler(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, EtatRepository $etatRepository): Response
+    {
+        $user = $this->getUser();
+        $sortie = $sortieRepository->find($id);
+        if (in_array("ROLE_ADMIN", $user->getRoles())) {
+            $sortie->setEtat($etatRepository->find(6));
+            $em->persist($sortie);
+            $em->flush();
+        }
+        return $this->redirectToRoute('app_main');
+    }
+
     #[Route('/inscrire/{id}', name: 'app_sortie_inscrire')]
     public function inscrire(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em): Response
     {
