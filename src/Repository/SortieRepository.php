@@ -6,7 +6,6 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use SebastianBergmann\Environment\Console;
 
 /**
  * @extends ServiceEntityRepository<Sortie>
@@ -46,21 +45,20 @@ class SortieRepository extends ServiceEntityRepository
             ->from('App\Entity\Sortie', 's')
             ->leftJoin('s.siteOrganisateur', 'site')
             ->leftJoin('s.organisateur', 'organisateur')
-            ->leftJoin('s.inscriptions', 'inscriptions');
+            ->leftJoin('s.participants', 'participants');
 
         #region Filtre
 
-        if($idSite != 0) {
+        if ($idSite != 0) {
             $qb->where('s.siteOrganisateur = :idSite')
                 ->setParameter('idSite', $idSite);
         }
 
         if (!empty($StringSearch)) {
-            if($idSite != 0) {
+            if ($idSite != 0) {
                 $qb->andWhere('s.nom LIKE :search')
                     ->setParameter('search', '%' . $StringSearch . '%');
-            }else
-            {
+            } else {
                 $qb->Where('s.nom LIKE :search')
                     ->setParameter('search', '%' . $StringSearch . '%');
             }
@@ -71,14 +69,13 @@ class SortieRepository extends ServiceEntityRepository
             $DateDebutFormat = new \DateTime($DateDebut);
             $DateFinFormat = new \DateTime($DateFin);
 
-            if($idSite != 0  || !empty($StringSearch)) {
+            if ($idSite != 0 || !empty($StringSearch)) {
                 $qb->andWhere('s.dateDebut >= :startDate')
                     ->andWhere('s.dateDebut <= :endDate')
                     ->setParameter('startDate', $DateDebutFormat->format('y-m-d h-i-s'))
                     ->setParameter('endDate', $DateFinFormat->format('y-m-d h-i-s'));
 
-            }else
-            {
+            } else {
                 $qb->Where('s.dateDebut >= :startDate')
                     ->andWhere('s.dateDebut <= :endDate')
                     ->setParameter('startDate', $DateDebutFormat->format('y-m-d h-i-s'))
@@ -87,43 +84,40 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($organisateur) {
-            if($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin)) {
+            if ($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin)) {
                 $qb->andWhere('organisateur = :userId')
                     ->setParameter('userId', $userid);
-            }else
-            {
+            } else {
                 $qb->Where('organisateur = :userId')
                     ->setParameter('userId', $userid);
             }
         }
 
         if ($inscrit) {
-            if($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur) {
-                $qb->andWhere(':user MEMBER OF inscriptions.participants')
-                    ->setParameter('user', $em->getReference(User::class, $userid));
-            }else
-            {
-                $qb->Where(':user MEMBER OF inscriptions.participants')
-                    ->setParameter('user', $em->getReference(User::class, $userid));
+            if ($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur) {
+                $qb->andWhere(':userId = participants.id')
+                    ->setParameter('userId', $userid);
+            } else {
+                $qb->Where(':userId = participants.id')
+                    ->setParameter('userId', $userid);
             }
         }
 
         if ($nonInscrit) {
-            if($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit) {
-                $qb->andWhere(':user NOT MEMBER OF inscriptions.participants')
-                    ->setParameter('user', $em->getReference(User::class, $userid));
-            }else{
-                $qb->Where(':user NOT MEMBER OF inscriptions.participants')
-                    ->setParameter('user', $em->getReference(User::class, $userid));
+            if ($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit) {
+                $qb->andWhere(':userId != participants.id')
+                    ->setParameter('userId', $userid);
+            } else {
+                $qb->Where(':userId != participants.id')
+                    ->setParameter('userId', $userid);
             }
         }
 
         if ($SortiePassee) {
-            if($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit || $nonInscrit) {
+            if ($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit || $nonInscrit) {
                 $qb->andWhere('s.dateDebut < :currentDate')
                     ->setParameter('currentDate', new \DateTime());
-            }else
-            {
+            } else {
                 $qb->Where('s.dateDebut < :currentDate')
                     ->setParameter('currentDate', new \DateTime());
             }

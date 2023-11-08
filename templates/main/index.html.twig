@@ -65,19 +65,22 @@
                     <td>{{ sortie.nom }}</td>
                     <td>{{ sortie.dateDebut|date('Y-m-d H:i') }}</td>
                     <td>{{ sortie.dateCloture|date('Y-m-d H:i') }}</td>
-                    <td>{{ sortie.inscriptions.count }} / {{ sortie.nbInscriptionsMax }}</td>
+                    <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
                     <td>{{ sortie.etat.libelle }}</td>
-                    <td>{% if sortie.inscriptions.contains(app.user) %}X{% endif %}</td>
+                    <td>{% if sortie.participants.contains(app.user) %}X{% endif %}</td>
                     <td><a href="{{ path('user_details',  { id: sortie.organisateur.id }) }}">{{ sortie.organisateur.nom }}</a></td>
                     <td>
                         {% if sortie.etat.libelle == 'Ouverte' and sortie.organisateur.login == app.user.login %}
                             Afficher - Annuler
-                        {% elseif sortie.etat.libelle == 'Ouverte' and sortie.inscriptions.contains(app.user) and not sortie.etat.libelle == 'En cours' %}
-                            Afficher - Se Désister
+                        {% elseif sortie.etat.libelle == 'Ouverte' and sortie.participants.contains(app.user) %}
+                            Afficher - <a class="nav-link" href="{{ path('app_sortie_desister', {id: sortie.id}) }}">
+                            Se desister<span class="sr-only"></span></a>
                         {% elseif sortie.etat.libelle == 'Créée' %}
-                            Modifier - Publier
+                            Modifier - <a class="nav-link" href="{{ path('app_sortie_publish', {id: sortie.id}) }}">
+                            Publier<span class="sr-only"></span></a>
                         {% else %}
-                            Afficher
+                            Afficher - <a class="nav-link" href="{{ path('app_sortie_inscrire', {id: sortie.id}) }}">
+                            S'inscrire<span class="sr-only"></span></a>
                         {% endif %}
                     </td>
                 </tr>
@@ -86,7 +89,7 @@
         </table>
     </div>
     <br>
-    <form action="{{ path('app_sortie') }}" method="post">
+    <form action="{{ path('app_sortie_create') }}" method="post">
         <input type="submit" value="Créer une sortie">
     </form>
 

@@ -53,13 +53,12 @@ class Sortie
     #[ORM\JoinColumn(nullable: false)]
     private ?Lieu $lieu = null;
 
-    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'sortie')]
-    private Collection $inscriptions;
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'sorties')]
+    private Collection $participants;
 
     public function __construct()
     {
         $this->participants = new ArrayCollection();
-        $this->inscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -223,30 +222,4 @@ class Sortie
         return $this;
     }
 
-    /**
-     * @return Collection<int, Inscription>
-     */
-    public function getInscriptions(): Collection
-    {
-        return $this->inscriptions;
-    }
-
-    public function addInscription(Inscription $inscription): static
-    {
-        if (!$this->inscriptions->contains($inscription)) {
-            $this->inscriptions->add($inscription);
-            $inscription->addSortie($this);
-        }
-
-        return $this;
-    }
-
-    public function removeInscription(Inscription $inscription): static
-    {
-        if ($this->inscriptions->removeElement($inscription)) {
-            $inscription->removeSortie($this);
-        }
-
-        return $this;
-    }
 }
