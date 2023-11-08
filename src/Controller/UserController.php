@@ -2,8 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Site;
+use App\Entity\User;
+use App\Form\AddUserCsvType;
 use App\Form\EditUserFormType;
+use App\Repository\SiteRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Csv\Reader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -72,14 +77,91 @@ class UserController extends AbstractController
         return $this->redirectToRoute('user_list', ['messageRetour'=>$messageRetour], Response::HTTP_SEE_OTHER);
     }
 
-
     #[Route('/user/list', name: 'user_list')]
-    public function listUser(String $messageRetour = null, UserRepository $userRepository): Response
+    public function listUser(String $messageRetour = null, Request $request, UserRepository $userRepository, SluggerInterface $slugger, EntityManagerInterface $entityManager, SiteRepository $siteRepository, UserPasswordHasherInterface $userPasswordHasher): Response
     {
+        $user = $this->getUser();
+        $form = $this->createForm(AddUserCsvType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $file = $form->get('file')->getData();
+
+            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            // this is needed to safely include the file name as part of the URL
+            $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+
+            $projectDir = $this->getParameter('public_directory').'/uploads/csv/'.$newFilename;
+
+            try {
+                $file->move(
+                    $this->getParameter('csv_directory'),
+                    $newFilename
+                );
+            } catch (FileException $e) {
+                // ... handle exception if something happens during file upload
+            }
+
+            $reader = Reader::createFromPath($projectDir, 'r');
+
+            for ($i = 0; $i <= $reader->count()-1; $i++) {
+                if($i == 0){
+                    $i++;
+                }
+                $row = $reader->fetchOne($i);
+                $userReader = new User();
+                $util = explode(";", $row[0]);
+
+                $userReader->setNom($util[0]);
+                $userReader->setPrenom($util[1]);
+                $userReader->setTelephone($util[2]);
+                $userReader->setEmail($util[3]);
+                if($util[4] == 'oui'){
+                    $userReader->setAdministrateur(true);
+                }
+                else{
+                    $userReader->setAdministrateur(false);
+                }
+                $userReader->setLogin($util[5]);
+                $userReader->setPassword(
+                    $userPasswordHasher->hashPassword(
+                        $userReader,
+                        $util[6]
+                    )
+                );
+                $site = $siteRepository->findSiteByNom($util[7]);
+                if($site){
+                    $userReader->setSite($site[0]);
+                }
+                else{
+                    $entitySite = new Site();
+                    $entitySite->setNom($util[7]);
+                    $entityManager->persist($entitySite);
+                    $entityManager->flush();
+                    $userReader->setSite($entitySite);
+                }
+                $userReader->setActif(true);
+                $userReader->setImageFilename('');
+                $entityManager->persist($userReader);
+                $entityManager->flush();
+
+                $fileSystem = new Filesystem();
+                echo "<script>console. log('this is a Variable: " . $projectDir. "' );</script>";
+                if($fileSystem->exists($projectDir)){
+                    $fileSystem->remove($projectDir);
+                }
+            }
+
+            return $this->redirectToRoute('user_list');
+        }
+
         return $this->render('user/list.html.twig', [
             'controller_name' => 'UserController',
             'users'=> $userRepository->findAll(),
-            'messageRetour' => $messageRetour
+            'messageRetour' => $messageRetour,
+            'registrationForm' => $form->createView()
         ]);
     }
 

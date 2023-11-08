@@ -86,8 +86,7 @@
         {{ form_widget(registrationForm.agreeTerms, { 'attr' : { 'class': 'form-check-input' } }) }}
     <p>(<a class="" href="/cgu">ici</a>)</p>
     </div>
-    {{ form_row(registrationForm.site) }}
-    {{ form_row(registrationForm.image) }}
+    {{ form_row(registrationForm.image, { 'attr' : { 'class': 'form-control' } }) }}
 
         <button type="submit" class="btn btn-primary">Inscription</button>
     {{ form_end(registrationForm) }}
