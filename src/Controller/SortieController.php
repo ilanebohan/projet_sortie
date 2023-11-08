@@ -2,11 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Inscription;
 use App\Entity\Sortie;
+use App\Form\AnnulerSortieType;
 use App\Form\CreateSortieType;
 use App\Form\CreateSortieWithLieuType;
 use App\Repository\EtatRepository;
-use App\Repository\UserRepository;
+use App\Repository\LieuRepository;
+use App\Repository\SortieRepository;
+use App\Repository\VilleRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,14 +20,86 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SortieController extends AbstractController
 {
-    #[Route('/create', name: 'app_sortie')]
-    public function create(Request $request, EntityManagerInterface $em, EtatRepository $etatRepository, UserRepository $userRepository): Response
+
+    #[Route('/publish/{id}', name: 'app_sortie_publish')]
+    public function publish(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, EtatRepository $etatRepository): Response
+    {
+        $user = $this->getUser();
+        $sortie = $sortieRepository->find($id);
+        if ($user === $sortie->getOrganisateur()) {
+            $sortie->setEtat($etatRepository->find(2));
+            $em->persist($sortie);
+            $em->flush();
+        }
+        return $this->redirectToRoute('app_main');
+    }
+
+    #[Route('/inscrire/{id}', name: 'app_sortie_inscrire')]
+    public function inscrire(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        $sortie = $sortieRepository->find($id);
+        if ($user !== $sortie->getOrganisateur()
+            && $sortie->getEtat()->getLibelle() == "Ouverte"
+            && $sortie->getDateCloture() > new DateTime('now')) {
+            $sortie->addParticipant($user);
+            $em->persist($sortie);
+            $em->flush();
+        }
+        return $this->redirectToRoute('app_main');
+    }
+
+    #[Route('/desister/{id}', name: 'app_sortie_desister')]
+    public function desister(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        $sortie = $sortieRepository->find($id);
+        if ($sortie->getEtat()->getLibelle() == "Ouverte"
+            || $sortie->getEtat()->getLibelle() == "Clôturée") {
+            $sortie->removeParticipant($user);
+            $em->persist($sortie);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('app_main');
+    }
+
+    #[Route('/annuler/{id}', name: 'app_sortie_annuler')]
+    public function annuler(int $id, Request $request, SortieRepository $sortieRepository, EntityManagerInterface $em, EtatRepository $etatRepository): Response
+    {
+        $user = $this->getUser();
+        $sortie = $sortieRepository->find($id);
+        if (in_array("ROLE_ADMIN", $user->getRoles()) or $user === $sortie->getOrganisateur()
+            && $sortie->getEtat()->getLibelle() == "Ouverte"
+            && $sortie->getDateDebut() > new DateTime('now')) {
+            $form = $this->createForm(AnnulerSortieType::class,$sortie);
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $sortie->setEtat($etatRepository->find(6));
+                $em->persist($sortie);
+                $em->flush();
+                return $this->redirectToRoute('app_main');
+            }
+            return $this->render('sortie/annuler.html.twig', [
+                'sortieForm' => $form->createView(),
+                'sortie' => $sortie,
+            ]);
+
+
+        }
+        return $this->redirectToRoute('app_main');
+    }
+
+    #[Route('/create', name: 'app_sortie_create')]
+    public function create(Request $request, EntityManagerInterface $em, EtatRepository $etatRepository, LieuRepository $lieuRepository, VilleRepository $villeRepository): Response
     {
         $sortie = new Sortie();
-        $form = $this->createForm(CreateSortieType::class, $sortie);
+        $ville = $villeRepository->find(1);
+        $form = $this->createForm(CreateSortieType::class, $sortie, ['villeId' => $ville]);
         $form->handleRequest($request);
         $formWithLieu = $this->createForm(CreateSortieWithLieuType::class, $sortie);
         $formWithLieu->handleRequest($request);
+        $lieux = $lieuRepository->findAll();
         if ($form->get('addLieu')->isClicked() || $formWithLieu->isSubmitted()) {
             if ($formWithLieu->isSubmitted() && $formWithLieu->isValid()) {
                 $this->save($sortie, $etatRepository, $em);
@@ -37,10 +114,10 @@ class SortieController extends AbstractController
             $this->save($sortie, $etatRepository, $em);
 
             return $this->redirectToRoute('app_main');
-
         }
         return $this->render('sortie/create.html.twig', [
             'sortieForm' => $form->createView(),
+            'lieux' => $lieux
         ]);
     }
 

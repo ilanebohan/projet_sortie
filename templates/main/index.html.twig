@@ -13,9 +13,11 @@
         Participant : {{ app.user.login }}
     </div><br>
 
+    <div class="container ">
+
     <form action="{{ path('app_main_filter') }}" method="post">
         <div class="Filter">
-            <h3>Filtrer les sorties</h3>
+            <h3 style="text-align: center">Filtrer les sorties</h3>
             <div class="filter-container" style="display: flex;justify-content: space-between;">
                 <div class="left">
                     site : <select name="site" id="site">
@@ -43,7 +45,7 @@
             </div>
         </div>
     </form>
-
+    </div>
 
     <div class="Sorties">
         <table class="table table-bordered">
@@ -65,17 +67,25 @@
                     <td>{{ sortie.nom }}</td>
                     <td>{{ sortie.dateDebut|date('Y-m-d H:i') }}</td>
                     <td>{{ sortie.dateCloture|date('Y-m-d H:i') }}</td>
-                    <td>{{ sortie.inscriptions.count }} / {{ sortie.nbInscriptionsMax }}</td>
+                    <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
                     <td>{{ sortie.etat.libelle }}</td>
-                    <td>{% if sortie.inscriptions.contains(app.user) %}X{% endif %}</td>
+                    <td>{% if sortie.participants.contains(app.user) %}X{% endif %}</td>
                     <td><a href="{{ path('user_details',  { id: sortie.organisateur.id }) }}">{{ sortie.organisateur.nom }}</a></td>
                     <td>
-                        {% if sortie.etat.libelle == 'Ouverte' and sortie.organisateur.login == app.user.login %}
-                            Afficher - Annuler
-                        {% elseif sortie.etat.libelle == 'Ouverte' and sortie.inscriptions.contains(app.user) and not sortie.etat.libelle == 'En cours' %}
-                            Afficher - Se Désister
-                        {% elseif sortie.etat.libelle == 'Créée' %}
-                            Modifier - Publier
+                        {% if sortie.etat.libelle == 'Ouverte' and (sortie.organisateur.login == app.user.login or is_granted('ROLE_ADMIN')) %}
+                            Afficher - <a class="nav-link" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">
+                            Annuler<span class="sr-only"></span></a>
+                        {% elseif sortie.etat.libelle == 'Ouverte' and sortie.participants.contains(app.user) %}
+                            Afficher - <a class="nav-link" href="{{ path('app_sortie_desister', {id: sortie.id}) }}">
+                            Se desister<span class="sr-only"></span></a>
+                        {% elseif sortie.etat.libelle == 'Créée' and sortie.organisateur.login == app.user.login %}
+                            Modifier - <a class="nav-link" href="{{ path('app_sortie_publish', {id: sortie.id}) }}">
+                            Publier<span class="sr-only"></span></a>
+                        {% elseif sortie.etat.libelle == 'Ouverte' %}
+                            Afficher - <a class="nav-link" href="{{ path('app_sortie_inscrire', {id: sortie.id}) }}">
+                            S'inscrire<span class="sr-only"></span></a>
+                        {% elseif sortie.etat.libelle == 'Annulée' %}
+                            Annulée
                         {% else %}
                             Afficher
                         {% endif %}
@@ -86,7 +96,7 @@
         </table>
     </div>
     <br>
-    <form action="{{ path('app_sortie') }}" method="post">
+    <form action="{{ path('app_sortie_create') }}" method="post">
         <input type="submit" value="Créer une sortie">
     </form>
 

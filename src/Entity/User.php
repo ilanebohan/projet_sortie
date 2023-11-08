@@ -52,10 +52,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
     private Collection $sortiesOrganise;
 
-
-    #[ORM\ManyToMany(mappedBy:'participants', targetEntity:Inscription::class)]
-    private $inscriptions;
-
     #[Assert\Image(
         minWidth: 200,
         maxWidth: 400,
@@ -63,8 +59,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxHeight: 400,
     )]
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'string', nullable: true)]
     private string $imageFilename;
+
+
+    #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participants')]
+    private Collection $sorties;
 
 
     public function getImageFilename(): string
@@ -82,8 +82,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->sortiesOrganise = new ArrayCollection();
-        $this->sortiesParticipant = new ArrayCollection();
-        $this->inscriptions = new ArrayCollection();
+        $this->sorties = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -253,52 +252,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Sortie>
      */
-    public function getSortiesParticipant(): Collection
+    public function getSorties(): Collection
     {
-        return $this->sortiesParticipant;
+        return $this->sorties;
     }
 
-    public function addSortiesParticipant(Sortie $sortiesParticipant): static
+    public function addSorty(Sortie $sorty): static
     {
-        if (!$this->sortiesParticipant->contains($sortiesParticipant)) {
-            $this->sortiesParticipant->add($sortiesParticipant);
-            $sortiesParticipant->addParticipant($this);
+        if (!$this->sorties->contains($sorty)) {
+            $this->sorties->add($sorty);
+            $sorty->addParticipant($this);
         }
 
         return $this;
     }
 
-    public function removeSortiesParticipant(Sortie $sortiesParticipant): static
+    public function removeSorty(Sortie $sorty): static
     {
-        if ($this->sortiesParticipant->removeElement($sortiesParticipant)) {
-            $sortiesParticipant->removeParticipant($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Inscription>
-     */
-    public function getInscriptions(): Collection
-    {
-        return $this->inscriptions;
-    }
-
-    public function addInscription(Inscription $inscription): static
-    {
-        if (!$this->inscriptions->contains($inscription)) {
-            $this->inscriptions->add($inscription);
-            $inscription->addParticipant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeInscription(Inscription $inscription): static
-    {
-        if ($this->inscriptions->removeElement($inscription)) {
-            $inscription->removeParticipant($this);
+        if ($this->sorties->removeElement($sorty)) {
+            $sorty->removeParticipant($this);
         }
 
         return $this;

@@ -3,8 +3,9 @@
 {% block title %}{{ parent() }} | Inscription{% endblock %}
 
 {% block body %}
+<div class="container text-center">
 
-    <div class="card" style="width: 18rem;">
+    <div class="card mx-auto" style="width: 18rem;">
         {% if user.imageFilename %}
             <img class="card-img-top" src="{{ asset('uploads/images/' ~ user.imageFilename)  }}" alt="Card image cap">
         {% else %}
@@ -17,5 +18,5 @@
             <p class="card-text">Téléphone : {{ user.telephone }}</p>
         </div>
     </div>
-
+</div>
 {% endblock %}

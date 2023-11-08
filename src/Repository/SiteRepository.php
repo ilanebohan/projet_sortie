@@ -25,6 +25,11 @@ class SiteRepository extends ServiceEntityRepository
         return $this->findAll();
     }
 
+    public function findSiteByNom(string $nom): array
+    {
+        return $this->findBy(['nom' => $nom]);
+    }
+
 //    /**
 //     * @return Site[] Returns an array of Site objects
 //     */
