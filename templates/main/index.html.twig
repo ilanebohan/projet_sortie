@@ -73,16 +73,19 @@
                     <td><a href="{{ path('user_details',  { id: sortie.organisateur.id }) }}">{{ sortie.organisateur.nom }}</a></td>
                     <td>
                         {% if sortie.etat.libelle == 'Ouverte' and sortie.organisateur.login == app.user.login %}
-                            Afficher - Annuler
+                            Afficher - <a class="nav-link" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">
+                            Annuler<span class="sr-only"></span></a>
                         {% elseif sortie.etat.libelle == 'Ouverte' and sortie.participants.contains(app.user) %}
                             Afficher - <a class="nav-link" href="{{ path('app_sortie_desister', {id: sortie.id}) }}">
                             Se desister<span class="sr-only"></span></a>
-                        {% elseif sortie.etat.libelle == 'Créée' %}
+                        {% elseif sortie.etat.libelle == 'Créée' and sortie.organisateur.login == app.user.login %}
                             Modifier - <a class="nav-link" href="{{ path('app_sortie_publish', {id: sortie.id}) }}">
                             Publier<span class="sr-only"></span></a>
-                        {% else %}
+                        {% elseif sortie.etat.libelle == 'Ouverte' %}
                             Afficher - <a class="nav-link" href="{{ path('app_sortie_inscrire', {id: sortie.id}) }}">
                             S'inscrire<span class="sr-only"></span></a>
+                        {% else %}
+                            Afficher
                         {% endif %}
                     </td>
                 </tr>

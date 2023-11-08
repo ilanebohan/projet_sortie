@@ -143,7 +143,6 @@ class UserController extends AbstractController
                     $userReader->setSite($entitySite);
                 }
                 $userReader->setActif(true);
-                $userReader->setImageFilename('');
                 $entityManager->persist($userReader);
                 $entityManager->flush();
 

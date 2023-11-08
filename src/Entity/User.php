@@ -59,7 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxHeight: 400,
     )]
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'string', nullable: true)]
     private string $imageFilename;
 
     #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participants')]
