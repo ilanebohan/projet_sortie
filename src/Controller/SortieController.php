@@ -4,12 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Inscription;
 use App\Entity\Sortie;
+use App\Form\AnnulerSortieType;
 use App\Form\CreateSortieType;
 use App\Form\CreateSortieWithLieuType;
 use App\Repository\EtatRepository;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use App\Repository\VilleRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +39,9 @@ class SortieController extends AbstractController
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
-        if ($user !== $sortie->getOrganisateur()) {
+        if ($user !== $sortie->getOrganisateur()
+            && $sortie->getEtat()->getLibelle() == "Ouverte"
+            && $sortie->getDateCloture() > new DateTime('now')) {
             $sortie->addParticipant($user);
             $em->persist($sortie);
             $em->flush();
@@ -50,10 +54,39 @@ class SortieController extends AbstractController
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
-        $sortie->removeParticipant($user);
-        $em->persist($sortie);
-        $em->flush();
+        if ($sortie->getEtat()->getLibelle() == "Ouverte"
+            || $sortie->getEtat()->getLibelle() == "Clôturée") {
+            $sortie->removeParticipant($user);
+            $em->persist($sortie);
+            $em->flush();
+        }
 
+        return $this->redirectToRoute('app_main');
+    }
+
+    #[Route('/annuler/{id}', name: 'app_sortie_annuler')]
+    public function annuler(int $id, Request $request, SortieRepository $sortieRepository, EntityManagerInterface $em, EtatRepository $etatRepository): Response
+    {
+        $user = $this->getUser();
+        $sortie = $sortieRepository->find($id);
+        if ($user === $sortie->getOrganisateur()
+            && $sortie->getEtat()->getLibelle() == "Ouverte"
+            && $sortie->getDateDebut() > new DateTime('now')) {
+            $form = $this->createForm(AnnulerSortieType::class,$sortie);
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $sortie->setEtat($etatRepository->find(6));
+                $em->persist($sortie);
+                $em->flush();
+                return $this->redirectToRoute('app_main');
+            }
+            return $this->render('sortie/annuler.html.twig', [
+                'sortieForm' => $form->createView(),
+                'sortie' => $sortie,
+            ]);
+
+
+        }
         return $this->redirectToRoute('app_main');
     }
 
