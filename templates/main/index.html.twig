@@ -13,9 +13,11 @@
         Participant : {{ app.user.login }}
     </div><br>
 
+    <div class="container ">
+
     <form action="{{ path('app_main_filter') }}" method="post">
         <div class="Filter">
-            <h3>Filtrer les sorties</h3>
+            <h3 style="text-align: center">Filtrer les sorties</h3>
             <div class="filter-container" style="display: flex;justify-content: space-between;">
                 <div class="left">
                     site : <select name="site" id="site">
@@ -43,7 +45,7 @@
             </div>
         </div>
     </form>
-
+    </div>
 
     <div class="Sorties">
         <table class="table table-bordered">

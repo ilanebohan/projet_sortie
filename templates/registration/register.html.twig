@@ -12,8 +12,17 @@
         {{ form_errors(registrationForm) }}
     </div>
 
+
+
+
     {{ form_start(registrationForm, { 'attr' : { 'class': 'registerForm' } }) }}
     <h1>Inscription</h1>
+
+<div class="container text-center">
+    <div class="row justify-content-center">
+        <div class="col-5">
+
+
 
     <div class="erreursInscription">
         {{ form_errors(registrationForm.email) }}
@@ -43,6 +52,8 @@
         {{ form_label(registrationForm.plainPassword.second) }}
     {{ form_widget(registrationForm.plainPassword.second, { 'attr' : { 'class': 'form-control' } }) }}
 </div>
+        </div>
+        <div class="col-5">
     <div class="erreursInscription">
         {{ form_errors(registrationForm.nom) }}
     </div>
@@ -71,6 +82,8 @@
     {{ form_label(registrationForm.site) }}
     {{ form_widget(registrationForm.site, { 'attr' : { 'class': 'form-select' } }) }}
 </div>
+        </div>
+    </div>
     <div class="erreursInscription">
         {{ form_errors(registrationForm.administrateur) }}
     </div>
@@ -86,8 +99,9 @@
         {{ form_widget(registrationForm.agreeTerms, { 'attr' : { 'class': 'form-check-input' } }) }}
     <p>(<a class="" href="/cgu">ici</a>)</p>
     </div>
+    <div class="form-outline mb-4">
     {{ form_row(registrationForm.image, { 'attr' : { 'class': 'form-control' } }) }}
-
+    </div>
         <button type="submit" class="btn btn-primary">Inscription</button>
     {{ form_end(registrationForm) }}
 {% endblock %}

@@ -107,22 +107,38 @@ function handleStyleButton(typeBTN){
         if ($('#deactivateUsers').hasClass('btn-secondary')) {
             $('#deactivateUsers').removeClass('btn-secondary');
             $('#deactivateUsers').addClass('btn-warning');
+            $('#deactivateUsers').attr("style", "cursor:default");
         }
         else if ($('#deactivateUsers').hasClass('btn-warning')) {
             $('#deactivateUsers').removeClass('btn-warning');
             $('#deactivateUsers').addClass('btn-secondary');
+            $('#deactivateUsers').attr("style", "cursor:not-allowed");
         }
     }
     else if (typeBTN === 'deleteUsers') {
         if ($('#deleteUsers').hasClass('btn-secondary')) {
             $('#deleteUsers').removeClass('btn-secondary');
             $('#deleteUsers').addClass('btn-danger');
+            $('#deleteUsers').attr("style", "cursor:default");
         }
         else if ($('#deleteUsers').hasClass('btn-danger')) {
             $('#deleteUsers').removeClass('btn-danger');
             $('#deleteUsers').addClass('btn-secondary');
+            $('#deleteUsers').attr("style", "cursor:not-allowed");
         }
     }
+}
+
+function resetButtons(typeBTN)
+{
+        $('#deactivateUsers').removeClass('btn-warning');
+        $('#deactivateUsers').addClass('btn-secondary');
+        $('#deactivateUsers').attr("style", "cursor:not-allowed");
+
+        $('#deleteUsers').removeClass('btn-danger');
+        $('#deleteUsers').addClass('btn-secondary');
+        $('#deleteUsers').attr("style", "cursor:not-allowed");
+
 }
 
 function deleteUsers()
@@ -136,8 +152,11 @@ function deleteUsers()
                 success: function(result) {
                     // Remove the row from the table
                     $('#' + value).closest('tr').remove();
-                    //console.log(result);
-
+                    // empty the array
+                    IDUsersSelected = [];
+                    // unselect all checkboxes
+                    $('input[name="checkBoxUser"]').prop('checked', false);
+                    resetButtons();
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     alert('Error!  Status = ' + xhr.status);
@@ -172,7 +191,9 @@ function desactivationUser()
                 success: function(result) {
                     // Update the 'Actif ?' row of the user
                     $('#' + value).closest('tr').find('td:eq(7)').text('Non');
-
+                    IDUsersSelected = [];
+                    $('input[name="checkBoxUser"]').prop('checked', false);
+                    resetButtons();
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     alert('Error!  Status = ' + xhr.status);
