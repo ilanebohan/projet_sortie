@@ -8,7 +8,7 @@
         .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
     </style>
 
-    <div class="DateAndUser" style="position: absolute; top: 20; right: 0;">
+    <div class="DateAndUser" style="position: absolute; right: 0;">
     date du jour : {{ DateDuJour|date('Y-m-d') }}<br>
         Participant : {{ app.user.login }}
     </div><br>
@@ -93,7 +93,7 @@
     </div>
     <br>
     <form action="{{ path('app_sortie_create') }}" method="post">
-        <input type="submit" value="Créer une sortie">
+        <input type="submit" value="Créer une sortie" class="btn btn-primary">
     </form>
 
 {% endblock %}
