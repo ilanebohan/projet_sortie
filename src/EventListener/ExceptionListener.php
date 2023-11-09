@@ -39,12 +39,12 @@ class ExceptionListener
         }
         else if ($exception instanceof NotFoundHttpException)
         {
-            //$event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_access_denied', ['statusCode' => Response::HTTP_NOT_FOUND])));
+            $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_access_denied', ['statusCode' => Response::HTTP_NOT_FOUND])));
         }
         else
         {
             // @TODO : DECOMMENTER AVANT LA PRESENTATION
-            //$event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_access_denied', ['statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR])));
+            $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_access_denied', ['statusCode' => Response::HTTP_INTERNAL_SERVER_ERROR])));
         }
 
         // inspect the exception

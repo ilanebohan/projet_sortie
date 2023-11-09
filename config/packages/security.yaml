@@ -37,6 +37,11 @@ security:
             lazy: true
             provider: app_user_provider
             entry_point: App\Security\AuthenticationEntryPoint
+            form_login:
+                # "app_login" is the name of the route created previously
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
                 # where to redirect after logout
                 # target: app_any_route
             remember_me:
