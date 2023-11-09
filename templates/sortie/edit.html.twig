@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Modifier mon Profil{% endblock %}
+
+{% block body %}
+
+
+
+
+    {{ form_errors(SortieForm) }}
+
+    {{ form_start(SortieForm) }}
+
+    <h1 style="text-align: center">Modifier ma sortie</h1>
+    <div class="container text-center">
+        <div class="row justify-content-center">
+                <div class="form-outline mb-4">
+                    <h5 class="card-title"> Cette sortie est : {{ EtatSortie }}</h5>
+                </div>
+                <div class="col-5">
+                    <div class="form-outline mb-4">
+                        <h5 class="card-title">{{ form_row(SortieForm.nom, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                    </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(SortieForm.dateDebut, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(SortieForm.duree, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(SortieForm.dateCloture, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+            </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(SortieForm.nbInscriptionsMax, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-text">{{ form_row(SortieForm.descriptionInfos, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-text">{{ form_row(SortieForm.siteOrganisateur, { 'attr' : { 'class': 'form-select' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-text">{{ form_row(SortieForm.lieu, { 'attr' : { 'class': 'form-select' } }) }}</h5>
+                </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Modifier la sortie</button>
+    </div>
+    {{ form_end(SortieForm) }}
+{% endblock %}

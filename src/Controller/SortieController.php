@@ -7,6 +7,8 @@ use App\Entity\Sortie;
 use App\Form\AnnulerSortieType;
 use App\Form\CreateSortieType;
 use App\Form\CreateSortieWithLieuType;
+use App\Form\EditSortieFormType;
+use App\Form\EditSortieWithoutAnnulationFormType;
 use App\Repository\EtatRepository;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
@@ -136,6 +138,28 @@ class SortieController extends AbstractController
             'lieux' => $lieux
         ]);
     }
+
+
+    #[Route('/sortie/edit/{id}', name: 'app_sortie_edit')]
+    public function edit(int $id, Request $request, SortieRepository $sortieRepository , EntityManagerInterface $entityManager): Response
+    {
+        $sortie = $sortieRepository->find($id);
+        $etat = $sortie->getEtat()->getLibelle();
+        $form = $this->createForm(EditSortieFormType::class, $sortie);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($sortie);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_main');
+        }
+
+        return $this->render('sortie/edit.html.twig', [
+            'SortieForm' => $form->createView(),
+            'EtatSortie' => $etat,
+        ]);
+    }
+
 
     /**
      * @param Sortie $sortie
