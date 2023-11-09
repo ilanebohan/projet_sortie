@@ -5,33 +5,36 @@
     <link rel="stylesheet" href="{{ asset("css/base.css") }}">
 {% endblock %}
 {% block body %}
-    <h1>Sites</h1>
+    <div class="container text-center">
+        <h1>Sites</h1>
+    </div>
 
-    <table class="table" style="text-align: center;">
-        <thead>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
             <tr>
-                <th>Id</th>
                 <th>Nom</th>
-                <th>actions</th>
+                <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for site in sites %}
-            <tr>
-                <td>{{ site.id }}</td>
-                <td>{{ site.nom }}</td>
-                <td>
-                    <a href="{{ path('app_site_show', {'id': site.id}) }}">show</a>
-                    <a href="{{ path('app_site_edit', {'id': site.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">Aucun enregistrement trouvé</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for site in sites %}
+                <tr>
+                    <td>{{ site.nom }}</td>
+                    <td>
+                        <a href="{{ path('app_site_show', {'id': site.id}) }}" class="btn btn-secondary">Afficher</a>
+                        <a href="{{ path('app_site_edit', {'id': site.id}) }}" class="btn btn-secondary">Modifier</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <a href="{{ path('app_site_new') }}">Créer</a>
+
+    <a href="{{ path('app_site_new') }}" class="btn btn-primary">Ajouter un Site</a>
 {% endblock %}

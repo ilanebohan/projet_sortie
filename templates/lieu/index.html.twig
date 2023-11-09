@@ -5,39 +5,42 @@
     <link rel="stylesheet" href="{{ asset("css/base.css") }}">
 {% endblock %}
 {% block body %}
-    <h1>Lieux</h1>
+    <div class="container text-center">
+        <h1>Lieux</h1>
+    </div>
 
-    <table class="table" style="text-align: center;">
-        <thead>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
             <tr>
-                <th>Id</th>
                 <th>Nom</th>
                 <th>Rue</th>
                 <th>Latitude</th>
                 <th>Longitude</th>
-                <th>actions</th>
+                <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for lieu in lieus %}
-            <tr>
-                <td>{{ lieu.id }}</td>
-                <td>{{ lieu.nom }}</td>
-                <td>{{ lieu.rue }}</td>
-                <td>{{ lieu.latitude }}</td>
-                <td>{{ lieu.longitude }}</td>
-                <td>
-                    <a href="{{ path('app_lieu_show', {'id': lieu.id}) }}">show</a>
-                    <a href="{{ path('app_lieu_edit', {'id': lieu.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">Aucun enregistrement trouvé</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for lieu in lieus %}
+                <tr>
+                    <td>{{ lieu.nom }}</td>
+                    <td>{{ lieu.rue }}</td>
+                    <td>{{ lieu.latitude }}</td>
+                    <td>{{ lieu.longitude }}</td>
+                    <td>
+                        <a href="{{ path('app_lieu_show', {'id': lieu.id}) }}" class="btn btn-secondary">Afficher</a>
+                        <a href="{{ path('app_lieu_edit', {'id': lieu.id}) }}" class="btn btn-secondary">Modifier</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <a href="{{ path('app_lieu_new') }}">Créer</a>
+
+    <a href="{{ path('app_lieu_new') }}" class="btn btn-primary">Ajouter un Lieu</a>
 {% endblock %}

@@ -3,24 +3,24 @@
 {% block title %}Site{% endblock %}
 
 {% block body %}
-    <h1>Site</h1>
+    <div class="container text-center">
+        <h1>Site</h1>
+    </div>
 
-    <table class="table" style="text-align: center;">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ site.id }}</td>
-            </tr>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <tbody>
             <tr>
                 <th>Nom</th>
                 <td>{{ site.nom }}</td>
             </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
-    <a href="{{ path('app_site_index') }}">back to list</a>
+    <a href="{{ path('app_site_index') }}" class="btn btn-primary">Retour à la liste</a>
 
-    <a href="{{ path('app_site_edit', {'id': site.id}) }}">edit</a>
+    <a href="{{ path('app_site_edit', {'id': site.id}) }}" class="btn btn-primary">Modifier</a>
 
     {{ include('site/_delete_form.html.twig') }}
 {% endblock %}

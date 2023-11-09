@@ -1,4 +1,33 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+{% endblock %}
+{{ form_start(form, { 'attr' : { 'class': 'registerForm' } }) }}
+
+<div class="container text-center">
+    <div class="row justify-content-center">
+        <div class="col-5">
+
+            <div class="erreursInscription">
+                {{ form_errors(form.nom) }}
+            </div>
+            <div class="form-outline mb-4">
+                {{ form_label(form.nom) }}
+                {{ form_widget(form.nom, { 'attr' : { 'class': 'form-control' } }) }}
+            </div>
+
+            <div class="erreursInscription">
+                {{ form_errors(form.codePostal) }}
+            </div>
+            <div class="form-outline mb-4">
+                {{ form_label(form.codePostal) }}
+                {{ form_widget(form.codePostal, { 'attr' : { 'class': 'form-control' } }) }}
+            </div>
+
+            <button class="btn btn-primary">{{ button_label|default('Ajouter') }}</button>
+            <a href="{{ path('app_ville_index') }}" class="btn btn-primary">Retour à la liste</a>
+
+        </div>
+    </div>
+</div>
+
 {{ form_end(form) }}
