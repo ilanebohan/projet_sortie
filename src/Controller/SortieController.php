@@ -15,6 +15,7 @@ use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use App\Repository\VilleRepository;
 use DateTime;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -130,10 +131,13 @@ class SortieController extends AbstractController
 
                 if($formWithLieu->get('estPrivee')->getData()) {
                     $allUser = $userRepository->findAll();
+                    $sortie->addParticipant($this->getUser());
 
-                    return $this->render('addUserToPrivate.html.twig', [
+                    return $this->render('sortie/addUserToPrivate.html.twig', [
                         'sortie' => $sortie,
-                        'allUser' => $allUser
+                        'allUser' => $allUser,
+                        'userAlreadyPresent' => $sortie->getParticipants(),
+                        'CurrentUser' => $this->getUser()
                     ]);
                 }
 
@@ -152,9 +156,13 @@ class SortieController extends AbstractController
             if($form->get('estPrivee')->getData()) {
                 $allUser = $userRepository->findAll();
 
+                $sortie->addParticipant($this->getUser());
+
                 return $this->render('sortie/addUserToPrivate.html.twig', [
                     'sortie' => $sortie,
-                    'allUser' => $allUser
+                    'allUser' => $allUser,
+                    'userAlreadyPresent' => $sortie->getParticipants(),
+                    'CurrentUser' => $this->getUser()
                 ]);
             }
 
@@ -176,6 +184,8 @@ class SortieController extends AbstractController
             $json = $request->request->get('ListUser');
 
             $listUser = json_decode($json);
+
+            $sortie->removeAllParticipants();
 
             foreach ($listUser as $user) {
                 $user = $userRepository->find($user);
@@ -205,6 +215,23 @@ class SortieController extends AbstractController
         return $this->render('sortie/edit.html.twig', [
             'SortieForm' => $form->createView(),
             'EtatSortie' => $etat,
+            'idSortie' => $id,
+            'estPrivee' => $sortie->isEstPrivee()
+        ]);
+    }
+
+    #[Route('/sortie/editPrivateListe/{id}', name: 'app_sortie_editPrivateListe')]
+    public function redirectToPrivate(int $id,Request $request, EntityManagerInterface $em, SortieRepository $sortieRepository, UserRepository $userRepository):Response
+    {
+        $sortie = $sortieRepository->find($id);
+        $allUser = $userRepository->findAll();
+        $sortie->addParticipant($this->getUser());
+
+        return $this->render('sortie/addUserToPrivate.html.twig', [
+            'sortie' => $sortie,
+            'allUser' => $allUser,
+            'userAlreadyPresent' => $sortie->getParticipants(),
+            'CurrentUser' => $this->getUser()
         ]);
     }
 

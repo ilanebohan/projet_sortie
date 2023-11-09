@@ -21,7 +21,7 @@
             {{ form_row(registrationForm.image) }}
         </div>
         {% else %}
-            <img class="card-img-top" src="{{ asset('uploads/images/defaultImage.png')  }}" alt="Card image cap">
+            <img class="card-img-top" src="{{ asset('uploads/images/defaultImage.jpg')  }}" alt="Card image cap">
             <h5 class="card-title">Ajouter une image : </h5>
             <div class="form-outline mb-4">{{ form_row(registrationForm.image) }}</div>
         {% endif %}
