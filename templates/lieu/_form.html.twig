@@ -1,4 +1,57 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+{% endblock %}
+{{ form_start(form, { 'attr' : { 'class': 'registerForm' } }) }}
+
+<div class="container text-center">
+    <div class="row justify-content-center">
+        <div class="col-5">
+
+            <div class="erreursInscription">
+                {{ form_errors(form.nom) }}
+            </div>
+            <div class="form-outline mb-4">
+                {{ form_label(form.nom) }}
+                {{ form_widget(form.nom, { 'attr' : { 'class': 'form-control' } }) }}
+            </div>
+
+            <div class="erreursInscription">
+                {{ form_errors(form.rue) }}
+            </div>
+            <div class="form-outline mb-4">
+                {{ form_label(form.rue) }}
+                {{ form_widget(form.rue, { 'attr' : { 'class': 'form-control' } }) }}
+            </div>
+
+            <div class="erreursInscription">
+                {{ form_errors(form.latitude) }}
+            </div>
+            <div class="form-outline mb-4">
+                {{ form_label(form.latitude) }}
+                {{ form_widget(form.latitude, { 'attr' : { 'class': 'form-control' } }) }}
+            </div>
+
+            <div class="erreursInscription">
+                {{ form_errors(form.longitude) }}
+            </div>
+            <div class="form-outline mb-4">
+                {{ form_label(form.longitude) }}
+                {{ form_widget(form.longitude, { 'attr' : { 'class': 'form-control' } }) }}
+            </div>
+
+            <div class="erreursInscription">
+                {{ form_errors(form.ville) }}
+            </div>
+            <div class="form-outline mb-4">
+                {{ form_label(form.ville) }}
+                {{ form_widget(form.ville, { 'attr' : { 'class': 'form-select' } }) }}
+            </div>
+
+            <button class="btn btn-primary">{{ button_label|default('Ajouter') }}</button>
+            <a href="{{ path('app_lieu_index') }}" class="btn btn-primary">Retour à la liste</a>
+        </div>
+    </div>
+</div>
+
+
 {{ form_end(form) }}

@@ -1,39 +1,40 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Ville index{% endblock %}
-{% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset("css/base.css") }}">
-{% endblock %}
-{% block body %}
-    <h1>Villes</h1>
 
-    <table class="table" style="text-align: center;">
-        <thead>
+{% block body %}
+    <div class="container text-center">
+        <h1>Villes</h1>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
             <tr>
-                <th>Id</th>
                 <th>Nom</th>
                 <th>CodePostal</th>
-                <th>actions</th>
+                <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for ville in villes %}
-            <tr>
-                <td>{{ ville.id }}</td>
-                <td>{{ ville.nom }}</td>
-                <td>{{ ville.codePostal }}</td>
-                <td>
-                    <a href="{{ path('app_ville_show', {'id': ville.id}) }}">show</a>
-                    <a href="{{ path('app_ville_edit', {'id': ville.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">Aucun enregistrement trouvé</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for ville in villes %}
+                <tr>
+                    <td>{{ ville.nom }}</td>
+                    <td>{{ ville.codePostal }}</td>
+                    <td>
+                        <a href="{{ path('app_ville_show', {'id': ville.id}) }}" class="btn btn-secondary">Afficher</a>
+                        <a href="{{ path('app_ville_edit', {'id': ville.id}) }}" class="btn btn-secondary">Modifier</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <a href="{{ path('app_ville_new') }}">Créer</a>
+
+    <a href="{{ path('app_ville_new') }}" class="btn btn-primary">Ajouter une Ville</a>
 {% endblock %}
