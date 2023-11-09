@@ -14,6 +14,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -38,40 +40,26 @@ class CreateSortieType extends AbstractType
     {
         $builder
             ->add('nom', null, [
-                'label' => 'Nom de la sortie',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                'label' => 'Nom de la sortie'
             ])
-            ->add('dateDebut', null, [
+            ->add('dateDebut', DateTimeType ::class, [
                 'label' => 'Date et heure de la sortie',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                'widget' => 'single_text',
+                'attr' => ['class' => 'js-datepicker']
             ])
-            ->add('dateCloture', null, [
+            ->add('dateCloture', DateTimeType ::class, [
                 'label' => 'Date limite d\'inscription',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                'widget' => 'single_text',
+                'attr' => ['class' => 'js-datepicker']
             ])
             ->add('nbInscriptionsMax', NumberType::class, [
                 'label' => 'Nombres de places',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
             ])
             ->add('duree', NumberType::class, [
-                'label' => 'Durée',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                'label' => 'Durée'
             ])
             ->add('descriptionInfos', TextareaType::class, [
-                'label' => 'Description et infos',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                'label' => 'Description et infos'
             ])
             ->add('siteOrganisateur', EntityType::class, [
                 'label' => 'Ville organisatrice',
@@ -79,10 +67,7 @@ class CreateSortieType extends AbstractType
                 'choice_label' => 'nom',
                 'query_builder' => function (SiteRepository $siteRepository) {
                     return $siteRepository->createQueryBuilder("s")->addOrderBy('s.nom');
-                },
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                }
             ])
             ->add('ville', EntityType::class, [
                 'mapped' => false,
@@ -93,10 +78,7 @@ class CreateSortieType extends AbstractType
                 'query_builder' => function (VilleRepository $villeRepository) {
                     return $villeRepository->createQueryBuilder("v")->addOrderBy('v.nom');
                 },
-                'data' => $options['villeId'],
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ],
+                'data' => $options['villeId']
             ])
             ->add('addLieu', SubmitType::class, [
                 'validate' => false,

@@ -1,34 +1,67 @@
 {% extends 'base.html.twig' %}
 
+
 {% block title %}{{ parent() }} | Créer une sortie{% endblock %}
 {% block body %}
+
     <h1>Créer une sortie</h1>
 
     {{ form_errors(sortieForm) }}
     {{ form_start(sortieForm) }}
-    {{ form_row(sortieForm.nom) }}
-    {{ form_row(sortieForm.dateDebut) }}
-    {{ form_row(sortieForm.dateCloture) }}
-    {{ form_row(sortieForm.nbInscriptionsMax) }}
-    {{ form_row(sortieForm.duree) }}
-    {{ form_row(sortieForm.descriptionInfos) }}
-    {{ form_row(sortieForm.siteOrganisateur) }}
-    {{ form_row(sortieForm.ville, {
-        'attr': {
-            'data-ville-id': ""~sortieForm.ville.vars.value,
-            'class': "change-lieux-per-ville",
-        }
-    }) }}
-    {{ form_row(sortieForm.addLieu) }}
-    {{ form_row(sortieForm.lieu) }}
 
-    {{ form_row(sortieForm.creer) }}
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-5">
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(sortieForm.nom, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(sortieForm.descriptionInfos, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(sortieForm.siteOrganisateur, { 'attr' : { 'class': 'form-select' } }) }}</h5>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(sortieForm.ville, {
+                            'attr': {
+                                'data-ville-id': ""~sortieForm.ville.vars.value,
+                                'class': "form-select change-lieux-per-ville",
+                            }
+                        }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(sortieForm.lieu, { 'attr' : { 'class': 'form-select' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(sortieForm.addLieu, { 'attr' : { 'class': 'btn btn-primary' } }) }}</h5>
+                </div>
+            </div>
+            <div class="col-5">
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(sortieForm.dateDebut, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-text">{{ form_row(sortieForm.dateCloture, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-text">{{ form_row(sortieForm.duree, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-text">{{ form_row(sortieForm.nbInscriptionsMax, { 'attr' : { 'class': 'form-control'} }) }}</h5>
+                </div>
+
+            </div>
+        </div>
+        {{ form_row(sortieForm.creer) }}
+    </div>
+
+
     {{ form_end(sortieForm) }}
 
 {% endblock %}
 {% block javascripts %}
-    <script src="https://code.jquery.com/jquery-3.6.3.min.js"
-            integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+
     <script>
         $(document).on('change', '#create_sortie_ville', function () {
 

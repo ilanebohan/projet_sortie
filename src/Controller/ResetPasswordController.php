@@ -178,8 +178,6 @@ class ResetPasswordController extends AbstractController
 
         $t = mail($to, $subject, $message, implode("\r\n", $headers));
 
-        var_dump($t);
-
         // Store the token object in session for retrieval in check-email route.
         $this->setTokenObjectInSession($resetToken);
 

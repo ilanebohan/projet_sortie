@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Sortie;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -13,9 +14,17 @@ class EditSortieFormType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('dateDebut')
+            ->add('dateDebut', DateTimeType ::class, [
+                'label' => 'Date et heure de la sortie',
+                'widget' => 'single_text',
+                'attr' => ['class' => 'js-datepicker']
+            ])
             ->add('duree')
-            ->add('dateCloture')
+            ->add('dateCloture', DateTimeType ::class, [
+                'label' => 'Date et heure de la sortie',
+                'widget' => 'single_text',
+                'attr' => ['class' => 'js-datepicker']
+            ])
             ->add('nbInscriptionsMax')
             ->add('descriptionInfos')
             ->add('siteOrganisateur')
