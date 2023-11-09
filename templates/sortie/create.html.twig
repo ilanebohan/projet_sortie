@@ -72,7 +72,7 @@
             var villeID = $(this).data("ville-id");
 
             $.ajax({
-                url: '/create',
+                url: '/sortie/create',
                 type: "POST",
                 data: 'villeID=' + villeID,
                 dataType: 'JSON',
