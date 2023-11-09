@@ -25,6 +25,15 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // If the login is already taken, return an error
+            $userRepo = $entityManager->getRepository(User::class);
+            $userLogin = $userRepo->findOneBy(['login' => $user->getLogin()]);
+            if ($userLogin)
+            {
+                $this->addFlash('error', 'Ce login est déjà utilisé');
+                //return $this->redirectToRoute('app_register');
+            }
+
             // encode the plain password
             $user->setPassword(
                 $userPasswordHasher->hashPassword(

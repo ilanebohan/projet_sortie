@@ -37,5 +37,8 @@ class VilleTest extends WebTestCase
         $this->assertEquals($ville->getId(), $villeBDD->getId());
         $this->assertEquals($ville->getNom(), $villeBDD->getNom());
         $this->assertEquals($ville->getCodePostal(), $villeBDD->getCodePostal());
+
+        $entityManager->remove($villeBDD);
+        $entityManager->flush();
     }
 }

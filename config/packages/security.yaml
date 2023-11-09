@@ -15,21 +15,42 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\AppAuthenticator
-            logout:
-                path: app_logout
             entry_point: App\Security\AuthenticationEntryPoint
-                # where to redirect after logout
-                # target: app_any_route
-
+            # where to redirect after logout
+            # target: app_any_route
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800
+                secure: false
+                signature_properties: [password]
+                token_provider:
+                    doctrine: true
+            form_login:
+                enable_csrf: true
+            logout:
+                path: app_logout
+                target: app_login
+        main:
+            lazy: true
+            provider: app_user_provider
+            entry_point: App\Security\AuthenticationEntryPoint
+                # where to redirect after logout
+                # target: app_any_route
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                secure: false
+                signature_properties: [ password ]
+                token_provider:
+                    doctrine: true # Use Doctrine ORM
                 path: /
-                always_remember_me: true
+            logout:
+                path: app_logout
+                target: app_login
+            custom_authenticator: App\Security\AppAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
