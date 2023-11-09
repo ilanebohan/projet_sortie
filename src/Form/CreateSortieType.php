@@ -10,9 +10,11 @@ use App\Repository\SiteRepository;
 use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\Boolean;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -88,7 +90,11 @@ class CreateSortieType extends AbstractType
                 'attr' => [
                     'class' => 'btn btn-primary',
                 ]
-            ]);
+            ])
+        ->add('estPrivee', CheckboxType::class, [
+            'label' => 'Sortie privée ',
+            'required' => false,
+        ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
         $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));

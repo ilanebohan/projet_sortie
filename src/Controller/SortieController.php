@@ -12,6 +12,7 @@ use App\Form\EditSortieWithoutAnnulationFormType;
 use App\Repository\EtatRepository;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
+use App\Repository\UserRepository;
 use App\Repository\VilleRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -111,7 +112,7 @@ class SortieController extends AbstractController
     }
 
     #[Route('/create', name: 'app_sortie_create')]
-    public function create(Request $request, EntityManagerInterface $em, EtatRepository $etatRepository, LieuRepository $lieuRepository, VilleRepository $villeRepository): Response
+    public function create(Request $request, EntityManagerInterface $em, EtatRepository $etatRepository, LieuRepository $lieuRepository, VilleRepository $villeRepository, UserRepository $userRepository): Response
     {
         $sortie = new Sortie();
         $ville = $villeRepository->find(1);
@@ -127,6 +128,15 @@ class SortieController extends AbstractController
                 && $sortie->getDateCloture() > new DateTime('now')) {
                 $this->save($sortie, $etatRepository, $em);
 
+                if($formWithLieu->get('estPrivee')->getData()) {
+                    $allUser = $userRepository->findAll();
+
+                    return $this->render('addUserToPrivate.html.twig', [
+                        'sortie' => $sortie,
+                        'allUser' => $allUser
+                    ]);
+                }
+
                 return $this->redirectToRoute('app_main');
             }
             return $this->render('sortie/createWithLieu.html.twig', [
@@ -139,12 +149,42 @@ class SortieController extends AbstractController
             && $sortie->getDateCloture() > new DateTime('now')) {
             $this->save($sortie, $etatRepository, $em);
 
+            if($form->get('estPrivee')->getData()) {
+                $allUser = $userRepository->findAll();
+
+                return $this->render('sortie/addUserToPrivate.html.twig', [
+                    'sortie' => $sortie,
+                    'allUser' => $allUser
+                ]);
+            }
+
             return $this->redirectToRoute('app_main');
         }
         return $this->render('sortie/create.html.twig', [
             'sortieForm' => $form->createView(),
             'lieux' => $lieux
         ]);
+    }
+
+    #[Route('/addUserToPrivateSortie/{id}', name: 'app_sortie_addUserToPrivateSortie')]
+    public function addUserToPrivateSortie(int $id, Request $request, EntityManagerInterface $em, SortieRepository $sortieRepository, UserRepository $userRepository) : Response
+    {
+        $sortie = $sortieRepository->find($id);
+
+        if($sortie) {
+
+            $json = $request->request->get('ListUser');
+
+            $listUser = json_decode($json);
+
+            foreach ($listUser as $user) {
+                $user = $userRepository->find($user);
+                $sortie->addParticipant($user);
+            }
+            $em->persist($sortie);
+            $em->flush();
+        }
+        return $this->redirectToRoute('app_main');
     }
 
 

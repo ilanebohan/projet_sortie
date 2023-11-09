@@ -72,33 +72,18 @@
                     <td>{% if sortie.participants.contains(app.user) %}X{% endif %}</td>
                     <td><a href="{{ path('user_details',  { id: sortie.organisateur.id }) }}">{{ sortie.organisateur.nom }}</a></td>
                     <td>
-                        {% if sortie.etat.libelle == 'Ouverte' and sortie.organisateur.login == app.user.login %}
-                            <a class="btn btn-primary" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
-                            <a class="btn btn-primary" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
-
-                        {% elseif sortie.etat.libelle == 'Ouverte' and ((sortie.participants.contains(app.user) == false) and is_granted('ROLE_ADMIN') and sortie.dateCloture|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s')) and sortie.nbInscriptionsMax > sortie.participants.count %}
-                            <a class="btn btn-primary" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
-                            <a class="btn btn-primary" href="{{ path('app_sortie_inscrire', {id: sortie.id}) }}">S'inscrire<span class="sr-only"></span></a> -
-                            <a class="btn btn-primary" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
-
-                        {% elseif sortie.etat.libelle == 'Ouverte' and ((sortie.participants.contains(app.user) == false) and is_granted('ROLE_ADMIN') and sortie.dateCloture|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s')) and sortie.nbInscriptionsMax == sortie.participants.count %}
-                            <a class="btn btn-primary" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
-                            <a class="btn btn-primary" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
-
+                        {% if sortie.etat.libelle == 'Ouverte' and (sortie.organisateur.login == app.user.login or is_granted('ROLE_ADMIN')) %}
+                            <a class="btn btn-primary" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> - <a class="btn btn-primary" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
                         {% elseif sortie.etat.libelle == 'Ouverte' and sortie.participants.contains(app.user) %}
-                            <a class="btn btn-primary" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
-                            <a class="btn btn-primary" href="{{ path('app_sortie_desister', {id: sortie.id}) }}">Se desister<span class="sr-only"></span></a>
-
-                        {% elseif sortie.etat.libelle == 'Créée' and sortie.organisateur.login == app.user.login and sortie.dateDebut|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s') %}
-                            <a class="btn btn-primary" href="{{ path('app_sortie_edit', {id: sortie.id}) }}">Modifier<span class="sr-only"></span></a> -
-                            <a class="btn btn-primary" href="{{ path('app_sortie_publish', {id: sortie.id}) }}">Publier<span class="sr-only"></span></a>
-
-                        {% elseif sortie.etat.libelle == 'Ouverte' and sortie.dateCloture|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s') and sortie.nbInscriptionsMax > sortie.participants.count %}
-                            <a class="btn btn-primary" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
-                            <a class="btn btn-primary" href="{{ path('app_sortie_inscrire', {id: sortie.id}) }}">S'inscrire<span class="sr-only"></span></a>
+                            <a class="btn btn-primary" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> - <a class="btn btn-primary" href="{{ path('app_sortie_desister', {id: sortie.id}) }}">Se desister<span class="sr-only"></span></a>
+                        {% elseif sortie.etat.libelle == 'Créée' and sortie.organisateur.login == app.user.login %}
+                            <a class="btn btn-primary" href="{{ path('app_sortie_edit', {id: sortie.id}) }}">Modifier<span class="sr-only"></span></a> - <a class="btn btn-primary" href="{{ path('app_sortie_publish', {id: sortie.id}) }}">Publier<span class="sr-only"></span></a>
+                        {% elseif sortie.etat.libelle == 'Ouverte' %}
+                            <a class="btn btn-primary" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> - <a class="btn btn-primary" href="{{ path('app_sortie_inscrire', {id: sortie.id}) }}">S'inscrire<span class="sr-only"></span></a>
+                        {% elseif sortie.etat.libelle == 'Annulée' %}
+                            <a class="btn btn-primary" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
                         {% else %}
                             <a class="btn btn-primary" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a>
-
                         {% endif %}
                     </td>
                 </tr>

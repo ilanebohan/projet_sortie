@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}{{ parent() }} | Ajouter des utilisateurs à la sortie privée{% endblock %}
+{% block body %}
+
+    <table id="usersTable" class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Ajouter</th>
+            <th>Pseudo</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in allUser %}
+            <tr>
+                <td><input type="checkbox" value="{{ user.id }}" class="userCheckbox" name="UserId"></td>
+                <td>{{ user.login }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <form action="{{ path('app_sortie_addUserToPrivateSortie' , {id: sortie.id}) }}" method="post">
+        <input type="hidden" name="ListUser" id="ListUser">
+        <input type="submit" id="Btn-send-User" class="btn btn-primary" onclick="addUsers()" value="Ajouter les utilisateurs">
+    </form>
+
+{% endblock body %}
+
+{% block javascripts %}
+<script>
+    $(document).ready( function () {
+        $('#usersTable').DataTable();
+    });
+
+    function addUsers() {
+        let ListUser = [];
+
+        var checkboxes = document.getElementsByName('UserId');
+        for (var checkboxe of checkboxes) {
+            if (checkboxe.checked) {
+                ListUser.push(checkboxe.defaultValue);
+            }
+        }
+
+        var input = document.getElementById('ListUser');
+        input.value =JSON.stringify(ListUser);
+    }
+
+</script>
+{% endblock %}

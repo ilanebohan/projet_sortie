@@ -56,6 +56,9 @@ class Sortie
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'sorties')]
     private Collection $participants;
 
+    #[ORM\Column]
+    private ?bool $estPrivee = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -220,6 +223,18 @@ class Sortie
     public function removeParticipant(User $participant): static
     {
         $this->participants->removeElement($participant);
+
+        return $this;
+    }
+
+    public function isEstPrivee(): ?bool
+    {
+        return $this->estPrivee;
+    }
+
+    public function setEstPrivee(bool $estPrivee): static
+    {
+        $this->estPrivee = $estPrivee;
 
         return $this;
     }
