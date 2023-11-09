@@ -28,7 +28,8 @@ class SortieController extends AbstractController
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
-        if ($user === $sortie->getOrganisateur()) {
+        if ($user === $sortie->getOrganisateur()
+            && $sortie->getDateDebut() > new DateTime('now')) {
             $sortie->setEtat($etatRepository->find(2));
             $em->persist($sortie);
             $em->flush();
@@ -42,6 +43,7 @@ class SortieController extends AbstractController
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
         if ($user !== $sortie->getOrganisateur()
+            && $sortie->getNbInscriptionsMax() > count($sortie->getParticipants())
             && $sortie->getEtat()->getLibelle() == "Ouverte"
             && $sortie->getDateCloture() > new DateTime('now')) {
             $sortie->addParticipant($user);
@@ -119,7 +121,10 @@ class SortieController extends AbstractController
         $formWithLieu->handleRequest($request);
         $lieux = $lieuRepository->findAll();
         if ($form->get('addLieu')->isClicked() || $formWithLieu->isSubmitted()) {
-            if ($formWithLieu->isSubmitted() && $formWithLieu->isValid()) {
+            if ($formWithLieu->isSubmitted() && $formWithLieu->isValid()
+                && $sortie->getDateCloture() < $sortie->getDateDebut()
+                && $sortie->getDateDebut() > new DateTime('now')
+                && $sortie->getDateCloture() > new DateTime('now')) {
                 $this->save($sortie, $etatRepository, $em);
 
                 return $this->redirectToRoute('app_main');
@@ -128,7 +133,10 @@ class SortieController extends AbstractController
                 'sortieForm' => $formWithLieu->createView(),
             ]);
         }
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()
+            && $sortie->getDateCloture() < $sortie->getDateDebut()
+            && $sortie->getDateDebut() > new DateTime('now')
+            && $sortie->getDateCloture() > new DateTime('now')) {
             $this->save($sortie, $etatRepository, $em);
 
             return $this->redirectToRoute('app_main');

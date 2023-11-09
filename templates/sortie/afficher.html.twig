@@ -24,20 +24,19 @@
         </div>
 
 
-        <div class="Participants">
+        <div class="table-responsive">
 
-            <h1>Liste des participants</h1>
 
-            <table class="table table-bordered" style="text-align: center;">
+            <table class="table table-bordered table-striped" style="text-align: center;">
                 <thead>
                 <tr>
-                    <th>Pseudo</th>
+                    <th>Liste des participants</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for user in sortie.participants %}
                     <tr>
-                        <td>{{ user.pseudo }}</td>
+                        <td>{{ user.nom }} {{ user.prenom }}</td>
 
                     </tr>
                 {% endfor %}

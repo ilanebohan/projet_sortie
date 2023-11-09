@@ -7,14 +7,50 @@
 
     {{ form_errors(sortieForm) }}
     {{ form_start(sortieForm) }}
-    {{ form_row(sortieForm.nom) }}
-    {{ form_row(sortieForm.dateDebut) }}
-    {{ form_row(sortieForm.dateCloture) }}
-    {{ form_row(sortieForm.nbInscriptionsMax) }}
-    {{ form_row(sortieForm.duree) }}
-    {{ form_row(sortieForm.descriptionInfos) }}
-    {{ form_row(sortieForm.siteOrganisateur) }}
-    {{ form_row(sortieForm.lieu) }}
-    {{ form_row(sortieForm.creer) }}
+
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-5">
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(sortieForm.nom, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(sortieForm.descriptionInfos, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(sortieForm.siteOrganisateur, { 'attr' : { 'class': 'form-select' } }) }}</h5>
+                </div>
+                <div class="card mx-auto" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title ">Lieu</h5>
+                        {{ form_label(sortieForm.lieu.ville) }}
+                        <p class="card-text">{{ form_widget(sortieForm.lieu.ville, { 'attr' : { 'class': 'form-control' } }) }}</p>
+                        <p class="card-text">{{ form_row(sortieForm.lieu.nom, { 'attr' : { 'class': 'form-control' } }) }}</p>
+                        <p class="card-text">{{ form_row(sortieForm.lieu.rue, { 'attr' : { 'class': 'form-control' } }) }}</p>
+                        <p class="card-text">{{ form_row(sortieForm.lieu.latitude, { 'attr' : { 'class': 'form-control' } }) }}</p>
+                        <p class="card-text">{{ form_row(sortieForm.lieu.longitude, { 'attr' : { 'class': 'form-control' } }) }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-5">
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(sortieForm.dateDebut, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-text">{{ form_row(sortieForm.dateCloture, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-text">{{ form_row(sortieForm.duree, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-text">{{ form_row(sortieForm.nbInscriptionsMax, { 'attr' : { 'class': 'form-control'} }) }}</h5>
+                </div>
+
+            </div>
+        </div>
+        {{ form_row(sortieForm.creer) }}
+    </div>
+
+
     {{ form_end(sortieForm) }}
 {% endblock %}

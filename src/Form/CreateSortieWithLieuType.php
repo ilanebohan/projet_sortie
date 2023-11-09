@@ -20,10 +20,7 @@ class CreateSortieWithLieuType extends AbstractType
     {
         $builder
             ->add('nom', null, [
-                'label' => 'Nom de la sortie',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                'label' => 'Nom de la sortie'
             ])
             ->add('dateDebut', DateTimeType ::class, [
                 'label' => 'Date et heure de la sortie',
@@ -34,33 +31,21 @@ class CreateSortieWithLieuType extends AbstractType
                 'widget' => 'single_text'
             ])
             ->add('nbInscriptionsMax', NumberType::class, [
-                'label' => 'Nombres de places',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                'label' => 'Nombres de places'
             ])
             ->add('duree', NumberType::class, [
-                'label' => 'Durée',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                'label' => 'Durée'
             ])
             ->add('descriptionInfos', TextareaType::class, [
-                'label' => 'Description et infos',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                'label' => 'Description et infos'
             ])
             ->add('siteOrganisateur', EntityType::class, [
-                'label' => 'Ville organisatrice',
+                'label' => 'Site organisateur',
                 'class' => Site::class,
                 'choice_label' => 'nom',
                 'query_builder' => function (SiteRepository $siteRepository) {
                     return $siteRepository->createQueryBuilder("s")->addOrderBy('s.nom');
-                },
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                }
             ])
             ->add('lieu', LieuType::class)
             ->add('creer', SubmitType::class, [

@@ -60,7 +60,7 @@ class CreateSortieType extends AbstractType
                 'label' => 'Description et infos'
             ])
             ->add('siteOrganisateur', EntityType::class, [
-                'label' => 'Ville organisatrice',
+                'label' => 'Site organisateur',
                 'class' => Site::class,
                 'choice_label' => 'nom',
                 'query_builder' => function (SiteRepository $siteRepository) {
