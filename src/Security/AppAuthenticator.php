@@ -52,8 +52,6 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
         {
             if ($user->isActif())
             {
-                // if checkbox remember me is checked then add RememberMeBadge()
-                if ($request->request->get('_remember_me') == 'on') {
                     return new Passport(
                         new UserBadge($user->getEmail()),
                         new PasswordCredentials($request->request->get('password', '')),
@@ -62,18 +60,6 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
                             new RememberMeBadge(),
                         ]
                     );
-                }
-                // else if checkbox remember me is not checked then do not add RememberMeBadge()
-                else
-                {
-                    return new Passport(
-                        new UserBadge($user->getEmail()),
-                        new PasswordCredentials($request->request->get('password', '')),
-                        [
-                            new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
-                        ]
-                    );
-                }
             }
             else
             {

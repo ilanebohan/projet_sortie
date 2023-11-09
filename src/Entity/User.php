@@ -12,7 +12,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte avec cet email')]
+#[UniqueEntity(fields: ['login'], message: 'Il y a déjà un compte avec ce login')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
 
