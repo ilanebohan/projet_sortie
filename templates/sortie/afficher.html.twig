@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Inscription{% endblock %}
+
+{% block body %}
+    <div class="container text-center">
+
+        <div class="card mx-auto" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">{{ sortie.nom }}</h5>
+                <p class="card-text">Etat : {{ sortie.Etat.libelle }}</p>
+                <p class="card-text">Organisateur : {{ sortie.organisateur.nom }}</p>
+                <p class="card-text">Site : {{ sortie.siteOrganisateur.nom }}</p>
+                <p class="card-text">nombre d'inscription maximum : {{ sortie.nbInscriptionsMax }}</p>
+                <p class="card-text">nombre d'inscrit : {{ sortie.participants.count }}</p>
+                <p class="card-text">Description : {{ sortie.descriptionInfos }}</p>
+                <p class="card-text">Lieu : {{ sortie.lieu.nom }}</p>
+                <p class="card-text">Durée : {{ sortie.duree }} heure(s)</p>
+                <p class="card-text">Date : {{ sortie.dateDebut|date('Y-m-d H:i') }}</p>
+                {% if sortie.Etat.libelle == "Annulée" %}
+                    <p class="card-text">motif d'annulation : {{ sortie.motifAnnulation }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <div class="Participants">
+
+            <h1>Liste des participants</h1>
+
+            <table class="table table-bordered" style="text-align: center;">
+                <thead>
+                <tr>
+                    <th>Pseudo</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in sortie.participants %}
+                    <tr>
+                        <td>{{ user.pseudo }}</td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+
+    </div>
+{% endblock %}

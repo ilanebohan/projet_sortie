@@ -64,6 +64,22 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('app_main');
     }
 
+    #[Route('/afficher/{id}', name: 'app_sortie_afficher')]
+    public function afficher(int $id, Request $request, SortieRepository $sortieRepository, EntityManagerInterface $em) : Response
+    {
+        $sortie = $sortieRepository->find($id);
+
+        if($sortie)
+        {
+            return $this->render('sortie/afficher.html.twig', [
+                'sortie' => $sortie
+            ]);
+        }
+        return $this->redirectToRoute('app_main');
+    }
+
+
+
     #[Route('/annuler/{id}', name: 'app_sortie_annuler')]
     public function annuler(int $id, Request $request, SortieRepository $sortieRepository, EntityManagerInterface $em, EtatRepository $etatRepository): Response
     {
