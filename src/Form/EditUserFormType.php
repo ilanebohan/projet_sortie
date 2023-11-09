@@ -2,12 +2,9 @@
 
 namespace App\Form;
 
-use App\Entity\Site;
 use App\Entity\User;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -40,18 +37,33 @@ class EditUserFormType extends AbstractType
                         'mimeTypesMessage' => 'Please upload a valid Image',
                     ])
                 ],
-            ])
-            ->add('nom')
-            ->add('prenom')
+            ]);
+        if ($options['admin']) {
+            $builder
+                ->add('nom')
+                ->add('prenom')
+                ->add('site');
+        } else {
+            $builder
+                ->add('nom', null, [
+                    'disabled' => true,
+                ])
+                ->add('prenom', null, [
+                    'disabled' => true,
+                ])
+                ->add('site', null, [
+                    'disabled' => true,
+                ]);
+        }
+        $builder
             ->add('telephone')
             ->add('email')
             ->add('login')
-            ->add('site')
             ->add('plainPassword', RepeatedType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'type' => PasswordType::class,
-                'first_options'  => ['label' => 'Mot de passe'],
+                'first_options' => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Confirmation du mot de passe '],
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
@@ -66,14 +78,14 @@ class EditUserFormType extends AbstractType
                         'max' => 4096,
                     ]),
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'admin' => Boolean::class,
         ]);
     }
 }

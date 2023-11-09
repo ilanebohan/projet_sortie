@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Form\AddUserCsvType;
 use App\Form\EditUserFormType;
 use App\Repository\SiteRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Reader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +17,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\UserRepository;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class UserController extends AbstractController
@@ -32,53 +32,51 @@ class UserController extends AbstractController
     #[Route('/user/details/{id}', name: 'user_details', requirements: ['id' => '\d+'])]
     public function details(int $id, UserRepository $userRepository): Response
     {
+        if($this->getUser()->isAdministrateur()){
+            return $this->redirectToRoute('user_edit', ['id'=>$id]);
+        }
         $user = $userRepository->findUserById($id);
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
-            'user'=> $user
+            'user' => $user
         ]);
     }
+
     #[Route('/user/delete/{id}', name: 'user_delete', requirements: ['id' => '\d+'])]
     public function deleteUser(int $id = null, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
-            $user = $userRepository->findUserById($id);
-                $entityManager->remove($user);
-                $entityManager->flush();
-                $messageRetour = 'Utilisateur ' . $user->getLogin()  . ' supprimé';
+        $user = $userRepository->findUserById($id);
+        $entityManager->remove($user);
+        $entityManager->flush();
+        $messageRetour = 'Utilisateur ' . $user->getLogin() . ' supprimé';
 
-                //$messageRetour = 'Erreur de lors de la suppression de ' . $user->getLogin();
-
-
+        //$messageRetour = 'Erreur de lors de la suppression de ' . $user->getLogin();
 
 
-        return $this->redirectToRoute('user_list', ['messageRetour'=>$messageRetour], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('user_list', ['messageRetour' => $messageRetour], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/user/desactivate/{id}', name: 'user_desactivate', requirements: ['id' => '\d+'])]
     public function desactivateUser(int $id = null, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
-            $user = $userRepository->findUserById($id);
-            $user->setActif(false);
-            $entityManager->persist($user);
-            $entityManager->flush();
-            $user = $userRepository->findUserById($id);
-            $messageRetour = '';
-            if (!$user->isActif())
-            {
-                $messageRetour = 'Utilisateur ' . $user->getLogin()  . ' désactivé';
-            }
-            else
-            {
-                $messageRetour = 'Erreur de lors de la désactivation de ' . $user->getLogin();
-            }
+        $user = $userRepository->findUserById($id);
+        $user->setActif(false);
+        $entityManager->persist($user);
+        $entityManager->flush();
+        $user = $userRepository->findUserById($id);
+        $messageRetour = '';
+        if (!$user->isActif()) {
+            $messageRetour = 'Utilisateur ' . $user->getLogin() . ' désactivé';
+        } else {
+            $messageRetour = 'Erreur de lors de la désactivation de ' . $user->getLogin();
+        }
 
 
-
-        return $this->redirectToRoute('user_list', ['messageRetour'=>$messageRetour], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('user_list', ['messageRetour' => $messageRetour], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/user/list', name: 'user_list')]
-    public function listUser(String $messageRetour = null, Request $request, UserRepository $userRepository, SluggerInterface $slugger, EntityManagerInterface $entityManager, SiteRepository $siteRepository, UserPasswordHasherInterface $userPasswordHasher): Response
+    public function listUser(string $messageRetour = null, Request $request, UserRepository $userRepository, SluggerInterface $slugger, EntityManagerInterface $entityManager, SiteRepository $siteRepository, UserPasswordHasherInterface $userPasswordHasher): Response
     {
         $user = $this->getUser();
         $form = $this->createForm(AddUserCsvType::class, $user);
@@ -91,9 +89,9 @@ class UserController extends AbstractController
             $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             // this is needed to safely include the file name as part of the URL
             $safeFilename = $slugger->slug($originalFilename);
-            $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+            $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
 
-            $projectDir = $this->getParameter('public_directory').'/uploads/csv/'.$newFilename;
+            $projectDir = $this->getParameter('public_directory') . '/uploads/csv/' . $newFilename;
 
             try {
                 $file->move(
@@ -106,8 +104,8 @@ class UserController extends AbstractController
 
             $reader = Reader::createFromPath($projectDir, 'r');
 
-            for ($i = 0; $i <= $reader->count()-1; $i++) {
-                if($i == 0){
+            for ($i = 0; $i <= $reader->count() - 1; $i++) {
+                if ($i == 0) {
                     $i++;
                 }
                 $row = $reader->fetchOne($i);
@@ -118,10 +116,9 @@ class UserController extends AbstractController
                 $userReader->setPrenom($util[1]);
                 $userReader->setTelephone($util[2]);
                 $userReader->setEmail($util[3]);
-                if($util[4] == 'oui'){
+                if ($util[4] == 'oui') {
                     $userReader->setAdministrateur(true);
-                }
-                else{
+                } else {
                     $userReader->setAdministrateur(false);
                 }
                 $userReader->setLogin($util[5]);
@@ -132,10 +129,9 @@ class UserController extends AbstractController
                     )
                 );
                 $site = $siteRepository->findSiteByNom($util[7]);
-                if($site){
+                if ($site) {
                     $userReader->setSite($site[0]);
-                }
-                else{
+                } else {
                     $entitySite = new Site();
                     $entitySite->setNom($util[7]);
                     $entityManager->persist($entitySite);
@@ -147,8 +143,8 @@ class UserController extends AbstractController
                 $entityManager->flush();
 
                 $fileSystem = new Filesystem();
-                echo "<script>console. log('this is a Variable: " . $projectDir. "' );</script>";
-                if($fileSystem->exists($projectDir)){
+                echo "<script>console. log('this is a Variable: " . $projectDir . "' );</script>";
+                if ($fileSystem->exists($projectDir)) {
                     $fileSystem->remove($projectDir);
                 }
             }
@@ -158,17 +154,18 @@ class UserController extends AbstractController
 
         return $this->render('user/list.html.twig', [
             'controller_name' => 'UserController',
-            'users'=> $userRepository->findAll(),
+            'users' => $userRepository->findAll(),
             'messageRetour' => $messageRetour,
             'registrationForm' => $form->createView()
         ]);
     }
 
-    #[Route('/user/edit', name: 'user_edit')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
+    #[Route('/user/edit/{id}', name: 'user_edit')]
+    public function editUser(int $id, Request $request, UserPasswordHasherInterface $userPasswordHasher, SluggerInterface $slugger, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
-        $user = $this->getUser();
-        $form = $this->createForm(EditUserFormType::class, $user);
+        $user = $userRepository->findUserById($id);
+        $userLogged = $this->getUser();
+        $form = $this->createForm(EditUserFormType::class, $user, ['admin' => $userLogged->isAdministrateur()]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -186,17 +183,15 @@ class UserController extends AbstractController
                 $originalFilename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
                 // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$image->guessExtension();
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $image->guessExtension();
 
-                $projectDir = $this->getParameter('public_directory').'/uploads/images/'.$user->getImageFilename();
+                $projectDir = $this->getParameter('public_directory') . '/uploads/images/' . $user->getImageFilename();
                 $fileSystem = new Filesystem();
-                if($fileSystem->exists($projectDir)){
+                if ($fileSystem->exists($projectDir)) {
                     $fileSystem->remove($projectDir);
-                }
-                else{
+                } else {
                     $user->setImageFilename($newFilename);
                 }
-
 
 
                 // Move the file to the directory where brochures are stored
@@ -223,7 +218,7 @@ class UserController extends AbstractController
 
         return $this->render('user/edit.html.twig', [
             'registrationForm' => $form->createView(),
-            'fileName' => $user->getImageFilename()
+            'fileName' => $user->getImageFilename(),
         ]);
     }
 }
