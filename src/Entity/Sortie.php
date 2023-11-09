@@ -88,6 +88,13 @@ class Sortie
         return $this->dateDebut;
     }
 
+    public function removeAllParticipants(): static
+    {
+        $this->participants->clear();
+
+        return $this;
+    }
+
     public function setDateDebut(\DateTimeInterface $dateDebut): static
     {
         $this->dateDebut = $dateDebut;

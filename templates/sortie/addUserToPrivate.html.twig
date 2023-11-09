@@ -4,6 +4,7 @@
 {% block title %}{{ parent() }} | Ajouter des utilisateurs à la sortie privée{% endblock %}
 {% block body %}
 
+
     <table id="usersTable" class="table table-bordered">
         <thead>
         <tr>
@@ -13,10 +14,12 @@
         </thead>
         <tbody>
         {% for user in allUser %}
+            {% if user != CurrentUser %}
             <tr>
-                <td><input type="checkbox" value="{{ user.id }}" class="userCheckbox" name="UserId"></td>
+                <td><input type="checkbox" value="{{ user.id }}" class="userCheckbox" name="UserId" {% if user in userAlreadyPresent %} checked="checked"{% endif %}></td>
                 <td>{{ user.login }}</td>
             </tr>
+            {% endif %}
         {% endfor %}
         </tbody>
     </table>

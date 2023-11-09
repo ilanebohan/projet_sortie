@@ -47,4 +47,11 @@
         <button type="submit" class="btn btn-primary">Modifier la sortie</button>
     </div>
     {{ form_end(SortieForm) }}
+    {% if estPrivee %}
+        <br>
+    <form action="{{ path('app_sortie_editPrivateListe' , {id: idSortie}) }}" method="post" style="text-align: center">
+        <input type="submit" value="modifier la liste des participants" class="btn btn-primary">
+    </form>
+    {% endif %}
+
 {% endblock %}
