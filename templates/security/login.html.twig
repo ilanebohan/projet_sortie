@@ -8,6 +8,9 @@
 
 {% block body %}
 <form class="loginForm" method="post">
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
 
     {% if app.user %}
         <div class="mb-3">
