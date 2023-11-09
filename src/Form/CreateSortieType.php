@@ -44,13 +44,11 @@ class CreateSortieType extends AbstractType
             ])
             ->add('dateDebut', DateTimeType ::class, [
                 'label' => 'Date et heure de la sortie',
-                'widget' => 'single_text',
-                'attr' => ['class' => 'js-datepicker']
+                'widget' => 'single_text'
             ])
             ->add('dateCloture', DateTimeType ::class, [
                 'label' => 'Date limite d\'inscription',
-                'widget' => 'single_text',
-                'attr' => ['class' => 'js-datepicker']
+                'widget' => 'single_text'
             ])
             ->add('nbInscriptionsMax', NumberType::class, [
                 'label' => 'Nombres de places',

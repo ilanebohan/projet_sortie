@@ -7,6 +7,7 @@ use App\Entity\Sortie;
 use App\Repository\SiteRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -24,17 +25,13 @@ class CreateSortieWithLieuType extends AbstractType
                     'class' => 'input-group mb-3'
                 ]
             ])
-            ->add('dateDebut', null, [
+            ->add('dateDebut', DateTimeType ::class, [
                 'label' => 'Date et heure de la sortie',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                'widget' => 'single_text'
             ])
-            ->add('dateCloture', null, [
+            ->add('dateCloture', DateTimeType ::class, [
                 'label' => 'Date limite d\'inscription',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
+                'widget' => 'single_text'
             ])
             ->add('nbInscriptionsMax', NumberType::class, [
                 'label' => 'Nombres de places',
