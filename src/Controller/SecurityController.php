@@ -14,8 +14,6 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class SecurityController extends AbstractController
 {
-    // random secret key
-    //private $secretKey = '';
 
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
@@ -28,7 +26,6 @@ class SecurityController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         if (isset($_COOKIE['remember_me']))
         {
-
             $lastUsername = openssl_decrypt($_COOKIE['remember_me'], "AES-128-ECB", $this->getParameter('secret_key'));
         }
         else
@@ -39,12 +36,20 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/disconnect', name: 'app_disconnect')]
-    public function disconnect(Request $request, Security $security)
+    public function disconnect()
     {
         if (isset($_COOKIE['REMEMBERME']))
         {
             $hash = openssl_encrypt($this->getUser()->getUserIdentifier(), "AES-128-ECB", $this->getParameter('secret_key'));
             setcookie('remember_me',$hash, time() + 3600, '/');
+        }
+        if (!isset($_COOKIE['REMEMBERME']))
+        {
+            if (isset($_COOKIE['remember_me']))
+            {
+                unset($_COOKIE['remember_me']);
+                setcookie('remember_me', null, -1, '/');
+            }
         }
             return $this->redirectToRoute('app_logout');
     }
