@@ -1,0 +1,3 @@
+# config/packages/api_platform.yaml
+parameters:
+  secret_key : 'Ahw7atDxB7UGzEai45GxcY78Jsl9OqpVR7XGL1mSWQI262zUP5BS9tmmCwS7JA2ji7Awtrfm0x0w3s2FsGx4MFrXi4hUogB6ThIqFtTnGjRaN6Ysmdi64sNjz9YOR0yN}-:2]~orxkz$lieRw;jA2a9Z,VGu)Od&(FKs>cs}:9pI`NU?R7J%fU6wQ=g`z_'
