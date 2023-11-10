@@ -83,9 +83,10 @@ class CreateSortieWithLieuType extends AbstractType
             ])
             ->add('lieu', LieuType::class)
             ->add('creer', SubmitType::class, [
-                'attr' => [
-                    'class' => 'btn btn-primary',
-                ]
+                'label' => 'Enregistrer'
+            ])
+            ->add('publier', SubmitType::class, [
+                'label' => 'Publier la sortie'
             ])
             ->add('estPrivee', CheckboxType::class, [
                 'label' => 'Sortie privée ',

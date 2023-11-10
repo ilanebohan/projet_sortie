@@ -51,7 +51,12 @@
 
             </div>
         </div>
-        {{ form_row(sortieForm.creer) }}
+    </div>
+
+    <div style="display: flex;justify-content: center;">
+
+        {{ form_row(sortieForm.creer, {'attr' : {'class': 'btn btn-outline-primary'}}) }}
+        {{ form_row(sortieForm.publier, {'attr' : {'class': 'btn btn-outline-warning', 'style': 'margin-left: 15px' }}) }}
     </div>
 
 
