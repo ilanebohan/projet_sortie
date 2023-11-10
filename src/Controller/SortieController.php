@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Inscription;
+use App\Entity\Lieu;
 use App\Entity\Sortie;
+use App\Entity\Ville;
 use App\Form\AnnulerSortieType;
 use App\Form\CreateSortieType;
 use App\Form\CreateSortieWithLieuType;
@@ -24,6 +26,18 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/sortie')]
 class SortieController extends AbstractController
 {
+
+    #[Route('/getLieuofVille/{idVille}', name: 'app_getlieuofville')]
+    public function getLieuxOfVille(int $idVille, SortieRepository $sortieRepository, EntityManagerInterface $em): Response
+    {
+        $ville = $em->getRepository(Ville::class)->findOneBy(['id' => $idVille]);
+        $lieu = $em->getRepository(Lieu::class)->findBy(['ville' => $ville]);
+
+        return $this->json(
+            $lieu,
+            headers: ['Content-Type' => 'application/json;charset=UTF-8']
+        );
+    }
 
     #[Route('/publish/{id}', name: 'app_sortie_publish')]
     public function publish(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, EtatRepository $etatRepository): Response
@@ -234,6 +248,7 @@ class SortieController extends AbstractController
             'CurrentUser' => $this->getUser()
         ]);
     }
+
 
 
     /**
