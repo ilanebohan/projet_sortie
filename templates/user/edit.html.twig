@@ -15,17 +15,17 @@
 
     <div class="card mx-auto" style="width: 18rem;">
         {% if fileName %}
-            <img class="card-img-top" src="{{ asset('uploads/images/' ~ fileName)  }}" alt="Card image cap">
+            <img class="card-img-top" src="{{ asset('uploads/images/' ~ fileName) }}" alt="Card image cap">
             <h5 class="card-title">Modifier mon image :</h5>
-        <div class="form-outline mb-4">
-            {{ form_row(registrationForm.image) }}
-        </div>
+            <div class="form-outline mb-4">
+                {{ form_row(registrationForm.image) }}
+            </div>
             <div style="display:flex;">
                 <h7 style="margin-right: 20px" class="card-text">{{ form_label(registrationForm.allowImageDiffusion) }}</h7>
                 <h5 class="card-text">{{ form_widget(registrationForm.allowImageDiffusion, { 'attr' : { 'class': 'form-check-input'} }) }}</h5>
             </div>
         {% else %}
-            <img class="card-img-top" src="{{ asset('uploads/images/defaultImage.jpg')  }}" alt="Card image cap">
+            <img class="card-img-top" src="{{ asset('uploads/images/defaultImage.jpg') }}" alt="Card image cap">
             <h5 class="card-title">Ajouter une image : </h5>
             <div class="form-outline mb-4">{{ form_row(registrationForm.image) }}</div>
             <div style="display:flex;">
@@ -34,40 +34,36 @@
             </div>
         {% endif %}
     </div>
-<div class="container text-center">
-    <div class="row justify-content-center">
-        <div class="col-5">
-        <div class="form-outline mb-4">
-            <h5 class="card-title">{{ form_row(registrationForm.nom, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-5">
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(registrationForm.nom, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(registrationForm.prenom, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(registrationForm.telephone, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+            </div>
+            <div class="col-5">
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(registrationForm.email, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    <h5 class="card-title">{{ form_row(registrationForm.login, { 'attr' : { 'class': 'form-control' } }) }}</h5>
+                </div>
+                <div class="form-outline mb-4">
+                    {{ form_row(registrationForm.site, { 'attr' : { 'class': 'form-select' } }) }}
+                </div>
+            </div>
         </div>
-        <div class="form-outline mb-4">
-            <h5 class="card-title">{{ form_row(registrationForm.prenom, { 'attr' : { 'class': 'form-control' } }) }}</h5>
-        </div>
-        <div class="form-outline mb-4">
-            <h5 class="card-title">{{ form_row(registrationForm.telephone, { 'attr' : { 'class': 'form-control' } }) }}</h5>
-        </div>
-
-        <div class="form-outline mb-4">
-            <h5 class="card-title">{{ form_row(registrationForm.email, { 'attr' : { 'class': 'form-control' } }) }}</h5>
-        </div>
-        </div>
-        <div class="col-5">
-        <div class="form-outline mb-4">
-            <h5 class="card-title">{{ form_row(registrationForm.login, { 'attr' : { 'class': 'form-control' } }) }}</h5>
-        </div>
-        <div class="form-outline mb-4">
-            <h5 class="card-text">{{ form_row(registrationForm.plainPassword.first, { 'attr' : { 'class': 'form-control' } }) }}</h5>
-        </div>
-        <div class="form-outline mb-4">
-            <h5 class="card-text">{{ form_row(registrationForm.plainPassword.second, { 'attr' : { 'class': 'form-control' } }) }}</h5>
-        </div>
-        <div class="form-outline mb-4">
-            {{ form_row(registrationForm.site, { 'attr' : { 'class': 'form-select' } }) }}
-        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Modifier mon Profil</button>
+            {{ form_row(registrationForm.modifierMdp) }}
         </div>
     </div>
-    <button type="submit" class="btn btn-primary">Modifier mon Profil</button>
-</div>
 
 
 

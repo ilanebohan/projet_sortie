@@ -15,7 +15,6 @@
         <div class="card-body">
             <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
             <h5 class="card-title">{{ user.login }}</h5>
-            <p class="card-text">Site : {{ user.site.nom }}</p>
         </div>
         {% if (app.user.id == user.id or app.user.administrateur == true) %}
         <div class="card-footer">
