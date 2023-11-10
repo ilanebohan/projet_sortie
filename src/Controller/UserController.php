@@ -32,9 +32,9 @@ class UserController extends AbstractController
     #[Route('/user/details/{id}', name: 'user_details', requirements: ['id' => '\d+'])]
     public function details(int $id, UserRepository $userRepository): Response
     {
-        if($this->getUser()->isAdministrateur()){
+        /*if($this->getUser()->isAdministrateur()){
             return $this->redirectToRoute('user_edit', ['id'=>$id]);
-        }
+        }*/
         $user = $userRepository->findUserById($id);
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
