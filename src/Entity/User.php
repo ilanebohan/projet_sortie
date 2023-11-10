@@ -70,7 +70,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $allowImageDiffusion = null;
 
-
     public function getImageFilename(): ?string
     {
         return $this->imageFilename;
@@ -207,6 +206,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
+
         // TODO: Implement getUserIdentifier() method.
         return $this->login;
     }

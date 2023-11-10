@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -36,11 +37,21 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/disconnect', name: 'app_disconnect')]
-    public function disconnect()
+    public function disconnect(LoggerInterface $logger)
     {
         if (isset($_COOKIE['REMEMBERME']))
         {
-            $hash = openssl_encrypt($this->getUser()->getUserIdentifier(), "AES-128-ECB", $this->getParameter('secret_key'));
+            if ($_COOKIE['method'] == 'email')
+            {
+                $hash = openssl_encrypt($this->getUser()->getEmail(), "AES-128-ECB", $this->getParameter('secret_key'));
+            }
+            else
+            {
+                $hash = openssl_encrypt($this->getUser()->getUserIdentifier(), "AES-128-ECB", $this->getParameter('secret_key'));
+            }
+            //$hash = openssl_encrypt($this->getUser()->getUserIdentifier(), "AES-128-ECB", $this->getParameter('secret_key'));
+
+
             setcookie('remember_me',$hash, time() + 3600, '/');
         }
         if (!isset($_COOKIE['REMEMBERME']))
@@ -49,6 +60,8 @@ class SecurityController extends AbstractController
             {
                 unset($_COOKIE['remember_me']);
                 setcookie('remember_me', null, -1, '/');
+                unset($_COOKIE['method']);
+                setcookie('method', null, -1, '/');
             }
         }
             return $this->redirectToRoute('app_logout');
