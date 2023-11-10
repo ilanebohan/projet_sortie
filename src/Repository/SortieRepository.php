@@ -22,6 +22,10 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
+    /**
+     * @param $array array liste des filtres
+     * @return Sortie[] Returns an array of Sortie objects
+     */
     public function findByFilter($array): array
     {
         #region recup des infos
