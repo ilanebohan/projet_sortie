@@ -41,6 +41,11 @@ class SecurityController extends AbstractController
     {
         if (isset($_COOKIE['REMEMBERME']))
         {
+            if (!isset($_COOKIE['method']))
+            {
+                $logger->info('cookie method not set');
+                return $this->redirectToRoute('app_logout');
+            }
             if ($_COOKIE['method'] == 'email')
             {
                 $hash = openssl_encrypt($this->getUser()->getEmail(), "AES-128-ECB", $this->getParameter('secret_key'));
@@ -50,8 +55,6 @@ class SecurityController extends AbstractController
                 $hash = openssl_encrypt($this->getUser()->getUserIdentifier(), "AES-128-ECB", $this->getParameter('secret_key'));
             }
             //$hash = openssl_encrypt($this->getUser()->getUserIdentifier(), "AES-128-ECB", $this->getParameter('secret_key'));
-
-
             setcookie('remember_me',$hash, time() + 3600, '/');
         }
         if (!isset($_COOKIE['REMEMBERME']))
