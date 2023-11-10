@@ -7,6 +7,9 @@ parameters:
     image_directory: '%kernel.project_dir%/public/uploads/images'
     csv_directory: '%kernel.project_dir%/public/uploads/csv'
     public_directory: '%kernel.project_dir%/public'
+imports:
+    - { resource: 'packages/config.yaml' }
+
 
 services:
     # default configuration for services in *this* file

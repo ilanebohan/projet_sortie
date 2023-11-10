@@ -6,6 +6,28 @@
     <style>
         .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
         .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .left, .middle, .right {
+            flex: 1;
+            margin-right: 10px; /* Adjust as needed */
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        .middle {
+            margin-left: 10px; /* Adjust as needed */
+        }
     </style>
 
     <div class="DateAndUser" style="position: absolute; right: 0;">
@@ -17,19 +39,30 @@
 
     <form action="{{ path('app_main_filter') }}" method="post">
         <div class="Filter">
-            <h3 style="text-align: center">Filtrer les sorties</h3>
+            <h3 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;" class="h3 mb-3 font-weight-normal">Filtrer les sorties</h3>
             <div class="filter-container" style="display: flex;justify-content: space-between;">
                 <div class="left">
-                    site : <select name="site" id="site">
-                        <option value="0">Tous</option>
+                    <input type="text" id="searchBar" name="searchBar" placeholder="Rechercher une sortie par mot-clé"><br>
+                    <select name="site" id="site">
+                        <option value="0">Choisir un site</option>
                         {% for site in sites %}
                             <option value="{{ site.id }}">{{ site.nom }}</option>
                         {% endfor %}
                     </select><br>
+                     <select name="statut" id="statut">
+                        <option value="0">Choisir le statut</option>
+                        <option value="1">Créée</option>
+                        <option value="2">Ouverte</option>
+                        <option value="3">Clôturée</option>
+                        <option value="4">En cours</option>
+                        <option value="5">Passée</option>
+                        <option value="6">Annulée</option>
+                    </select><br>
+                    <label for="datedebutlabel">date de début</label><br>
+                    <input type="date" id="dateDebut" name="dateDebut" class="js-datepicker"><br>
 
-                    Le nom de la sortie contient : <input type="text" id="searchBar" name="searchBar"><br>
-
-                    Entre : <input type="date" id="dateDebut" name="dateDebut"> et <input type="date" id="dateFin" name="dateFin"><br>
+                    <label for="datefinlabel">date de fin</label><br>
+                    <input type="date" id="dateFin" name="dateFin" class="js-datepicker"><br>
                 </div>
 
                 <div class="middle">
@@ -40,11 +73,24 @@
                 </div>
 
                 <div class="right">
-                    <input type="submit" id="Search" value="Rechercher">
+                    <input type="submit" id="Search" value="Rechercher" class="btn btn-outline-secondary">
+                    <input type="reset" id="Reset" value="Réinitialiser" class="btn btn-outline-secondary">
                 </div>
             </div>
         </div>
+        <br>
+        <h3 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;" class="h3 mb-3 font-weight-normal">Liste des sorties</h3>
     </form>
+
+    </div>
+
+
+    <br>
+    <div class="Creer" style="text-align: center">
+    <form action="{{ path('app_sortie_create') }}" method="post">
+        <input type="submit" value="Créer une sortie" class="btn btn-outline-info">
+    </form>
+    <br>
     </div>
 
     <div class="Sorties">
@@ -68,8 +114,8 @@
                     <td>{{ sortie.dateDebut|date('Y-m-d H:i') }}</td>
                     <td>{{ sortie.dateCloture|date('Y-m-d H:i') }}</td>
                     <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
-                    <td>{{ sortie.etat.libelle }}{% if sortie.estPrivee %}<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"/></svg>{% endif %}</td>
-                    <td>{% if sortie.participants.contains(app.user) %}X{% endif %}</td>
+                    <td>{{ sortie.etat.libelle }} {% if sortie.estPrivee %} <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"/></svg>{% endif %}</td>
+                    <td>{% if sortie.participants.contains(app.user) %}<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>{% endif %}</td>
                     <td><a href="{{ path('user_details',  { id: sortie.organisateur.id }) }}">{{ sortie.organisateur.nom }}</a></td>
                     <td>
                         {% if sortie.etat.libelle == 'Ouverte' and sortie.organisateur.login == app.user.login %}
@@ -106,9 +152,13 @@
             </tbody>
         </table>
     </div>
-    <br>
-    <form action="{{ path('app_sortie_create') }}" method="post">
-        <input type="submit" value="Créer une sortie" class="btn btn-primary">
-    </form>
 
+
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+
+
+    </script>
 {% endblock %}

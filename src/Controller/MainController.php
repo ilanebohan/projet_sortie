@@ -49,6 +49,7 @@ class MainController extends AbstractController
         $inscrit = $request->get('inscrit');
         $nonInscrit = $request->get('nonInscrit');
         $SortiePassee = $request->get('passee');
+        $statutId = $request->get('statut');
         $userid = $this->getUser()->getId();
 
 #endregion
@@ -64,6 +65,7 @@ class MainController extends AbstractController
         $Filter['nonInscrit'] = $nonInscrit;
         $Filter['SortiePassee'] = $SortiePassee;
         $Filter['userid'] = $userid;
+        $Filter['statutId'] = $statutId;
 
 #endregion
 
