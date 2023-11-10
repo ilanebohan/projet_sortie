@@ -116,10 +116,24 @@ class SortieRepository extends ServiceEntityRepository
 
         if ($nonInscrit) {
             if ($idSite != 0  || $statutId != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit) {
-                $qb->andWhere(':userId != participants.id')
+                $subQuery = $em->createQueryBuilder()
+                    ->select('s2.id')
+                    ->from('App\Entity\Sortie', 's2')
+                    ->leftJoin('s2.participants', 'participants2')
+                    ->where('participants2.id = :userId');
+
+                // Ajouter la condition NOT IN dans la requête principale
+                $qb->andWhere($qb->expr()->notIn('s.id', $subQuery->getDQL()))
                     ->setParameter('userId', $userid);
             } else {
-                $qb->Where(':userId != participants.id')
+                $subQuery = $em->createQueryBuilder()
+                    ->select('s2.id')
+                    ->from('App\Entity\Sortie', 's2')
+                    ->leftJoin('s2.participants', 'participants2')
+                    ->where('participants2.id = :userId');
+
+                // Ajouter la condition NOT IN dans la requête principale
+                $qb->Where($qb->expr()->notIn('s.id', $subQuery->getDQL()))
                     ->setParameter('userId', $userid);
             }
         }
@@ -137,6 +151,8 @@ class SortieRepository extends ServiceEntityRepository
         #endregion
 
         $query = $qb->getQuery();
+
+        dump($query);
 
         return $query->getResult();
     }
