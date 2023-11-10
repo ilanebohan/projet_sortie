@@ -76,6 +76,9 @@ class RegistrationController extends AbstractController
                 // instead of its contents
                 $user->setImageFilename($newFilename);
             }
+            else{
+                $user->setImageFilename("");
+            }
 
             $entityManager->persist($user);
             $entityManager->flush();
