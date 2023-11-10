@@ -43,6 +43,7 @@ class RegistrationController extends AbstractController
             );
             $user->setActif(true);
 
+
             // check that the phone number is in this format : "0X XX XX XX XX" otherwise, put space between numbers
             $phone = $user->getTelephone();
             // put spaces every 2 number if there is none
@@ -50,7 +51,15 @@ class RegistrationController extends AbstractController
             {
                 $phone = substr($phone, 0, 2) . ' ' . substr($phone, 2, 2) . ' ' . substr($phone, 4, 2) . ' ' . substr($phone, 6, 2) . ' ' . substr($phone, 8, 2);
             }
-            $user->setTelephone($phone);
+
+            // make telephone nullable in database
+            if ($phone == null)
+            {
+                $user->setTelephone(" ");
+            }
+            else {
+                $user->setTelephone($phone);
+            }
 
 
             $image = $form->get('image')->getData();

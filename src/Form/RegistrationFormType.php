@@ -70,6 +70,7 @@ class RegistrationFormType extends AbstractType
             ->add('nom', null, ['label' => 'Nom'])
             ->add('prenom', null, ['label' => 'Prénom'])
             ->add('telephone', null, ['label' => 'Téléphone',
+                'required' => false,
                 'constraints' => [
                     new Regex([
                         'pattern' => '/^0[1-9]([-. ]?[0-9]{2}){4}$/',
