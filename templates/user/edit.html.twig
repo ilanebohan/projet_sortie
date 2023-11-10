@@ -59,9 +59,10 @@
                 </div>
             </div>
         </div>
-        <div>
-            <button type="submit" class="btn btn-primary">Modifier mon Profil</button>
-            {{ form_row(registrationForm.modifierMdp) }}
+        <div style="display: flex;justify-content: center;">
+            <button type="submit" class="btn btn-outline-info">Enregistrer</button>
+            {{ form_row(registrationForm.modifierMdp, { 'attr' : { 'class': 'btn btn-outline-warning', 'style': 'margin-left: 15px' } }) }}
+            <button type="submit" href="{{ path('app_main') }}" class="btn btn-outline-secondary">Annuler</button>
         </div>
     </div>
 

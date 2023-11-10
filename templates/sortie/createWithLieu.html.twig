@@ -3,7 +3,7 @@
 {% block title %}{{ parent() }} | Créer une sortie{% endblock %}
 
 {% block body %}
-    <h1>Créer une sortie</h1>
+    <h1 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;">Créer une sortie</h1>
 
     {{ form_errors(sortieForm) }}
     {{ form_start(sortieForm) }}
@@ -57,6 +57,8 @@
 
         {{ form_row(sortieForm.creer, {'attr' : {'class': 'btn btn-outline-primary'}}) }}
         {{ form_row(sortieForm.publier, {'attr' : {'class': 'btn btn-outline-warning', 'style': 'margin-left: 15px' }}) }}
+        <a style="margin-left: 15px" role="button" href="{{ path('app_main') }}" class="btn btn-outline-secondary">
+            Annuler</a>
     </div>
 
 
