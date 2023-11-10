@@ -132,10 +132,10 @@
 
                         {% elseif sortie.etat.libelle == 'Ouverte' and sortie.participants.contains(app.user) %}
                             <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
-                            <a class="btn btn-primary" href="{{ path('app_sortie_desister', {id: sortie.id}) }}">Se desister<span class="sr-only"></span></a>
+                            <a class="btn btn-outline-warning" href="{{ path('app_sortie_desister', {id: sortie.id}) }}">Se desister<span class="sr-only"></span></a>
 
                         {% elseif sortie.etat.libelle == 'Créée' and sortie.organisateur.login == app.user.login and sortie.dateDebut|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s') %}
-                            <a class="btn btn-primary" href="{{ path('app_sortie_edit', {id: sortie.id}) }}">Modifier<span class="sr-only"></span></a> -
+                            <a class="btn btn-outline-info" href="{{ path('app_sortie_edit', {id: sortie.id}) }}">Modifier<span class="sr-only"></span></a> -
                             <a class="btn btn-outline-warning" href="{{ path('app_sortie_publish', {id: sortie.id}) }}">Publier<span class="sr-only"></span></a>
 
                         {% elseif sortie.etat.libelle == 'Ouverte' and sortie.dateCloture|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s') and sortie.nbInscriptionsMax > sortie.participants.count %}

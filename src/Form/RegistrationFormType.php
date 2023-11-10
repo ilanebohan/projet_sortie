@@ -42,31 +42,6 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('plainPassword', RepeatedType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'type' => PasswordType::class,
-                'invalid_message' => 'Les 2 mots de passes ne correspondent pas.    ',
-                'first_options'  => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Confirmation du mot de passe '],
-                'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez entrer un mot de passe',
-                    ]),
-                    new Length([
-                        'min' => 8,
-                        'minMessage' => 'Votre mot de passe doit faire au moins {{ limit }} caractères',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                    ]),
-                    new Regex([
-                        'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/',
-                        'message' => 'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial'
-                    ]),
-                ],
-            ])
             ->add('nom', null, ['label' => 'Nom'])
             ->add('prenom', null, ['label' => 'Prénom'])
             ->add('telephone', null, ['label' => 'Téléphone',
@@ -80,7 +55,6 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('administrateur', CheckboxType::class, array('required' => false))
             //->add('actif', CheckboxType::class)
-            ->add('login')
             ->add('site')
             ->add('image', FileType::class, [
                 'label' => 'Image',

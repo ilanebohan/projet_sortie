@@ -32,9 +32,9 @@ class UserController extends AbstractController
     #[Route('/user/details/{id}', name: 'user_details', requirements: ['id' => '\d+'])]
     public function details(int $id, UserRepository $userRepository): Response
     {
-        if($this->getUser()->isAdministrateur()){
+        /*if($this->getUser()->isAdministrateur()){
             return $this->redirectToRoute('user_edit', ['id'=>$id]);
-        }
+        }*/
         $user = $userRepository->findUserById($id);
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
@@ -168,14 +168,11 @@ class UserController extends AbstractController
         $form = $this->createForm(EditUserFormType::class, $user, ['admin' => $userLogged->isAdministrateur()]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if($form->get("modifierMdp")->isClicked()){
+            return $this->redirectToRoute('app_forgot_password_request');
+        }
 
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $image = $form->get('image')->getData();
 

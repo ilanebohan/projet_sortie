@@ -67,6 +67,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participants')]
     private Collection $sorties;
 
+    #[ORM\Column]
+    private ?bool $allowImageDiffusion = null;
+
 
     public function getImageFilename(): string
     {
@@ -273,6 +276,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->sorties->removeElement($sorty)) {
             $sorty->removeParticipant($this);
         }
+
+        return $this;
+    }
+
+    public function isAllowImageDiffusion(): ?bool
+    {
+        return $this->allowImageDiffusion;
+    }
+
+    public function setAllowImageDiffusion(bool $allowImageDiffusion): static
+    {
+        $this->allowImageDiffusion = $allowImageDiffusion;
 
         return $this;
     }
