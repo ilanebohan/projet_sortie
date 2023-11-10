@@ -47,7 +47,6 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
 
         // $user to UserInterface type
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $emailOrUsername);
-
         if ($user != null)
         {
             if ($user->isActif())
