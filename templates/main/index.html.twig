@@ -78,9 +78,10 @@
                 </div>
             </div>
         </div>
-    </form>
         <br>
         <h3 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;" class="h3 mb-3 font-weight-normal">Liste des sorties</h3>
+    </form>
+
     </div>
 
 
@@ -113,7 +114,7 @@
                     <td>{{ sortie.dateDebut|date('Y-m-d H:i') }}</td>
                     <td>{{ sortie.dateCloture|date('Y-m-d H:i') }}</td>
                     <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
-                    <td>{{ sortie.etat.libelle }}{% if sortie.estPrivee %}<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"/></svg>{% endif %}</td>
+                    <td>{{ sortie.etat.libelle }} {% if sortie.estPrivee %} <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"/></svg>{% endif %}</td>
                     <td>{% if sortie.participants.contains(app.user) %}<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>{% endif %}</td>
                     <td><a href="{{ path('user_details',  { id: sortie.organisateur.id }) }}">{{ sortie.organisateur.nom }}</a></td>
                     <td>

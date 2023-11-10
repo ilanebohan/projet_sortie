@@ -5,13 +5,16 @@ namespace App\Controller;
 use App\Entity\Site;
 use App\Entity\User;
 use App\Form\AddUserCsvType;
+use App\Form\ConfirmPasswordType;
 use App\Form\EditUserFormType;
 use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Reader;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -157,16 +160,37 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/user/edit/confirmPassword/{id}', name: 'user_edit_confirm_password')]
+    public function confirmPassword(int $id, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        $form = $this->createForm(ConfirmPasswordType::class);
+        $form->handleRequest($request);
+        $user = $userRepository->findUserById($id);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($passwordHasher->isPasswordValid($user, $form->get("password")->getData())) {
+                return $this->redirectToRoute('app_forgot_password_request');
+            } else {
+                $form->addError(new FormError("Mot de passe incorrect"));
+            }
+        }
+        return $this->render('user/confirmPassword.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
     #[Route('/user/edit/{id}', name: 'user_edit')]
-    public function editUser(int $id, Request $request, UserPasswordHasherInterface $userPasswordHasher, SluggerInterface $slugger, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    public function editUser(int $id, Request $request, SluggerInterface $slugger, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $user = $userRepository->findUserById($id);
         $userLogged = $this->getUser();
         $form = $this->createForm(EditUserFormType::class, $user, ['admin' => $userLogged->isAdministrateur()]);
         $form->handleRequest($request);
 
-        if($form->get("modifierMdp")->isClicked()){
-            return $this->redirectToRoute('app_forgot_password_request');
+        if ($form->get("modifierMdp")->isClicked()) {
+            if ($userLogged->isAdministrateur()) {
+                return $this->redirectToRoute('app_forgot_password_request');
+            }
+            return $this->redirectToRoute('user_edit_confirm_password', ['id' => $id]);
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
