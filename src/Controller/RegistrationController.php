@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[IsGranted('ROLE_ADMIN')]
 class RegistrationController extends AbstractController
@@ -25,39 +24,32 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // If the login is already taken, return an error
-            $userRepo = $entityManager->getRepository(User::class);
-            $userLogin = $userRepo->findOneBy(['login' => $user->getLogin()]);
-            if ($userLogin)
-            {
-                $this->addFlash('error', 'Ce login est déjà utilisé');
-                //return $this->redirectToRoute('app_register');
-            }
+            $seed = str_split('abcdefghijklmnopqrstuvwxyz'
+                . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                . '0123456789!@#$%^&*()');
+            shuffle($seed);
+            $login = "";
+            foreach (array_rand($seed, 10) as $k) $login .= $seed[$k];
+            $user->setLogin($login);
 
             // encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
+            $user->setPassword($userPasswordHasher->hashPassword(
+                $user, 'password'
+            ));
             $user->setActif(true);
 
 
             // check that the phone number is in this format : "0X XX XX XX XX" otherwise, put space between numbers
             $phone = $user->getTelephone();
             // put spaces every 2 number if there is none
-            if (strlen($phone) == 10)
-            {
+            if ($phone != null && strlen($phone) == 10) {
                 $phone = substr($phone, 0, 2) . ' ' . substr($phone, 2, 2) . ' ' . substr($phone, 4, 2) . ' ' . substr($phone, 6, 2) . ' ' . substr($phone, 8, 2);
             }
 
             // make telephone nullable in database
-            if ($phone == null)
-            {
+            if ($phone == null) {
                 $user->setTelephone(" ");
-            }
-            else {
+            } else {
                 $user->setTelephone($phone);
             }
 
@@ -68,7 +60,7 @@ class RegistrationController extends AbstractController
                 $originalFilename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
                 // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$image->guessExtension();
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $image->guessExtension();
 
                 // Move the file to the directory where brochures are stored
                 try {
@@ -83,6 +75,9 @@ class RegistrationController extends AbstractController
                 // updates the 'brochureFilename' property to store the PDF file name
                 // instead of its contents
                 $user->setImageFilename($newFilename);
+            }
+            else{
+                $user->setImageFilename("");
             }
 
             $entityManager->persist($user);
