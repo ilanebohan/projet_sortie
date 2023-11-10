@@ -39,10 +39,12 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
         // if emailOrUsername is email then get user by email
         if (filter_var($emailOrUsername, FILTER_VALIDATE_EMAIL)) {
             $user = $this->userRepository->findOneBy(['email' => $emailOrUsername]);
+            setcookie('method','email', time() + 3600, '/');
         }
         // else if emailOrUsername is username then get user by username
         else {
             $user = $this->userRepository->findOneBy(['login' => $emailOrUsername]);
+            setcookie('method','login', time() + 3600, '/');
         }
 
         // $user to UserInterface type
