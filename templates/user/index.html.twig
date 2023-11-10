@@ -6,7 +6,7 @@
 <div class="container text-center">
 
     <div class="card mx-auto" style="width: 18rem;">
-        {% if user.imageFilename %}
+        {% if user.imageFilename and (user.allowImageDiffusion or app.user.id == user.id or is_granted('ROLE_ADMIN')) %}
             <img class="card-img-top" src="{{ asset('uploads/images/' ~ user.imageFilename)  }}" alt="Card image cap">
         {% else %}
             <img class="card-img-top" src="{{ asset('uploads/images/defaultImage.jpg')  }}" alt="Card image cap">
@@ -14,8 +14,7 @@
 
         <div class="card-body">
             <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
-            <p class="card-text">Email : {{ user.email }}</p>
-            <p class="card-text">Téléphone : {{ user.telephone }}</p>
+            <h5 class="card-title">{{ user.login }}</h5>
             <p class="card-text">Site : {{ user.site.nom }}</p>
         </div>
         {% if (app.user.id == user.id or app.user.administrateur == true) %}

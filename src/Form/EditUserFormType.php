@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\User;
 use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -19,6 +20,10 @@ class EditUserFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('allowImageDiffusion', CheckboxType::class, [
+                'label'    => 'Autoriser la diffusion de l\'image',
+                'required' => false,
+            ])
             ->add('image', FileType::class, [
                 'label' => false,
                 'mapped' => false,
