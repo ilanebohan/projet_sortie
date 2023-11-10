@@ -61,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
 
     #[ORM\Column(type: 'string', nullable: true)]
-    private string $imageFilename;
+    private ?string $imageFilename;
 
 
     #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participants')]
@@ -70,7 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $allowImageDiffusion = null;
 
-    public function getImageFilename(): string
+    public function getImageFilename(): ?string
     {
         return $this->imageFilename;
     }

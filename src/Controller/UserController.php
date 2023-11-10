@@ -203,9 +203,9 @@ class UserController extends AbstractController
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename . '-' . uniqid() . '.' . $image->guessExtension();
 
-                $projectDir = $this->getParameter('public_directory') . '/uploads/images/' . $user->getImageFilename();
+                $projectDir = $this->getParameter('image_directory').'/'. $user->getImageFilename();
                 $fileSystem = new Filesystem();
-                if ($fileSystem->exists($projectDir)) {
+                if ($fileSystem->exists($projectDir) && $user->getImageFilename()) {
                     $fileSystem->remove($projectDir);
                 } else {
                     $user->setImageFilename($newFilename);
@@ -236,7 +236,7 @@ class UserController extends AbstractController
 
         return $this->render('user/edit.html.twig', [
             'registrationForm' => $form->createView(),
-            'fileName' => $user->getImageFilename(),
+            'user' => $user
         ]);
     }
 }

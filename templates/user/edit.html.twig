@@ -14,8 +14,8 @@
     <h1 style="text-align: center">Modifier mon Profil</h1>
 
     <div class="card mx-auto" style="width: 18rem;">
-        {% if fileName %}
-            <img class="card-img-top" src="{{ asset('uploads/images/' ~ fileName) }}" alt="Card image cap">
+        {% if user.imageFilename %}
+            <img class="card-img-top" src="{{ asset('uploads/images/' ~ user.imageFilename) }}" alt="Card image cap">
             <h5 class="card-title">Modifier mon image :</h5>
             <div class="form-outline mb-4">
                 {{ form_row(registrationForm.image) }}
