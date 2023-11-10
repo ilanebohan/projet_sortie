@@ -35,6 +35,7 @@ class SortieRepository extends ServiceEntityRepository
         $nonInscrit = $array['nonInscrit'];
         $SortiePassee = $array['SortiePassee'];
         $userid = $array['userid'];
+        $statutId = $array['statutId'];
 
         #endregion
 
@@ -54,8 +55,18 @@ class SortieRepository extends ServiceEntityRepository
                 ->setParameter('idSite', $idSite);
         }
 
-        if (!empty($StringSearch)) {
+        if ($statutId != 0) {
             if ($idSite != 0) {
+                $qb->andWhere('s.etat = :idEtat')
+                    ->setParameter('idEtat', $statutId);
+            } else {
+                $qb->Where('s.etat = :idEtat')
+                    ->setParameter('idEtat', $statutId);
+            }
+        }
+
+        if (!empty($StringSearch)) {
+            if ($idSite != 0 || $statutId != 0) {
                 $qb->andWhere('s.nom LIKE :search')
                     ->setParameter('search', '%' . $StringSearch . '%');
             } else {
@@ -69,7 +80,7 @@ class SortieRepository extends ServiceEntityRepository
             $DateDebutFormat = new \DateTime($DateDebut);
             $DateFinFormat = new \DateTime($DateFin);
 
-            if ($idSite != 0 || !empty($StringSearch)) {
+            if ($idSite != 0  || $statutId != 0 || !empty($StringSearch)) {
                 $qb->andWhere('s.dateDebut >= :startDate')
                     ->andWhere('s.dateDebut <= :endDate')
                     ->setParameter('startDate', $DateDebutFormat->format('y-m-d h-i-s'))
@@ -84,7 +95,7 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($organisateur) {
-            if ($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin)) {
+            if ($idSite != 0  || $statutId != 0 || !empty($StringSearch) || ($DateDebut && $DateFin)) {
                 $qb->andWhere('organisateur = :userId')
                     ->setParameter('userId', $userid);
             } else {
@@ -94,7 +105,7 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($inscrit) {
-            if ($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur) {
+            if ($idSite != 0  || $statutId != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur) {
                 $qb->andWhere(':userId = participants.id')
                     ->setParameter('userId', $userid);
             } else {
@@ -104,7 +115,7 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($nonInscrit) {
-            if ($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit) {
+            if ($idSite != 0  || $statutId != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit) {
                 $qb->andWhere(':userId != participants.id')
                     ->setParameter('userId', $userid);
             } else {
@@ -114,7 +125,7 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($SortiePassee) {
-            if ($idSite != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit || $nonInscrit) {
+            if ($idSite != 0  || $statutId != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit || $nonInscrit) {
                 $qb->andWhere('s.dateDebut < :currentDate')
                     ->setParameter('currentDate', new \DateTime());
             } else {

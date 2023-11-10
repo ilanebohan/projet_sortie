@@ -165,14 +165,11 @@ class UserController extends AbstractController
         $form = $this->createForm(EditUserFormType::class, $user, ['admin' => $userLogged->isAdministrateur()]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if($form->get("modifierMdp")->isClicked()){
+            return $this->redirectToRoute('app_forgot_password_request');
+        }
 
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $image = $form->get('image')->getData();
 
