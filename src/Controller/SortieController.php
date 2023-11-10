@@ -141,7 +141,15 @@ class SortieController extends AbstractController
                 && $sortie->getDateCloture() < $sortie->getDateDebut()
                 && $sortie->getDateDebut() > new DateTime('now')
                 && $sortie->getDateCloture() > new DateTime('now')) {
-                $this->save($sortie, $etatRepository, $em);
+
+                if($form->get('publier')->isClicked()){
+                    $sortie->setEtat($etatRepository->find(2));
+                }
+                else{
+                    $sortie->setEtat($etatRepository->find(2));
+                }
+
+                $this->save($sortie, $em);
 
                 if($formWithLieu->get('estPrivee')->getData()) {
                     $allUser = $userRepository->findAll();
@@ -165,7 +173,13 @@ class SortieController extends AbstractController
             && $sortie->getDateCloture() < $sortie->getDateDebut()
             && $sortie->getDateDebut() > new DateTime('now')
             && $sortie->getDateCloture() > new DateTime('now')) {
-            $this->save($sortie, $etatRepository, $em);
+            if($form->get('publier')->isClicked()){
+                $sortie->setEtat($etatRepository->find(2));
+            }
+            else{
+                $sortie->setEtat($etatRepository->find(2));
+            }
+            $this->save($sortie, $em);
 
             if($form->get('estPrivee')->getData()) {
                 $allUser = $userRepository->findAll();
@@ -253,13 +267,11 @@ class SortieController extends AbstractController
 
     /**
      * @param Sortie $sortie
-     * @param EtatRepository $etatRepository
      * @param EntityManagerInterface $em
      * @return void
      */
-    public function save(Sortie $sortie, EtatRepository $etatRepository, EntityManagerInterface $em): void
+    public function save(Sortie $sortie, EntityManagerInterface $em): void
     {
-        $sortie->setEtat($etatRepository->find(1));
         $user = $this->getUser();
         $sortie->setOrganisateur($user);
         $em->persist($sortie);

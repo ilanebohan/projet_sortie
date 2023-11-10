@@ -101,12 +101,20 @@ class CreateSortieType extends AbstractType
                 'data' => $options['villeId']
             ])
             ->add('addLieu', SubmitType::class, [
+                'label' => '+',
                 'validate' => false,
                 'attr' => [
                     'class' => 'btn btn-primary',
                 ]
             ])
             ->add('creer', SubmitType::class, [
+                'label' => 'Enregistrer',
+                'attr' => [
+                    'class' => 'btn btn-primary',
+                ]
+            ])
+            ->add('publier', SubmitType::class, [
+                'label' => 'Publier la sortie',
                 'attr' => [
                     'class' => 'btn btn-primary',
                 ]
