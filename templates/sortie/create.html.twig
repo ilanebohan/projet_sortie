@@ -79,22 +79,33 @@
 
 {% endblock %}
 {% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 
     <script>
         $(document).on('change', '#create_sortie_ville', function () {
 
-            var villeID = $(this).data("ville-id");
+            //var villeID = $(this).data("ville-id");
+            // put the id of the selected "ville" in create_sortie_ville into variable villeID
+            var villeID = $(this).val();
+
 
             $.ajax({
-                url: '/sortie/create',
+                url: '/sortie/getLieuofVille/' + villeID,
                 type: "POST",
-                data: 'villeID=' + villeID,
+                //data: 'villeID=' + villeID,
                 dataType: 'JSON',
                 success: function (data) {
-                    var child = $(document).find('#create_sortie_lieu');
-                    $.each(data, function (k, v) {
-                        $(child).append('<option value="' + v[1] + '">' + v['TEST'] + '</option>');
-                    })
+                    console.log(data);
+                    // Replace the options of create_sortie_lieu select with the name of the selected ville
+                    const $category = $('#create_sortie_lieu');
+                    $category.find('option').detach();
+                    for (element of data)
+                    {
+                        $(`<option value="${element.id}">${element.nom}</option>`).appendTo($category);
+                    }
+                },
+                error: function (data) {
+                    console.log(data);
                 }
             });
         })
