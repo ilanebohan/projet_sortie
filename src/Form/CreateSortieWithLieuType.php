@@ -14,6 +14,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\LessThan;
 
 class CreateSortieWithLieuType extends AbstractType
 {
@@ -28,11 +30,27 @@ class CreateSortieWithLieuType extends AbstractType
             ])
             ->add('dateDebut', DateTimeType ::class, [
                 'label' => 'Date et heure de la sortie',
-                'widget' => 'single_text'
+                'widget' => 'single_text',
+                'constraints' => [
+                    new GreaterThan([
+                        'value' => 'now',
+                        'message' => 'Vous devez mettre une date de Debut supérieure à la date et l\'heure d\'aujourd\'hui'
+                    ])
+                ]
             ])
             ->add('dateCloture', DateTimeType ::class, [
                 'label' => 'Date limite d\'inscription',
-                'widget' => 'single_text'
+                'widget' => 'single_text',
+                'constraints' => [
+                    new GreaterThan([
+                        'value' => 'now',
+                        'message' => 'Vous devez mettre une date de cloture supérieure à la date et l\'heure d\'aujourd\'hui'
+                    ]),
+                    new LessThan([
+                        'propertyPath' => 'parent.all[dateDebut].data',
+                        'message' => 'Vous devez mettre une date de cloture inférieure à la date de début'
+                    ])
+                ]
             ])
             ->add('nbInscriptionsMax', NumberType::class, [
                 'label' => 'Nombres de places',
