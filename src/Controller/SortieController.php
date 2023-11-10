@@ -130,6 +130,8 @@ class SortieController extends AbstractController
     public function create(Request $request, EntityManagerInterface $em, EtatRepository $etatRepository, LieuRepository $lieuRepository, VilleRepository $villeRepository, UserRepository $userRepository): Response
     {
         $sortie = new Sortie();
+        $sortie->setOrganisateur($this->getUser());
+        $sortie->setSiteOrganisateur($this->getUser()->getSite());
         $ville = $villeRepository->find(1);
         $form = $this->createForm(CreateSortieType::class, $sortie, ['villeId' => $ville]);
         $form->handleRequest($request);
@@ -146,7 +148,7 @@ class SortieController extends AbstractController
                     $sortie->setEtat($etatRepository->find(2));
                 }
                 else{
-                    $sortie->setEtat($etatRepository->find(2));
+                    $sortie->setEtat($etatRepository->find(1));
                 }
 
                 $this->save($sortie, $em);
@@ -177,7 +179,7 @@ class SortieController extends AbstractController
                 $sortie->setEtat($etatRepository->find(2));
             }
             else{
-                $sortie->setEtat($etatRepository->find(2));
+                $sortie->setEtat($etatRepository->find(1));
             }
             $this->save($sortie, $em);
 
