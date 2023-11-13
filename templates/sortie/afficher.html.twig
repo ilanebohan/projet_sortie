@@ -3,6 +3,8 @@
 {% block title %}{{ parent() }} | Inscription{% endblock %}
 
 {% block body %}
+    <h1 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;">Afficher une sortie</h1>
+
     <div class="container text-center">
 
         <div class="card mx-auto" style="width: 18rem;">
@@ -25,19 +27,20 @@
 
 
         <div class="table-responsive">
-
-            <h1>Liste des participants</h1>
+            <h2 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;">Liste des participants inscrits</h2>
 
             <table class="table table-bordered table-striped" style="text-align: center;">
                 <thead>
                 <tr>
-                    <th>Liste des participants</th>
+                    <th>Login</th>
+                    <th>Nom</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for user in sortie.participants %}
                     <tr>
                         <td>{{ user.login }}</td>
+                        <td>{{ user.nom }}</td>
 
                     </tr>
                 {% endfor %}

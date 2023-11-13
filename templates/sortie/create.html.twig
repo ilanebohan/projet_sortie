@@ -18,9 +18,6 @@
                 <div class="form-outline mb-4">
                     <h5 class="card-title">{{ form_row(sortieForm.descriptionInfos, { 'attr' : { 'class': 'form-control' } }) }}</h5>
                 </div>
-                <div class="form-outline mb-4">
-                    <h5 class="card-title">{{ form_row(sortieForm.siteOrganisateur, { 'attr' : { 'class': 'form-select' } }) }}</h5>
-                </div>
 
                 <div class="form-outline mb-4">
                     <h5 class="card-title">{{ form_row(sortieForm.ville, {
@@ -30,13 +27,13 @@
                             }
                         }) }}</h5>
                 </div>
-                <div class="form-outline mb-4">
+                <div class="form-outline mb-4 align-items-end">
                     <div class="row justify-content-center">
-                        <div class="col-5">
+                        <div class="col-md-6 col-12">
                             <h5 class="card-title">{{ form_row(sortieForm.lieu, { 'attr' : { 'class': 'form-select' } }) }}</h5>
                         </div>
-                        <div  class="col-5">
-                            <h5 style="position: relative; left: -20%;top: 38%;" class="card-title">{{ form_row(sortieForm.addLieu, { 'attr' : { 'class': 'rounded-circle btn btn-outline-info btn-floating' } }) }}</h5>
+                        <div class="col-md-6 col-12 mt-3 mt-md-0">
+                            <h5 style="position: relative; top: 20%;" class="card-title">{{ form_row(sortieForm.addLieu, { 'attr' : { 'class': 'rounded-circle btn btn-outline-info btn-floating' } }) }}</h5>
                         </div>
                     </div>
                 </div>
@@ -69,6 +66,8 @@
 
         {{ form_row(sortieForm.creer, {'attr' : {'class': 'btn btn-outline-primary'}}) }}
         {{ form_row(sortieForm.publier, {'attr' : {'class': 'btn btn-outline-warning', 'style': 'margin-left: 15px' }}) }}
+        <a style="margin-left: 15px" role="button" href="{{ path('app_main') }}" class="btn btn-outline-secondary">
+            Annuler</a>
     </div>
 
 

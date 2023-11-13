@@ -24,9 +24,6 @@ class CreateSortieWithLieuType extends AbstractType
         $builder
             ->add('nom', null, [
                 'label' => 'Nom de la sortie',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
             ])
             ->add('dateDebut', DateTimeType ::class, [
                 'label' => 'Date et heure de la sortie',
@@ -54,32 +51,12 @@ class CreateSortieWithLieuType extends AbstractType
             ])
             ->add('nbInscriptionsMax', NumberType::class, [
                 'label' => 'Nombres de places',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
             ])
             ->add('duree', NumberType::class, [
                 'label' => 'Durée',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
             ])
             ->add('descriptionInfos', TextareaType::class, [
                 'label' => 'Description et infos',
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
-            ])
-            ->add('siteOrganisateur', EntityType::class, [
-                'label' => 'Ville organisatrice',
-                'class' => Site::class,
-                'choice_label' => 'nom',
-                'query_builder' => function (SiteRepository $siteRepository) {
-                    return $siteRepository->createQueryBuilder("s")->addOrderBy('s.nom');
-                },
-                'row_attr' => [
-                    'class' => 'input-group mb-3'
-                ]
             ])
             ->add('lieu', LieuType::class)
             ->add('creer', SubmitType::class, [

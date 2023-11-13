@@ -2,46 +2,60 @@
 
 {% block title %}{{ parent() }} | Accueil{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
+    {{ parent() }}
     <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+        .DateAndUser {
+            position: absolute;
+            right: 0;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        .Filter {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
 
         .filter-container {
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
         }
 
-        .left, .middle, .right {
-            flex: 1;
-            margin-right: 10px; /* Adjust as needed */
+        .filter-container select,
+        .filter-container input {
+            width: 100%;
+            margin-bottom: 10px;
         }
 
-        .right {
-            text-align: right;
+        .Sorties {
+            padding: 10px;
         }
 
-        .container {
-            display: flex;
-        }
-
-        .middle {
-            margin-left: 10px; /* Adjust as needed */
+        .table-responsive {
+            overflow-x: auto;
         }
     </style>
+{% endblock %}
 
-    <div class="DateAndUser" style="position: absolute; right: 0;">
-    date du jour : {{ DateDuJour|date('Y-m-d') }}<br>
+{% block body %}
+    <div class="DateAndUser">
+        Date du jour : {{ DateDuJour|date('Y-m-d') }}<br>
         Participant : {{ app.user.login }}
-    </div><br>
+    </div>
 
-    <div class="container ">
-
-    <form action="{{ path('app_main_filter') }}" method="post">
-        <div class="Filter">
+    <div class="container">
+        <form action="{{ path('app_main_filter') }}" method="post" class="Filter">
             <h3 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;" class="h3 mb-3 font-weight-normal">Filtrer les sorties</h3>
-            <div class="filter-container" style="display: flex;justify-content: space-between;">
-                <div class="left">
+            <div class="filter-container">
+                <div>
                     <input type="text" id="searchBar" name="searchBar" placeholder="Rechercher une sortie par mot-clé"><br>
                     <select name="site" id="site">
                         <option value="0">Choisir un site</option>
@@ -49,7 +63,7 @@
                             <option value="{{ site.id }}">{{ site.nom }}</option>
                         {% endfor %}
                     </select><br>
-                     <select name="statut" id="statut">
+                    <select name="statut" id="statut">
                         <option value="0">Choisir le statut</option>
                         <option value="1">Créée</option>
                         <option value="2">Ouverte</option>
@@ -58,107 +72,110 @@
                         <option value="5">Passée</option>
                         <option value="6">Annulée</option>
                     </select><br>
-                    <label for="datedebutlabel">date de début</label><br>
+                    <label for="datedebutlabel">Date de début</label><br>
                     <input type="date" id="dateDebut" name="dateDebut" class="js-datepicker"><br>
-
-                    <label for="datefinlabel">date de fin</label><br>
+                    <label for="datefinlabel">Date de fin</label><br>
                     <input type="date" id="dateFin" name="dateFin" class="js-datepicker"><br>
                 </div>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 5px; text-align: center;">
+                    <div>
+                        <label for="organisateur">Sorties dont je suis l'organisateur/trice</label>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <input type="checkbox" id="organisateur" name="organisateur">
+                        </div>
+                    </div>
 
-                <div class="middle">
-                    <input type="checkbox" id="organisateur" name="organisateur"> Sorties dont je suis l'organisateur/trice<br>
-                    <input type="checkbox" id="inscrit" name="inscrit"> Sorties auxquelles je suis inscrit/e<br>
-                    <input type="checkbox" id="nonInscrit" name="nonInscrit"> Sorties auxquelles je ne suis pas inscrit/e<br>
-                    <input type="checkbox" id="passee" name="passee"> Sorties passées<br>
+                    <div>
+                        <label for="inscrit">Sorties auxquelles je suis inscrit/e</label>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <input type="checkbox" id="inscrit" name="inscrit">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="nonInscrit">Sorties auxquelles je ne suis pas inscrit/e</label>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <input type="checkbox" id="nonInscrit" name="nonInscrit">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="passee">Sorties passées</label>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <input type="checkbox" id="passee" name="passee">
+                        </div>
+                    </div>
                 </div>
-
-                <div class="right">
+                <div style="display: flex; flex-direction: column; align-items: flex-end; margin-right: 10px;">
+                    <br><br><br>
                     <input type="submit" id="Search" value="Rechercher" class="btn btn-outline-secondary">
                     <input type="reset" id="Reset" value="Réinitialiser" class="btn btn-outline-secondary">
                 </div>
             </div>
-        </div>
-        <br>
+        </form>
+
         <h3 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;" class="h3 mb-3 font-weight-normal">Liste des sorties</h3>
-    </form>
 
+        <div class="Sorties">
+            <div class="table-responsive">
+                <table class="table table-bordered" style="text-align: center;">
+                    <thead>
+                    <tr>
+                        <th>Nom de la Sortie</th>
+                        <th>Date de la Sortie</th>
+                        <th>Clôture</th>
+                        <th>Inscrit/Places</th>
+                        <th>État</th>
+                        <th>Inscrit</th>
+                        <th>Organisateur</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for sortie in sorties %}
+                        <tr>
+                            <td>{{ sortie.nom }}</td>
+                            <td>{{ sortie.dateDebut|date('Y-m-d H:i') }}</td>
+                            <td>{{ sortie.dateCloture|date('Y-m-d H:i') }}</td>
+                            <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
+                            <td>{{ sortie.etat.libelle }} {% if sortie.estPrivee %} <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"/></svg>{% endif %}</td>
+                            <td>{% if sortie.participants.contains(app.user) %}<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>{% endif %}</td>
+                            <td><a href="{{ path('user_details',  { id: sortie.organisateur.id }) }}">{{ sortie.organisateur.nom }}</a></td>
+                            <td>
+                                {% if sortie.etat.libelle == 'Ouverte' and sortie.organisateur.login == app.user.login %}
+                                    <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
+                                    <a class="btn btn-outline-danger" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
+
+                                {% elseif sortie.etat.libelle == 'Ouverte' and ((sortie.participants.contains(app.user) == false) and is_granted('ROLE_ADMIN') and sortie.dateCloture|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s')) and sortie.nbInscriptionsMax > sortie.participants.count and not sortie.estPrivee %}
+                                    <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
+                                    <a class="btn btn-outline-warning" href="{{ path('app_sortie_inscrire', {id: sortie.id}) }}">S'inscrire<span class="sr-only"></span></a> -
+                                    <a class="btn btn-outline-danger" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
+
+                                {% elseif sortie.etat.libelle == 'Ouverte' and ((sortie.participants.contains(app.user) == false) and is_granted('ROLE_ADMIN') and sortie.dateCloture|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s')) and sortie.nbInscriptionsMax == sortie.participants.count %}
+                                    <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
+                                    <a class="btn btn-outline-danger" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
+
+                                {% elseif sortie.etat.libelle == 'Ouverte' and sortie.participants.contains(app.user) %}
+                                    <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
+                                    <a class="btn btn-outline-warning" href="{{ path('app_sortie_desister', {id: sortie.id}) }}">Se désister<span class="sr-only"></span></a>
+
+                                {% elseif sortie.etat.libelle == 'Créée' and sortie.organisateur.login == app.user.login and sortie.dateDebut|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s') %}
+                                    <a class="btn btn-outline-info" href="{{ path('app_sortie_edit', {id: sortie.id}) }}">Modifier<span class="sr-only"></span></a> -
+                                    <a class="btn btn-outline-warning" href="{{ path('app_sortie_publish', {id: sortie.id}) }}">Publier<span class="sr-only"></span></a>
+
+                                {% elseif sortie.etat.libelle == 'Ouverte' and sortie.dateCloture|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s') and sortie.nbInscriptionsMax > sortie.participants.count and not sortie.estPrivee %}
+                                    <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
+                                    <a class="btn btn-outline-warning" href="{{ path('app_sortie_inscrire', {id: sortie.id}) }}">S'inscrire<span class="sr-only"></span></a>
+                                {% else %}
+                                    <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-
-    <br>
-    <div class="Creer" style="text-align: center">
-    <form action="{{ path('app_sortie_create') }}" method="post">
-        <input type="submit" value="Créer une sortie" class="btn btn-outline-info">
-    </form>
-    <br>
-    </div>
-
-    <div class="Sorties">
-        <table class="table table-bordered" style="text-align: center;">
-            <thead>
-            <tr>
-                <th>Nom de la Sortie</th>
-                <th>Date de la Sortie</th>
-                <th>Clôture</th>
-                <th>Inscrit/Places</th>
-                <th>État</th>
-                <th>Inscrit</th>
-                <th>Organisateur</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for sortie in sorties %}
-                <tr>
-                    <td>{{ sortie.nom }}</td>
-                    <td>{{ sortie.dateDebut|date('Y-m-d H:i') }}</td>
-                    <td>{{ sortie.dateCloture|date('Y-m-d H:i') }}</td>
-                    <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
-                    <td>{{ sortie.etat.libelle }} {% if sortie.estPrivee %} <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"/></svg>{% endif %}</td>
-                    <td>{% if sortie.participants.contains(app.user) %}<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>{% endif %}</td>
-                    <td><a href="{{ path('user_details',  { id: sortie.organisateur.id }) }}">{{ sortie.organisateur.nom }}</a></td>
-                    <td>
-                        {% if sortie.etat.libelle == 'Ouverte' and sortie.organisateur.login == app.user.login %}
-                            <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
-                            <a class="btn btn-outline-danger" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
-
-                        {% elseif sortie.etat.libelle == 'Ouverte' and ((sortie.participants.contains(app.user) == false) and is_granted('ROLE_ADMIN') and sortie.dateCloture|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s')) and sortie.nbInscriptionsMax > sortie.participants.count and not sortie.estPrivee %}
-                            <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
-                            <a class="btn btn-outline-warning" href="{{ path('app_sortie_inscrire', {id: sortie.id}) }}">S'inscrire<span class="sr-only"></span></a> -
-                            <a class="btn btn-outline-danger" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
-
-                        {% elseif sortie.etat.libelle == 'Ouverte' and ((sortie.participants.contains(app.user) == false) and is_granted('ROLE_ADMIN') and sortie.dateCloture|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s')) and sortie.nbInscriptionsMax == sortie.participants.count %}
-                            <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
-                            <a class="btn btn-outline-danger" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
-
-                        {% elseif sortie.etat.libelle == 'Ouverte' and sortie.participants.contains(app.user) %}
-                            <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
-                            <a class="btn btn-outline-warning" href="{{ path('app_sortie_desister', {id: sortie.id}) }}">Se desister<span class="sr-only"></span></a>
-
-                        {% elseif sortie.etat.libelle == 'Créée' and sortie.organisateur.login == app.user.login and sortie.dateDebut|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s') %}
-                            <a class="btn btn-outline-info" href="{{ path('app_sortie_edit', {id: sortie.id}) }}">Modifier<span class="sr-only"></span></a> -
-                            <a class="btn btn-outline-warning" href="{{ path('app_sortie_publish', {id: sortie.id}) }}">Publier<span class="sr-only"></span></a>
-
-                        {% elseif sortie.etat.libelle == 'Ouverte' and sortie.dateCloture|date('Y-m-d H:i:s') > date().timestamp|date('Y-m-d H:i:s') and sortie.nbInscriptionsMax > sortie.participants.count and not sortie.estPrivee %}
-                            <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
-                            <a class="btn btn-outline-warning" href="{{ path('app_sortie_inscrire', {id: sortie.id}) }}">S'inscrire<span class="sr-only"></span></a>
-                        {% else %}
-                            <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a>
-
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-
-{% endblock %}
-
-{% block javascripts %}
-    <script>
-
-
-    </script>
 {% endblock %}
