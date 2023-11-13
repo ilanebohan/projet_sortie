@@ -27,9 +27,18 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_lieu_index') }}" class="btn btn-primary">Retour à la liste</a>
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <a href="{{ path('app_lieu_index') }}" class="btn btn-primary">Retour à la liste</a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ path('app_lieu_edit', {'id': lieu.id}) }}" class="btn btn-primary">Modifier</a>
+            </div>
+            <div class="col-md-4">
+                {{ include('lieu/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
 
-    <a href="{{ path('app_lieu_edit', {'id': lieu.id}) }}" class="btn btn-primary">Modifier</a>
-
-    {{ include('lieu/_delete_form.html.twig') }}
 {% endblock %}
