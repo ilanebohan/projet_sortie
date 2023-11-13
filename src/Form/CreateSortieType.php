@@ -81,14 +81,6 @@ class CreateSortieType extends AbstractType
             ->add('descriptionInfos', TextareaType::class, [
                 'label' => 'Description et infos'
             ])
-            ->add('siteOrganisateur', EntityType::class, [
-                'label' => 'Site organisateur',
-                'class' => Site::class,
-                'choice_label' => 'nom',
-                'query_builder' => function (SiteRepository $siteRepository) {
-                    return $siteRepository->createQueryBuilder("s")->addOrderBy('s.nom');
-                }
-            ])
             ->add('ville', EntityType::class, [
                 'mapped' => false,
                 'label' => 'Ville',
@@ -157,7 +149,6 @@ class CreateSortieType extends AbstractType
     {
         $form = $event->getForm();
         $ville = $form->get("ville")->getData();
-
         $this->addElements($form, $ville);
     }
 
