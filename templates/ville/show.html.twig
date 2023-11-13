@@ -22,10 +22,17 @@
     </table>
 </div>
 
-
-    <a href="{{ path('app_ville_index') }}" class="btn btn-primary">Retour à la liste</a>
-
-    <a href="{{ path('app_ville_edit', {'id': ville.id}) }}" class="btn btn-primary">Modifier</a>
-
-    {{ include('ville/_delete_form.html.twig') }}
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <a href="{{ path('app_ville_index') }}" class="btn btn-primary">Retour à la liste</a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ path('app_ville_edit', {'id': ville.id}) }}" class="btn btn-primary">Modifier</a>
+            </div>
+            <div class="col-md-4">
+                {{ include('ville/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
 {% endblock %}
