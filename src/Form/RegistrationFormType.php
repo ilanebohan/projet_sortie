@@ -56,25 +56,6 @@ class RegistrationFormType extends AbstractType
             ->add('administrateur', CheckboxType::class, array('required' => false))
             //->add('actif', CheckboxType::class)
             ->add('site')
-            ->add('image', FileType::class, [
-                'label' => 'Image',
-                'mapped' => false,
-                'required' => false,
-
-                // unmapped fields can't define their validation using annotations
-                // in the associated entity, so you can use the PHP constraint classes
-                'constraints' => [
-                    new File([
-                        'mimeTypes' => [
-                            'image/png',
-                            'image/jpeg',
-                            'image/pjpeg',
-                            'image/gif'
-                        ],
-                        'mimeTypesMessage' => 'Please upload a valid Image',
-                    ])
-                ],
-            ])
         ;
     }
 
