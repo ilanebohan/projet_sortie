@@ -3,14 +3,14 @@
 {% block title %}{{ parent() }} | Créer une sortie{% endblock %}
 
 {% block body %}
-    <h1 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;">Créer une sortie</h1>
+    <h1 style="font-family: Avanta Garde; font-style: italic; text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;">Créer une sortie</h1>
 
     {{ form_errors(sortieForm) }}
     {{ form_start(sortieForm) }}
 
-    <div class="container text-center">
+    <div class="container">
         <div class="row justify-content-center">
-            <div class="col-5">
+            <div class="col-md-6">
                 <div class="form-outline mb-4">
                     <h5 class="card-title">{{ form_row(sortieForm.nom, { 'attr' : { 'class': 'form-control' } }) }}</h5>
                 </div>
@@ -20,7 +20,7 @@
                 <div class="card mx-auto" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title ">Lieu</h5>
-                        {{ form_label(sortieForm.lieu.ville) }}
+                        <p class="card-text">{{ form_label(sortieForm.lieu.ville) }}</p>
                         <p class="card-text">{{ form_widget(sortieForm.lieu.ville, { 'attr' : { 'class': 'form-control' } }) }}</p>
                         <p class="card-text">{{ form_row(sortieForm.lieu.nom, { 'attr' : { 'class': 'form-control' } }) }}</p>
                         <p class="card-text">{{ form_row(sortieForm.lieu.rue, { 'attr' : { 'class': 'form-control' } }) }}</p>
@@ -29,7 +29,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-5">
+
+            <div class="col-md-6">
                 <div class="form-outline mb-4">
                     <h5 class="card-text">{{ form_row(sortieForm.dateCloture, { 'attr' : { 'class': 'form-control' } }) }}</h5>
                 </div>
@@ -45,19 +46,17 @@
                 <div class="form-outline mb-4">
                     <h5 class="card-text">{{ form_row(sortieForm.estPrivee, { 'attr' : { 'class': 'form-check-input'} }) }}</h5>
                 </div>
-
             </div>
         </div>
     </div>
 
-    <div style="display: flex;justify-content: center;">
-
+    <div style="display: flex; justify-content: center;">
         {{ form_row(sortieForm.creer, {'attr' : {'class': 'btn btn-outline-primary'}}) }}
         {{ form_row(sortieForm.publier, {'attr' : {'class': 'btn btn-outline-warning', 'style': 'margin-left: 15px' }}) }}
         <a style="margin-left: 15px" role="button" href="{{ path('app_main') }}" class="btn btn-outline-secondary">
-            Annuler</a>
+            Annuler
+        </a>
     </div>
-
 
     {{ form_end(sortieForm) }}
 {% endblock %}

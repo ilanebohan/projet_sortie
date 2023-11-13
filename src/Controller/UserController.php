@@ -121,19 +121,24 @@ class UserController extends AbstractController
                 } else {
                     $userReader->setAdministrateur(false);
                 }
-                $userReader->setLogin($util[5]);
-                $userReader->setPassword(
-                    $userPasswordHasher->hashPassword(
-                        $userReader,
-                        $util[6]
-                    )
-                );
-                $site = $siteRepository->findSiteByNom($util[7]);
+                $seed = str_split('abcdefghijklmnopqrstuvwxyz'
+                    . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                    . '0123456789!@#$%^&*()');
+                shuffle($seed);
+                $login = "";
+                foreach (array_rand($seed, 10) as $k) {$login .= $seed[$k];}
+                $userReader->setLogin($login);
+                $userReader->setPassword($userPasswordHasher->hashPassword(
+                    $userReader, 'password'
+                ));
+                $userReader->setAllowImageDiffusion(false);
+
+                $site = $siteRepository->findSiteByNom($util[5]);
                 if ($site) {
                     $userReader->setSite($site[0]);
                 } else {
                     $entitySite = new Site();
-                    $entitySite->setNom($util[7]);
+                    $entitySite->setNom($util[5]);
                     $entityManager->persist($entitySite);
                     $entityManager->flush();
                     $userReader->setSite($entitySite);
@@ -143,7 +148,6 @@ class UserController extends AbstractController
                 $entityManager->flush();
 
                 $fileSystem = new Filesystem();
-                echo "<script>console. log('this is a Variable: " . $projectDir . "' );</script>";
                 if ($fileSystem->exists($projectDir)) {
                     $fileSystem->remove($projectDir);
                 }
