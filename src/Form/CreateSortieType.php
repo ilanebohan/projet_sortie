@@ -4,10 +4,13 @@ namespace App\Form;
 
 use App\Entity\Lieu;
 use App\Entity\Site;
+use App\Entity\Sortie;
 use App\Entity\Ville;
 use App\Repository\LieuRepository;
 use App\Repository\SiteRepository;
+use App\Repository\SortieRepository;
 use App\Repository\VilleRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Boolean;
@@ -25,6 +28,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\GreaterThan;
@@ -34,10 +38,12 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class CreateSortieType extends AbstractType
 {
     private VilleRepository $villeRepository;
+    private lieuRepository $lieuRepository;
     private LoggerInterface $logger;
 
     public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
     {
+        $this->lieuRepository = new LieuRepository($registry);
         $this->villeRepository = new VilleRepository($registry);
         $this->logger = $logger;
     }
@@ -123,15 +129,58 @@ class CreateSortieType extends AbstractType
             'label' => 'Sortie privée ',
             'required' => false,
         ]);
+        // When the user selects a ville, we'll reload the lieu field.
+        $formModifier = function (FormInterface $form, Ville $ville = null) {
+            $lieux = null === $ville ? [] : $this->getLieuxOfVille($ville->getId());
+
+            $form->add('lieu', EntityType::class, [
+                'class' => 'App\Entity\Lieu',
+                'placeholder' => '',
+                'choices' => $lieux,
+            ]);
+        };
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) use ($formModifier) {
+                // this would be your entity, i.e. SportMeetup
+                $data = $event->getData();
+
+                $formModifier($event->getForm(), $data->getVille());
+            }
+        );
+        $builder->get('ville')->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) use ($formModifier) {
+                // It's important here to fetch $event->getForm()->getData(), as
+                // $event->getData() will get you the client data (that is, the ID)
+                $ville = $event->getForm()->getData();
+
+                // since we've added the listener to the child, we'll have to pass on
+                // the parent to the callback functions!
+                $formModifier($event->getForm()->getParent(), $ville);  // Here line 58 and error show this line
+            }
+        );
+
+
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
         $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
     }
 
 
+    public function getLieuxOfVille(int $idVille)
+    {
+        $ville = $this->villeRepository->findOneBy(['id' => $idVille]);
+        $lieu = $this->lieuRepository->findBy(['ville' => $ville]);
+
+        return $lieu;
+    }
+
+
     protected
     function addElements(FormInterface $form, $ville = null)
     {
+
         if ($ville) {
             $form->add('lieu', EntityType::class, array(
                 'class' => Lieu::class,
@@ -151,7 +200,6 @@ class CreateSortieType extends AbstractType
             );
         }
     }
-
     public
     function onPreSubmit(FormEvent $event): void
     {
@@ -175,6 +223,7 @@ class CreateSortieType extends AbstractType
     {
         $resolver->setDefaults([
             'villeId' => Ville::class,
+            'data_class' => Sortie::class,
         ]);
     }
 }

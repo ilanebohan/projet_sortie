@@ -59,6 +59,14 @@ class Sortie
     #[ORM\Column]
     private ?bool $estPrivee = null;
 
+    public function getVille()
+    {
+        if ($this->getLieu() === null) {
+            return null;
+        }
+        return $this->getLieu()->getVille();
+    }
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -244,6 +252,12 @@ class Sortie
         $this->estPrivee = $estPrivee;
 
         return $this;
+    }
+
+    //ToString
+    public function __toString()
+    {
+        return "VILLE " . $this->nom;
     }
 
 }
