@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/site')]
 class SiteController extends AbstractController
 {
+
     #[Route('/', name: 'app_site_index', methods: ['GET'])]
     public function index(SiteRepository $siteRepository): Response
     {
