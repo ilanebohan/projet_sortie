@@ -33,28 +33,26 @@
 
 
     <div class="row">
-        <div class="col d-flex justify-content-center">
+        <div class="col-md-6 d-flex justify-content-center mb-3">
             <button style="height:40px" class="btn btn-outline-primary" type="submit">
                 Connexion
             </button>
         </div>
-        <div class="col d-flex justify-content-center">
+        <div class="col-md-6 d-flex justify-content-center">
             <div class="row">
-                <div class="col d-flex justify-content-center">
-                    <div style="flex:none;" class="form-check form-switch">
-                        <div class="form-check">
-                            <input type="checkbox" name="_remember_me" class="form-check-input" checked>
-                            <label class="form-check-label">
-                                Se souvenir de moi
-                            </label>
-                        </div>
+                <div class="col-md-12 mb-2 d-flex justify-content-center">
+                    <div class="form-check form-switch">
+                        <input type="checkbox" name="_remember_me" class="form-check-input" checked>
+                        <label class="form-check-label">
+                            Se souvenir de moi
+                        </label>
                     </div>
-
                 </div>
-                <a style="flex:none;" href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+                <div class="col-md-12 d-flex justify-content-center">
+                    <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+                </div>
             </div>
         </div>
-
     </div>
 </form>
 {% endblock %}
