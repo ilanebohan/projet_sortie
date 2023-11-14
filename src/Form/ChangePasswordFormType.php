@@ -21,8 +21,8 @@ class ChangePasswordFormType extends AbstractType
                 // this is read and encoded in the controller
                 'type' => PasswordType::class,
                 'invalid_message' => 'Les 2 mots de passes ne correspondent pas.    ',
-                'first_options'  => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Confirmation du mot de passe '],
+                'first_options'  => ['label' => 'Mot de passe *'],
+                'second_options' => ['label' => 'Confirmation du mot de passe *'],
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [

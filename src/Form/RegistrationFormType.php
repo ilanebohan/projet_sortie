@@ -25,7 +25,7 @@ class RegistrationFormType extends AbstractType
         $builder
             ->add('email', EmailType::class,
                 [
-                    'label' => 'Adresse email',
+                    'label' => 'Adresse email *',
                     'attr' => ['autocomplete' => 'email'],
                     'constraints' => [
                         new Email([
@@ -33,17 +33,8 @@ class RegistrationFormType extends AbstractType
                         ]),
                     ],
                 ])
-            ->add('agreeTerms', CheckboxType::class, [
-                'label' => 'J\'accepte les conditions générales d\'utilisation',
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'Vous devez accepter les conditions générales d\'utilisation.',
-                    ]),
-                ],
-            ])
-            ->add('nom', null, ['label' => 'Nom'])
-            ->add('prenom', null, ['label' => 'Prénom'])
+            ->add('nom', null, ['label' => 'Nom *'])
+            ->add('prenom', null, ['label' => 'Prénom *'])
             ->add('telephone', null, ['label' => 'Téléphone',
                 'required' => false,
                 'constraints' => [

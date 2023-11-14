@@ -20,7 +20,7 @@
             <tbody>
             {% for site in sites %}
                 <tr>
-                    <td>{{ site.nom }}</td>
+                    <td>Campus {{ site.nom }}</td>
                     <td>
                         <a href="{{ path('app_site_show', {'id': site.id}) }}" class="btn btn-secondary">Afficher</a>
                         <a href="{{ path('app_site_edit', {'id': site.id}) }}" class="btn btn-secondary">Modifier</a>
@@ -28,7 +28,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="3">no records found</td>
+                    <td colspan="3">Aucun enregistrement</td>
                 </tr>
             {% endfor %}
             </tbody>

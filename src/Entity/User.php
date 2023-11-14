@@ -122,8 +122,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->telephone;
     }
 
-    public function setTelephone(string $telephone): static
+    public function setTelephone($telephone): static
     {
+        if ($telephone == null) {
+            $telephone = "";
+        }
         $this->telephone = $telephone;
 
         return $this;
