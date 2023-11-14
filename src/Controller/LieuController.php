@@ -5,10 +5,8 @@ namespace App\Controller;
 use App\Entity\Lieu;
 use App\Form\LieuType;
 use App\Repository\LieuRepository;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,16 +30,6 @@ class LieuController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $entityManager->persist($lieu);
-                $entityManager->flush();
-            }catch (UniqueConstraintViolationException $e){
-                $form->addError(new FormError("Ce lieu existe déjà"));
-                return $this->render('lieu/new.html.twig', [
-                    'lieu' => $lieu,
-                    'form' => $form,
-                ]);
-            }
 
             return $this->redirectToRoute('app_lieu_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -81,7 +69,7 @@ class LieuController extends AbstractController
     #[Route('/{id}', name: 'app_lieu_delete', methods: ['POST'])]
     public function delete(Request $request, Lieu $lieu, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$lieu->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $lieu->getId(), $request->request->get('_token'))) {
             $entityManager->remove($lieu);
             $entityManager->flush();
         }
