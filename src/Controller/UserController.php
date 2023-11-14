@@ -5,7 +5,8 @@ namespace App\Controller;
 use App\Entity\Site;
 use App\Entity\User;
 use App\Form\AddUserCsvType;
-use App\Form\ConfirmPasswordType;
+use App\Form\ChangePasswordAndLoginType;
+use App\Form\ChangePasswordType;
 use App\Form\EditUserFormType;
 use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
@@ -184,20 +185,61 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/user/edit/confirmPassword/{id}', name: 'user_edit_confirm_password')]
-    public function confirmPassword(int $id, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): Response
+    #[Route('/user/edit/resetPassword/{id}', name: 'user_reset_password')]
+    public function resetPassword(int $id, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): Response
     {
-        $form = $this->createForm(ConfirmPasswordType::class);
+        $idUserConnected = $userRepository->findUserByLogin($this->getUser()->getUserIdentifier())->getId();
+
+        if($id != $idUserConnected){
+            return $this->redirectToRoute('app_access_denied', ['statusCode' => 403]);
+        }
+
+        $form = $this->createForm(ChangePasswordType::class);
         $form->handleRequest($request);
         $user = $userRepository->findUserById($id);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($passwordHasher->isPasswordValid($user, $form->get("password")->getData())) {
-                return $this->redirectToRoute('app_forgot_password_request');
+            if ($passwordHasher->isPasswordValid($user, $form->get("previousPassword")->getData())) {
+                $user->setPassword($userPasswordHasher->hashPassword(
+                    $user, $form->get("plainPassword")->getData()
+                ));
+                $entityManager->persist($user);
+                $entityManager->flush();
+                return $this->redirectToRoute('app_disconnect');
             } else {
                 $form->addError(new FormError("Mot de passe incorrect"));
             }
         }
-        return $this->render('user/confirmPassword.html.twig', [
+        return $this->render('user/resetPassword.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/user/edit/resetPasswordLogin/{id}', name: 'user_reset_passwordLogin')]
+    public function resetPasswordLogin(int $id, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        $idUserConnected = $userRepository->findUserByLogin($this->getUser()->getUserIdentifier())->getId();
+
+        if($id != $idUserConnected){
+            return $this->redirectToRoute('app_access_denied', ['statusCode' => 403]);
+        }
+
+        $form = $this->createForm(ChangePasswordAndLoginType::class);
+        $form->handleRequest($request);
+        $user = $userRepository->findUserById($id);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($passwordHasher->isPasswordValid($user, $form->get("previousPassword")->getData())) {
+                $user->setPassword($userPasswordHasher->hashPassword(
+                    $user, $form->get("plainPassword")->getData()
+                ));
+                $user->setLogin($form->get("login")->getData());
+                $entityManager->persist($user);
+                $entityManager->flush();
+                return $this->redirectToRoute('app_disconnect');
+            } else {
+                $form->addError(new FormError("Mot de passe incorrect"));
+            }
+        }
+        return $this->render('user/resetPasswordLogin.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -214,7 +256,7 @@ class UserController extends AbstractController
             if ($userLogged->isAdministrateur()) {
                 return $this->redirectToRoute('app_forgot_password_request');
             }
-            return $this->redirectToRoute('user_edit_confirm_password', ['id' => $id]);
+            return $this->redirectToRoute('user_reset_password', ['id' => $id]);
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
