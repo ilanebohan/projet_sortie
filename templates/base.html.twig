@@ -110,4 +110,17 @@
     <body>
         {% block body %}{% endblock %}
     </body>
+
+    <footer class="py-3 my-4">
+    {% block footer %}
+            <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Informations légales</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Le code source est sous licence</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Le contenu du site Web est sous licence</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">RGPD</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Accessibilité</a></li>
+            </ul>
+            <p class="text-center text-muted"> © by <a href="https://www.eni-ecole.fr/">ENI Ecole Informatique </a></p>
+    {% endblock %}
+</footer>
 </html>

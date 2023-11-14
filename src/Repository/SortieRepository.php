@@ -79,76 +79,80 @@ class SortieRepository extends ServiceEntityRepository
             }
         }
 
-        if ($DateDebut && $DateFin) {
+        if ($DateDebut) {
 
             $DateDebutFormat = new \DateTime($DateDebut);
-            $DateFinFormat = new \DateTime($DateFin);
 
             if ($idSite != 0  || $statutId != 0 || !empty($StringSearch)) {
                 $qb->andWhere('s.dateDebut >= :startDate')
-                    ->andWhere('s.dateDebut <= :endDate')
-                    ->setParameter('startDate', $DateDebutFormat->format('y-m-d h-i-s'))
-                    ->setParameter('endDate', $DateFinFormat->format('y-m-d h-i-s'));
+                    ->setParameter('startDate', $DateDebutFormat->format('y-m-d h-i-s'));
 
             } else {
                 $qb->Where('s.dateDebut >= :startDate')
-                    ->andWhere('s.dateDebut <= :endDate')
-                    ->setParameter('startDate', $DateDebutFormat->format('y-m-d h-i-s'))
+                    ->setParameter('startDate', $DateDebutFormat->format('y-m-d h-i-s'));
+            }
+        }
+
+        if ($DateFin) {
+
+            $DateFinFormat = new \DateTime($DateFin);
+
+            if ($idSite != 0  || $statutId != 0 || !empty($StringSearch) || $DateDebut) {
+                $qb->andWhere('s.dateDebut <= :endDate')
+                    ->setParameter('endDate', $DateFinFormat->format('y-m-d h-i-s'));
+
+            } else {
+                $qb->Where('s.dateDebut <= :endDate')
                     ->setParameter('endDate', $DateFinFormat->format('y-m-d h-i-s'));
             }
         }
 
-        if ($organisateur) {
-            if ($idSite != 0  || $statutId != 0 || !empty($StringSearch) || ($DateDebut && $DateFin)) {
-                $qb->andWhere('organisateur = :userId')
-                    ->setParameter('userId', $userid);
+
+
+        if ($organisateur || $inscrit || $nonInscrit || $SortiePassee) {
+
+            if ($idSite != 0  || $statutId != 0 || !empty($StringSearch) || $DateDebut || $DateFin) {
+                if($nonInscrit) {
+                    $subQuery = $em->createQueryBuilder()
+                        ->select('s2.id')
+                        ->from('App\Entity\Sortie', 's2')
+                        ->leftJoin('s2.participants', 'participants2')
+                        ->where('participants2.id = :userId');
+                }
+
+                $qb->andWhere(
+                    $qb->expr()->orX(
+                        $organisateur ? $qb->expr()->eq('organisateur', ':userId') : null,
+                        $inscrit ? $qb->expr()->eq(':userId', 'participants.id') : null,
+                        $nonInscrit ? $qb->expr()->notIn('s.id', $subQuery->getDQL()) : null,
+                        $SortiePassee ? $qb->expr()->gte(':currentDate','s.dateDebut') : null
+                    )
+                );
+                if($organisateur || $inscrit)
+                     $qb->setParameter('userId', $userid);
+                if($SortiePassee)
+                    $qb->setParameter('currentDate', new \DateTime());
             } else {
-                $qb->Where('organisateur = :userId')
-                    ->setParameter('userId', $userid);
-            }
-        }
+                if($nonInscrit) {
+                    $subQuery = $em->createQueryBuilder()
+                        ->select('s2.id')
+                        ->from('App\Entity\Sortie', 's2')
+                        ->leftJoin('s2.participants', 'participants2')
+                        ->where('participants2.id = :userId');
+                }
 
-        if ($inscrit) {
-            if ($idSite != 0  || $statutId != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur) {
-                $qb->andWhere(':userId = participants.id')
-                    ->setParameter('userId', $userid);
-            } else {
-                $qb->Where(':userId = participants.id')
-                    ->setParameter('userId', $userid);
-            }
-        }
-
-        if ($nonInscrit) {
-            if ($idSite != 0  || $statutId != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit) {
-                $subQuery = $em->createQueryBuilder()
-                    ->select('s2.id')
-                    ->from('App\Entity\Sortie', 's2')
-                    ->leftJoin('s2.participants', 'participants2')
-                    ->where('participants2.id = :userId');
-
-                // Ajouter la condition NOT IN dans la requête principale
-                $qb->andWhere($qb->expr()->notIn('s.id', $subQuery->getDQL()))
-                    ->setParameter('userId', $userid);
-            } else {
-                $subQuery = $em->createQueryBuilder()
-                    ->select('s2.id')
-                    ->from('App\Entity\Sortie', 's2')
-                    ->leftJoin('s2.participants', 'participants2')
-                    ->where('participants2.id = :userId');
-
-                // Ajouter la condition NOT IN dans la requête principale
-                $qb->Where($qb->expr()->notIn('s.id', $subQuery->getDQL()))
-                    ->setParameter('userId', $userid);
-            }
-        }
-
-        if ($SortiePassee) {
-            if ($idSite != 0  || $statutId != 0 || !empty($StringSearch) || ($DateDebut && $DateFin) || $organisateur || $inscrit || $nonInscrit) {
-                $qb->andWhere('s.dateDebut < :currentDate')
-                    ->setParameter('currentDate', new \DateTime());
-            } else {
-                $qb->Where('s.dateDebut < :currentDate')
-                    ->setParameter('currentDate', new \DateTime());
+                $qb->Where(
+                    $qb->expr()->orX(
+                        $organisateur ? $qb->expr()->eq('organisateur', ':userId') : null,
+                        $inscrit ? $qb->expr()->eq(':userId', 'participants.id') : null,
+                        $nonInscrit ? $qb->expr()->notIn('s.id', $subQuery->getDQL()) : null,
+                        $SortiePassee ? $qb->expr()->gte(':currentDate','s.dateDebut') : null
+                    )
+                );
+                if($organisateur || $inscrit || $nonInscrit)
+                    $qb->setParameter('userId', $userid);
+                if($SortiePassee)
+                    $qb->setParameter('currentDate', new \DateTime());
             }
         }
 

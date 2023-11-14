@@ -34,6 +34,7 @@ use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\LessThan;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Positive;
 
 class CreateSortieType extends AbstractType
 {
@@ -52,11 +53,17 @@ class CreateSortieType extends AbstractType
     {
         $builder
             ->add('nom', null, [
-                'label' => 'Nom de la sortie'
+                'label' => 'Nom de la sortie *',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Vous devez mettre un nom'
+                    ])
+                ]
             ])
             ->add('dateDebut', DateTimeType ::class, [
-                'label' => 'Date et heure de la sortie',
+                'label' => 'Date et heure de la sortie *',
                 'widget' => 'single_text',
+                'model_timezone' => 'Europe/Paris',
                 'constraints' => [
                     new GreaterThan([
                         'value' => 'now',
@@ -65,8 +72,9 @@ class CreateSortieType extends AbstractType
                 ]
             ])
             ->add('dateCloture', DateTimeType ::class, [
-                'label' => 'Date limite d\'inscription',
+                'label' => 'Date limite d\'inscription *',
                 'widget' => 'single_text',
+                'model_timezone' => 'Europe/Paris',
                 'constraints' => [
                     new GreaterThan([
                         'value' => 'now',
@@ -79,17 +87,30 @@ class CreateSortieType extends AbstractType
                 ]
             ])
             ->add('nbInscriptionsMax', NumberType::class, [
-                'label' => 'Nombres de places',
+                'label' => 'Nombres de places *',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Vous devez mettre un nom'
+                    ])
+                ]
             ])
             ->add('duree', NumberType::class, [
-                'label' => 'Durée'
+                'label' => 'Durée (en minutes) *',
+                'constraints' => [
+                    new Positive([
+                        'message' => 'La durée doit être positive'
+                    ]),
+                    new NotBlank([
+                        'message' => 'Vous devez mettre une durée'
+                    ])
+                ]
             ])
             ->add('descriptionInfos', TextareaType::class, [
-                'label' => 'Description et infos'
+                'label' => 'Description et infos *'
             ])
             ->add('ville', EntityType::class, [
                 'mapped' => false,
-                'label' => 'Ville',
+                'label' => 'Ville *',
                 'class' => Ville::class,
                 'choice_label' => 'nom',
                 'choice_value' => 'id',
@@ -127,7 +148,8 @@ class CreateSortieType extends AbstractType
 
             $form->add('lieu', EntityType::class, [
                 'class' => 'App\Entity\Lieu',
-                'placeholder' => '',
+                'label' => 'Lieu *',
+                'placeholder' => '-- Choisir un lieu --',
                 'choices' => $lieux,
             ]);
         };
@@ -177,6 +199,7 @@ class CreateSortieType extends AbstractType
             $form->add('lieu', EntityType::class, array(
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
+                'label' => 'Lieu *',
                 'query_builder' => function (LieuRepository $lr) use ($ville) {
                     return $lr->createQueryBuilder('l')
                         ->join('l.ville', 'v')
@@ -187,7 +210,8 @@ class CreateSortieType extends AbstractType
         } else {
             $form->add('lieu', ChoiceType::class, array(
                     'choice_label' => 'nom',
-                    'choices' => array())
+                    'label' => 'Lieu *',
+                    'choices' => array()),
             );
         }
     }

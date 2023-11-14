@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ville index{% endblock %}
+{% block title %}{{ parent() }} | Ville{% endblock %}
 
 {% block body %}
     <div class="container text-center">
@@ -28,7 +28,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="4">no records found</td>
+                    <td colspan="4">Aucun enregistrement</td>
                 </tr>
             {% endfor %}
             </tbody>
