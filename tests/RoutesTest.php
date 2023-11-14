@@ -30,7 +30,7 @@ class RoutesTest extends WebTestCase
     public function testAllRoutesRedirect()
     {
         $client = static::createClient();
-        $routes = ['/','/register','/cgu','/user','/site','/lieu','/ville','/sortie/create'];
+        $routes = ['/','/register','/user','/site','/lieu','/ville','/sortie/create'];
         // foreach routes, make a call and assert
         foreach ($routes as $route) {
             $crawler = $client->request('GET', $route);

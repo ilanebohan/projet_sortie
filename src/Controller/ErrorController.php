@@ -11,6 +11,10 @@ class ErrorController extends AbstractController
     #[Route('/accessDenied/{statusCode}', name: 'app_access_denied')]
     public function index($statusCode): Response
     {
+        if (!is_numeric($statusCode)) {
+            $statusCode = 500;
+        }
+
         return $this->render('error/error.html.twig', [
             'controller_name' => 'ErrorController',
             'statusCode' => $statusCode

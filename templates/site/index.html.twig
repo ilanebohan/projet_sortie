@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Site index{% endblock %}
+{% block title %}{{ parent() }} | Site{% endblock %}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset("css/base.css") }}">
 {% endblock %}
