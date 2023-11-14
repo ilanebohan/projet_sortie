@@ -46,10 +46,10 @@
 {% endblock %}
 
 {% block body %}
-    <div class="DateAndUser">
-        Date du jour : {{ DateDuJour|date('Y-m-d') }}<br>
-        Participant : {{ app.user.login }}
-    </div>
+{#    <div class="DateAndUser">#}
+{#        Date du jour : {{ DateDuJour|date('Y-m-d') }}<br>#}
+{#        Participant : {{ app.user.login }}#}
+{#    </div>#}
 
     <div class="container">
         {% if is_full_view() or is_tablet_view() %}

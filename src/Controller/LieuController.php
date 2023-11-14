@@ -18,7 +18,7 @@ class LieuController extends AbstractController
     public function index(LieuRepository $lieuRepository): Response
     {
         return $this->render('lieu/index.html.twig', [
-            'lieus' => $lieuRepository->findAll(),
+            'lieux' => $lieuRepository->findAll(),
         ]);
     }
 
@@ -30,8 +30,6 @@ class LieuController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($lieu);
-            $entityManager->flush();
 
             return $this->redirectToRoute('app_lieu_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -71,7 +69,7 @@ class LieuController extends AbstractController
     #[Route('/{id}', name: 'app_lieu_delete', methods: ['POST'])]
     public function delete(Request $request, Lieu $lieu, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$lieu->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $lieu->getId(), $request->request->get('_token'))) {
             $entityManager->remove($lieu);
             $entityManager->flush();
         }

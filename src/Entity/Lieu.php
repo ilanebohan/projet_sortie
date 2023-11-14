@@ -4,8 +4,10 @@ namespace App\Entity;
 
 use App\Repository\LieuRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: LieuRepository::class)]
+#[UniqueEntity(fields: ['nom','rue','ville'] )]
 class Lieu
 {
     #[ORM\Id]
@@ -16,7 +18,7 @@ class Lieu
     #[ORM\Column(length: 50)]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 100, nullable: true)]
+    #[ORM\Column(length: 100)]
     private ?string $rue = null;
 
     #[ORM\Column(nullable: true)]
