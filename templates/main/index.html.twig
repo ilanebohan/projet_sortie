@@ -155,7 +155,7 @@
                                     <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
                                     <a class="btn btn-outline-danger" href="{{ path('app_sortie_annuler', {id: sortie.id}) }}">Annuler<span class="sr-only"></span></a>
 
-                                {% elseif sortie.etat.libelle == 'Ouverte' and sortie.participants.contains(app.user) %}
+                                {% elseif (sortie.etat.libelle == 'Ouverte' or sortie.etat.libelle == 'Clôturée') and sortie.participants.contains(app.user) %}
                                     <a class="btn btn-outline-info" href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher<span class="sr-only"></span></a> -
                                     <a class="btn btn-outline-warning" href="{{ path('app_sortie_desister', {id: sortie.id}) }}">Se désister<span class="sr-only"></span></a>
 
