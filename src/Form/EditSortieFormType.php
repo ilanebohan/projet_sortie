@@ -21,7 +21,7 @@ class EditSortieFormType extends AbstractType
             ])
             ->add('duree')
             ->add('dateCloture', DateTimeType ::class, [
-                'label' => 'Date et heure de la sortie',
+                'label' => 'Date et heure de fin d\'inscription',
                 'widget' => 'single_text',
                 'attr' => ['class' => 'js-datepicker']
             ])

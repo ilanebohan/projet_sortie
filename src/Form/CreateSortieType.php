@@ -187,7 +187,6 @@ class CreateSortieType extends AbstractType
         } else {
             $form->add('lieu', ChoiceType::class, array(
                     'choice_label' => 'nom',
-                    'empty_value' => '-- Choose --',
                     'choices' => array())
             );
         }

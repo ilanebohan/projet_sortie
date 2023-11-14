@@ -1,6 +1,11 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 {% endblock %}
+{% if form_errors(form) %}
+    <div class="alert alert-danger text-center">
+        {{ form_errors(form) }}
+    </div>
+{% endif %}
 {{ form_start(form, { 'attr' : { 'class': 'registerForm' } }) }}
 
 <div class="container text-center">
