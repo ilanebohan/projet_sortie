@@ -60,7 +60,11 @@
                     <select name="site" id="site">
                         <option value="0">Choisir un site</option>
                         {% for site in sites %}
-                            <option value="{{ site.id }}">{{ site.nom }}</option>
+                            {% if idSiteUtilisateur == site.id and FirstConnexionAfterLogIn %}
+                                <option value="{{ site.id }}" selected="true">{{ site.nom }}</option>
+                            {% else %}
+                                <option value="{{ site.id }}">{{ site.nom }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select><br>
                     <select name="statut" id="statut">
@@ -81,21 +85,21 @@
                     <div>
                         <label for="organisateur">Sorties dont je suis l'organisateur/trice</label>
                         <div style="display: flex; justify-content: center; align-items: center;">
-                            <input type="checkbox" id="organisateur" name="organisateur">
+                            <input type="checkbox" id="organisateur" name="organisateur" {% if FirstConnexionAfterLogIn %} checked="true" {% endif %}>
                         </div>
                     </div>
 
                     <div>
                         <label for="inscrit">Sorties auxquelles je suis inscrit/e</label>
                         <div style="display: flex; justify-content: center; align-items: center;">
-                            <input type="checkbox" id="inscrit" name="inscrit">
+                            <input type="checkbox" id="inscrit" name="inscrit" {% if FirstConnexionAfterLogIn %} checked="true" {% endif %}>
                         </div>
                     </div>
 
                     <div>
                         <label for="nonInscrit">Sorties auxquelles je ne suis pas inscrit/e</label>
                         <div style="display: flex; justify-content: center; align-items: center;">
-                            <input type="checkbox" id="nonInscrit" name="nonInscrit">
+                            <input type="checkbox" id="nonInscrit" name="nonInscrit" {% if FirstConnexionAfterLogIn %} checked="true" {% endif %}>
                         </div>
                     </div>
 
