@@ -12,7 +12,12 @@ class SiteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom')
+            ->add('nom', null, [
+                'label' => 'Nom du site *',
+                'attr' => [
+                    'placeholder' => 'Nom du site',
+                ],
+            ])
         ;
     }
 

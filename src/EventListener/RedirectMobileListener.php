@@ -12,7 +12,7 @@ class RedirectMobileListener
     public function redirectMobile(RequestEvent $request)
     {
         // or 'iPod' in app.request.headers.get('User-Agent')
-        $routesForbidden = ['/user','/lieu','/ville','/site','/sortie'];
+        $routesForbidden = ['/user','/lieu','/ville','/site','/sortie/create'];
         $appareils = ['iPod','iPhone','BlackBerry','Windows Phone','Mobile', 'Pixel', 'moto g'];
 
         // get UserAgent from request

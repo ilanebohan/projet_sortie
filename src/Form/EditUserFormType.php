@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class EditUserFormType extends AbstractType
 {
@@ -58,7 +59,15 @@ class EditUserFormType extends AbstractType
                 ]);
         }
         $builder
-            ->add('telephone')
+            ->add('telephone', null, ['label' => 'Téléphone',
+                'required' => false,
+                'constraints' => [
+                    new Regex([
+                        'pattern' => '/^0[1-9]([-. ]?[0-9]{2}){4}$/',
+                        'message' => 'Le numéro de téléphone doit être au format 0X XX XX XX XX'
+                    ]),
+                ],
+            ])
             ->add('email')
             ->add('login')
             ->add('modifierMdp', SubmitType::class, [

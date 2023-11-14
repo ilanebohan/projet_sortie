@@ -10,7 +10,12 @@
         <div class="card mx-auto" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">{{ sortie.nom }}</h5>
-                <p class="card-text">Etat : {{ sortie.Etat.libelle }}</p>
+                {% if sortie.Etat.libelle == 'Annulée' %}
+                    <p class="card-text">Etat :</p><p style="color:red"> {{ sortie.Etat.libelle }}</p>
+                {% else %}
+                    <p class="card-text">Etat : {{ sortie.Etat.libelle }}</p>
+                {% endif %}
+
                 <p class="card-text">Organisateur : {{ sortie.organisateur.nom }}</p>
                 <p class="card-text">Site : {{ sortie.siteOrganisateur.nom }}</p>
                 <p class="card-text">nombre d'inscription maximum : {{ sortie.nbInscriptionsMax }}</p>
@@ -20,7 +25,7 @@
                 <p class="card-text">Durée : {{ sortie.duree }} heure(s)</p>
                 <p class="card-text">Date : {{ sortie.dateDebut|date('Y-m-d H:i') }}</p>
                 {% if sortie.Etat.libelle == "Annulée" %}
-                    <p class="card-text">motif d'annulation : {{ sortie.motifAnnulation }}</p>
+                    <p class="card-text">Motif d'annulation : {{ sortie.motifAnnulation }}</p>
                 {% endif %}
             </div>
         </div>
@@ -34,14 +39,20 @@
                 <tr>
                     <th>Login</th>
                     <th>Nom</th>
+                    <th>Prénom</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for user in sortie.participants %}
                     <tr>
-                        <td>{{ user.login }}</td>
-                        <td>{{ user.nom }}</td>
+                        {% if sortie.organisateur.id == app.user.id  %}
+                            <td><a href="{{ path('user_details', {id: user.id}) }}">{{ user.login }}</a></td>
+                        {% else  %}
+                            <td>{{ user.login }}</td>
+                        {% endif %}
 
+                        <td>{{ user.nom }}</td>
+                        <td>{{ user.prenom }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

@@ -28,6 +28,7 @@ class CreateSortieWithLieuType extends AbstractType
             ->add('dateDebut', DateTimeType ::class, [
                 'label' => 'Date et heure de la sortie',
                 'widget' => 'single_text',
+                'model_timezone' => 'Europe/Paris',
                 'constraints' => [
                     new GreaterThan([
                         'value' => 'now',
@@ -38,6 +39,7 @@ class CreateSortieWithLieuType extends AbstractType
             ->add('dateCloture', DateTimeType ::class, [
                 'label' => 'Date limite d\'inscription',
                 'widget' => 'single_text',
+                'model_timezone' => 'Europe/Paris',
                 'constraints' => [
                     new GreaterThan([
                         'value' => 'now',
@@ -53,7 +55,7 @@ class CreateSortieWithLieuType extends AbstractType
                 'label' => 'Nombres de places',
             ])
             ->add('duree', NumberType::class, [
-                'label' => 'Durée',
+                'label' => 'Durée (en minutes)',
             ])
             ->add('descriptionInfos', TextareaType::class, [
                 'label' => 'Description et infos',

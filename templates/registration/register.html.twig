@@ -52,7 +52,7 @@
             {{ form_errors(registrationForm.site) }}
         </div>
         <div class="form-outline mb-4">
-            {{ form_label(registrationForm.site) }}
+            {{ form_label(registrationForm.site) }} *
             {{ form_widget(registrationForm.site, { 'attr' : { 'class': 'form-select' } }) }}
         </div>
     </div>
@@ -63,14 +63,7 @@
         {{ form_label(registrationForm.administrateur) }}
         {{ form_widget(registrationForm.administrateur, { 'attr' : { 'class': 'form-check-input' } }) }}
     </div>
-    <div class="erreursInscription">
-        {{ form_errors(registrationForm.agreeTerms) }}
-    </div>
-    <div class="form-outline mb-4">
-        {{ form_label(registrationForm.agreeTerms) }}
-        {{ form_widget(registrationForm.agreeTerms, { 'attr' : { 'class': 'form-check-input' } }) }}
-        <p>(<a class="" href="/cgu">ici</a>)</p>
-    </div>
+
     <div class="form-outline mb-4">
         <button type="submit" class="btn btn-primary">Inscription</button>
     </div>
