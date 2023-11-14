@@ -9,10 +9,9 @@ use App\Form\ConfirmPasswordType;
 use App\Form\EditUserFormType;
 use App\Repository\SiteRepository;
 use App\Repository\UserRepository;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Reader;
-use MobileDetectBundle\DeviceDetector\MobileDetectorInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\FormError;
@@ -44,21 +43,39 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/delete/{id}', name: 'user_delete', requirements: ['id' => '\d+'])]
-    public function deleteUser(int $id = null, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function deleteUser(int $id = null, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
         $user = $userRepository->findUserById($id);
-        $entityManager->remove($user);
-        $entityManager->flush();
-        $messageRetour = 'Utilisateur ' . $user->getLogin() . ' supprimé';
+        try {
+            $entityManager->remove($user);
+            $entityManager->flush();
+            $messageRetour = 'Utilisateur ' . $user->getLogin() . ' supprimé';
+        } catch (ForeignKeyConstraintViolationException $e) {
+            $messageRetour = 'L\'utilisateur ' . $user->getLogin() . ' ne peut pas être supprimé';
+        }
 
         //$messageRetour = 'Erreur de lors de la suppression de ' . $user->getLogin();
-
 
         return $this->redirectToRoute('user_list', ['messageRetour' => $messageRetour], Response::HTTP_SEE_OTHER);
     }
 
+    #[Route('/user/deleteMessage/{id}', name: 'user_delete_message', requirements: ['id' => '\d+'])]
+    public function deleteUserMessage(int $id = null, UserRepository $userRepository, EntityManagerInterface $entityManager): string
+    {
+        $user = $userRepository->findUserById($id);
+        try {
+            $entityManager->remove($user);
+            $entityManager->flush();
+            $messageRetour = 'Utilisateur ' . $user->getLogin() . ' supprimé';
+        } catch (ForeignKeyConstraintViolationException $e) {
+            $messageRetour = 'L\'utilisateur ' . $user->getLogin() . ' ne peut pas être supprimé';
+        }
+
+        return $messageRetour;
+    }
+
     #[Route('/user/desactivate/{id}', name: 'user_desactivate', requirements: ['id' => '\d+'])]
-    public function desactivateUser(int $id = null, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function desactivateUser(int $id = null, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
         $user = $userRepository->findUserById($id);
         $user->setActif(false);
@@ -77,12 +94,12 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/list', name: 'user_list')]
-    public function listUser(string $messageRetour = null, Request $request, UserRepository $userRepository, SluggerInterface $slugger, EntityManagerInterface $entityManager, SiteRepository $siteRepository, UserPasswordHasherInterface $userPasswordHasher): Response
+    public function listUser(Request $request, UserRepository $userRepository, SluggerInterface $slugger, EntityManagerInterface $entityManager, SiteRepository $siteRepository, UserPasswordHasherInterface $userPasswordHasher): Response
     {
         $user = $this->getUser();
         $form = $this->createForm(AddUserCsvType::class, $user);
         $form->handleRequest($request);
-
+        $messageRetour = $request->get('messageRetour');
         if ($form->isSubmitted() && $form->isValid()) {
 
             $file = $form->get('file')->getData();
@@ -127,7 +144,9 @@ class UserController extends AbstractController
                     . '0123456789!@#$%^&*()');
                 shuffle($seed);
                 $login = "";
-                foreach (array_rand($seed, 10) as $k) {$login .= $seed[$k];}
+                foreach (array_rand($seed, 10) as $k) {
+                    $login .= $seed[$k];
+                }
                 $userReader->setLogin($login);
                 $userReader->setPassword($userPasswordHasher->hashPassword(
                     $userReader, 'password'
@@ -208,7 +227,7 @@ class UserController extends AbstractController
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename . '-' . uniqid() . '.' . $image->guessExtension();
 
-                $projectDir = $this->getParameter('image_directory').'/'. $user->getImageFilename();
+                $projectDir = $this->getParameter('image_directory') . '/' . $user->getImageFilename();
                 $fileSystem = new Filesystem();
                 if ($fileSystem->exists($projectDir) && $user->getImageFilename()) {
                     $fileSystem->remove($projectDir);

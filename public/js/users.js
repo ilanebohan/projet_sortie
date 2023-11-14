@@ -146,11 +146,12 @@ function deleteUsers()
     if (IDUsersSelected.length > 0) {
         $.each(IDUsersSelected, function(index, value) {
             $.ajax({
-                url: '/user/delete/' + value,
+                url: '/user/deleteMessage/' + value,
                 type: 'GET',
                 async: true,
                 success: function(result) {
                     // Remove the row from the table
+                    console.log(result);
                     $('#' + value).closest('tr').remove();
                     // empty the array
                     IDUsersSelected = [];
@@ -159,11 +160,11 @@ function deleteUsers()
                     resetButtons();
                 },
                 error: function(xhr, textStatus, errorThrown) {
-                    alert('Error!  Status = ' + xhr.status);
+                    alert('L\'utilisateur ' + $('#' + value).closest('tr').find('td:eq(4)').text() + ' ne peut pas être supprimé');
                 }
             });
         });
-        alert(IDUsersSelected.length + ' utilisateur(s) supprimé(s)');
+        //alert(IDUsersSelected.length + ' utilisateur(s) supprimé(s)');
     }
 
 }

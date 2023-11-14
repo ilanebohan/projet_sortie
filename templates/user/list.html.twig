@@ -34,9 +34,10 @@
         <button type="submit" class="btn btn-primary">Créer</button>
     </div>
 </div>
-
-
-    {{ form_end(registrationForm) }}
+    <div class="erreursInscription text-center">
+        {{ messageRetour }}
+    </div>
+    <h5>{{ form_end(registrationForm) }}</h5>
 <div class="table-responsive">
     <table class="table table-bordered table-striped" style="text-align: center;">
         <thead>
