@@ -22,7 +22,7 @@
                 <p class="card-text">nombre d'inscrit : {{ sortie.participants.count }}</p>
                 <p class="card-text">Description : {{ sortie.descriptionInfos }}</p>
                 <p class="card-text">Lieu : {{ sortie.lieu.nom }}</p>
-                <p class="card-text">Durée : {{ sortie.duree }} heure(s)</p>
+                <p class="card-text">Durée : {{ sortie.duree }} minute(s)</p>
                 <p class="card-text">Date : {{ sortie.dateDebut|date('Y-m-d H:i') }}</p>
                 {% if sortie.Etat.libelle == "Annulée" %}
                     <p class="card-text">Motif d'annulation : {{ sortie.motifAnnulation }}</p>
@@ -45,7 +45,7 @@
                 <tbody>
                 {% for user in sortie.participants %}
                     <tr>
-                        {% if sortie.organisateur.id == app.user.id  %}
+                        {% if sortie.organisateur.id == app.user.id and (is_full_view() or is_tablet_view())  %}
                             <td><a href="{{ path('user_details', {id: user.id}) }}">{{ user.login }}</a></td>
                         {% else  %}
                             <td>{{ user.login }}</td>

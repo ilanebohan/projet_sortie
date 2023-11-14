@@ -3,16 +3,20 @@
 namespace App\EventListener;
 
 
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RedirectMobileListener
 {
     public function redirectMobile(RequestEvent $request)
     {
+        $isRouteAuthorized = false;
         // or 'iPod' in app.request.headers.get('User-Agent')
-        $routesForbidden = ['/user','/lieu','/ville','/site','/sortie/create'];
+        //$routesForbidden = ['/user','/lieu','/ville','/site','/sortie/create'];
+        $authorizedRoutes = ["",'/','/login','/disconnect',"/sortie/afficher/"];
         $appareils = ['iPod','iPhone','BlackBerry','Windows Phone','Mobile', 'Pixel', 'moto g'];
 
         // get UserAgent from request
@@ -22,13 +26,21 @@ class RedirectMobileListener
         {
             if (str_contains($userAgent, $appareil)) {
             // Si la route de la requête contient une route de la liste $routesForbidden
-                foreach ($routesForbidden as $route)
+                foreach ($authorizedRoutes as $route)
                 {
                     if (str_contains($request->getRequest()->getPathInfo(), $route))
                     {
                         // Redirection vers la page d'erreur
-                        $request->setResponse(new RedirectResponse('/accessDenied/403'));
+                        //$request->setResponse(new RedirectResponse('/accessDenied/403'));
+                        $isRouteAuthorized = true;
                     }
+
+                }
+
+                if (!$isRouteAuthorized)
+                {
+                    // Redirection vers la page d'erreur
+                    $request->setResponse(new RedirectResponse('/accessDenied/403'));
                 }
 
             }

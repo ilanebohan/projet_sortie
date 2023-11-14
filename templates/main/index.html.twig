@@ -52,6 +52,7 @@
     </div>
 
     <div class="container">
+        {% if is_full_view() or is_tablet_view() %}
         <form action="{{ path('app_main_filter') }}" method="post" class="Filter">
             <h3 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;" class="h3 mb-3 font-weight-normal">Filtrer les sorties</h3>
             <div class="filter-container">
@@ -119,7 +120,7 @@
                 </div>
             </div>
         </form>
-
+        {% endif %}
         <h3 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;" class="h3 mb-3 font-weight-normal">Liste des sorties</h3>
 
         <div class="Sorties">
@@ -127,18 +128,26 @@
                 <table class="table table-bordered" style="text-align: center;">
                     <thead>
                     <tr>
-                        <th>Nom de la Sortie</th>
-                        <th>Date de la Sortie</th>
-                        <th>Clôture</th>
-                        <th>Inscrit/Places</th>
-                        <th>État</th>
-                        <th>Inscrit</th>
-                        <th>Organisateur</th>
-                        <th>Action</th>
+                        {% if is_full_view() or is_tablet_view() %}
+                            <th>Nom de la Sortie</th>
+                            <th>Date de la Sortie</th>
+                            <th>Clôture</th>
+                            <th>Inscrit/Places</th>
+                            <th>État</th>
+                            <th>Inscrit</th>
+                            <th>Organisateur</th>
+                            <th>Action</th>
+                        {% else %}
+                            <th>Nom de la Sortie</th>
+                            <th>Date de la Sortie</th>
+                            <th>Lieu</th>
+
+                        {% endif %}
                     </tr>
                     </thead>
                     <tbody>
                     {% for sortie in sorties %}
+                        {% if is_full_view() or is_tablet_view() %}
                         <tr>
                             <td>{{ sortie.nom }}</td>
                             <td>{{ sortie.dateDebut|date('Y-m-d H:i') }}</td>
@@ -181,6 +190,15 @@
                                 {% endif %}
                             </td>
                         </tr>
+                        {% else %}
+                            {% if sortie.organisateur.id == app.user.id or sortie.participants.contains(app.user) %}
+                            <tr>
+                                <td><a href="{{ path("app_sortie_afficher", {id : sortie.id}) }}">{{ sortie.nom }}</a></td>
+                                <td>{{ sortie.dateDebut|date('Y-m-d H:i') }}</td>
+                                <td>{{ sortie.lieu.nom }}</td>
+                            </tr>
+                            {% endif %}
+                        {% endif %}
                     {% endfor %}
                     </tbody>
                 </table>
