@@ -30,13 +30,9 @@ class RedirectMobileListener
                 {
                     if (str_contains($request->getRequest()->getPathInfo(), $route))
                     {
-                        // Redirection vers la page d'erreur
-                        //$request->setResponse(new RedirectResponse('/accessDenied/403'));
                         $isRouteAuthorized = true;
                     }
-
                 }
-
                 if (!$isRouteAuthorized)
                 {
                     // Redirection vers la page d'erreur
