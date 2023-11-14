@@ -54,7 +54,7 @@ class SortieController extends AbstractController
     }
 
     #[Route('/inscrire/{id}', name: 'app_sortie_inscrire')]
-    public function inscrire(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em): Response
+    public function inscrire(int $id, EtatRepository $etatRepository, SortieRepository $sortieRepository, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
@@ -63,6 +63,9 @@ class SortieController extends AbstractController
             && $sortie->getEtat()->getLibelle() == "Ouverte"
             && $sortie->getDateCloture() > new DateTime('now')) {
             $sortie->addParticipant($user);
+            if($sortie->getNbInscriptionsMax() == count($sortie->getParticipants())){
+                $sortie->setEtat($etatRepository->find(3));
+            }
             $em->persist($sortie);
             $em->flush();
         }
@@ -70,12 +73,15 @@ class SortieController extends AbstractController
     }
 
     #[Route('/desister/{id}', name: 'app_sortie_desister')]
-    public function desister(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em): Response
+    public function desister(int $id, EtatRepository $etatRepository, SortieRepository $sortieRepository, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
         if ($sortie->getEtat()->getLibelle() == "Ouverte"
             || $sortie->getEtat()->getLibelle() == "Clôturée") {
+            if($sortie->getNbInscriptionsMax() == count($sortie->getParticipants())){
+                $sortie->setEtat($etatRepository->find(2));
+            }
             $sortie->removeParticipant($user);
             $em->persist($sortie);
             $em->flush();
@@ -97,8 +103,6 @@ class SortieController extends AbstractController
         }
         return $this->redirectToRoute('app_main');
     }
-
-
 
     #[Route('/annuler/{id}', name: 'app_sortie_annuler')]
     public function annuler(int $id, Request $request, SortieRepository $sortieRepository, EntityManagerInterface $em, EtatRepository $etatRepository): Response
