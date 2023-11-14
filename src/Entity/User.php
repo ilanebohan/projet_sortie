@@ -204,13 +204,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+        // eraseCrendentials
     }
 
     public function getUserIdentifier(): string
     {
-
-        // TODO: Implement getUserIdentifier() method.
         return $this->login;
     }
 

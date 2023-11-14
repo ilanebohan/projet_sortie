@@ -95,7 +95,7 @@ class MainController extends AbstractController
         $sites = $Siterepository->findAll();
 
         $sortieRepository = $entityManager->getRepository(Sortie::class);
-        $sorties = $sortieRepository->findByFilter($Filter); // TODO : filter
+        $sorties = $sortieRepository->findByFilter($Filter);
 
         return $this->render('main/index.html.twig', [
             'sites' => $sites,

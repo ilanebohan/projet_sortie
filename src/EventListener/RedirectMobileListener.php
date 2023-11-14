@@ -14,8 +14,6 @@ class RedirectMobileListener
     public function redirectMobile(RequestEvent $request)
     {
         $isRouteAuthorized = false;
-        // or 'iPod' in app.request.headers.get('User-Agent')
-        //$routesForbidden = ['/user','/lieu','/ville','/site','/sortie/create'];
         $authorizedRoutes = ["",'/','/login','/disconnect',"/sortie/afficher/"];
         $appareils = ['iPod','iPhone','BlackBerry','Windows Phone','Mobile', 'Pixel', 'moto g'];
 
@@ -25,7 +23,7 @@ class RedirectMobileListener
         foreach ($appareils as $appareil)
         {
             if (str_contains($userAgent, $appareil)) {
-            // Si la route de la requête contient une route de la liste $routesForbidden
+            // Si la route de la requête contient une route de la liste $authorizedRoutes
                 foreach ($authorizedRoutes as $route)
                 {
                     if (str_contains($request->getRequest()->getPathInfo(), $route))

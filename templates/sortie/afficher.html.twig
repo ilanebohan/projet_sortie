@@ -11,7 +11,9 @@
             <div class="card-body">
                 <h5 class="card-title">{{ sortie.nom }}</h5>
                 {% if sortie.Etat.libelle == 'Annulée' %}
-                    <p class="card-text">Etat :</p><p style="color:red"> {{ sortie.Etat.libelle }}</p>
+                    <div class="d-flex justify-content-center">
+                        <p class="card-text">Etat :&nbsp;</p><p style="color:red">{{ sortie.Etat.libelle }}</p>
+                    </div>
                 {% else %}
                     <p class="card-text">Etat : {{ sortie.Etat.libelle }}</p>
                 {% endif %}
