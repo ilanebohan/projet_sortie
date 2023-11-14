@@ -23,7 +23,7 @@ class RedirectMobileListener
         foreach ($appareils as $appareil)
         {
             if (str_contains($userAgent, $appareil)) {
-            // Si la route de la requête contient une route de la liste $authorizedRoutes
+                // Si la route de la requête contient une route de la liste $authorizedRoutes
                 foreach ($authorizedRoutes as $route)
                 {
                     if (str_contains($request->getRequest()->getPathInfo(), $route))
