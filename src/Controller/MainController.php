@@ -18,6 +18,9 @@ class MainController extends AbstractController
     #[Route('/', name: 'app_main')]
     public function index(EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED', null, 'User tried to access a page without being authenticated');
+
+
         $Siterepository = $entityManager->getRepository(Site::class);
         $sites = $Siterepository->findAll();
 
@@ -44,7 +47,6 @@ class MainController extends AbstractController
         $sortieRepository = $entityManager->getRepository(Sortie::class);
         $sorties = $sortieRepository->findByFilter($array);
 
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED', null, 'User tried to access a page without being authenticated');
 
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',
