@@ -63,18 +63,21 @@ class UserController extends AbstractController
     #[Route('/user/deleteMessage/{id}', name: 'user_delete_message', requirements: ['id' => '\d+'])]
     public function deleteUserMessage(int $id = null,
                                       UserRepository $userRepository,
-                                      EntityManagerInterface $entityManager): string
+                                      EntityManagerInterface $entityManager): Response
     {
+        $reponse = new Response();
         $user = $userRepository->findUserById($id);
         try {
             $entityManager->remove($user);
             $entityManager->flush();
             $messageRetour = 'Utilisateur ' . $user->getLogin() . ' supprimé';
+            $reponse->setStatusCode(200);
         } catch (ForeignKeyConstraintViolationException $e) {
             $messageRetour = 'L\'utilisateur ' . $user->getLogin() . ' ne peut pas être supprimé';
+            $reponse->setStatusCode(500);
         }
-
-        return $messageRetour;
+        $reponse->setContent($messageRetour);
+        return $reponse;
     }
 
     #[Route('/user/desactivate/{id}', name: 'user_desactivate', requirements: ['id' => '\d+'])]
