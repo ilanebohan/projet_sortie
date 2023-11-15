@@ -54,7 +54,13 @@ class EditSortieFormType extends AbstractType
                     ])
                 ]
             ])
-            ->add('nbInscriptionsMax')
+            ->add('nbInscriptionsMax', null, [
+                'constraints' => [
+                    new Positive([
+                        'message' => 'Le Nombre d\'inscirt doit être positif'
+                    ])
+                ]
+            ])
             ->add('descriptionInfos')
             ->add('siteOrganisateur')
             ->add('lieu')
