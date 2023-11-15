@@ -250,7 +250,8 @@ class SortieController extends AbstractController
             'SortieForm' => $form->createView(),
             'EtatSortie' => $etat,
             'idSortie' => $id,
-            'estPrivee' => $sortie->isEstPrivee()
+            'estPrivee' => $sortie->isEstPrivee(),
+            'nomSortie' => $sortie->getNom(),
         ]);
     }
 
