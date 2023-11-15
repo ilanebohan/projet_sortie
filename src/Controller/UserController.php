@@ -279,9 +279,6 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->get("modifierMdp")->isClicked()) {
-            if ($userLogged->isAdministrateur()) {
-                return $this->redirectToRoute('app_forgot_password_request');
-            }
             return $this->redirectToRoute('user_reset_password', ['id' => $id]);
         }
 
