@@ -69,6 +69,7 @@ security:
     access_control:
         - { path: ^/register, roles: ROLE_ADMIN }
         - { path: ^/site, roles: ROLE_ADMIN }
+        - { path: ^/sortie/create, allow_if: "not is_granted('ROLE_ADMIN')" }
         - { path: ^/lieu, roles: ROLE_ADMIN }
         - { path: ^/ville, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
