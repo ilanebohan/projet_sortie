@@ -19,7 +19,6 @@ $(document).on('change', 'input[name="checkBoxUser"]', function() {
 function gererButtons()
 {
     if (IDUsersSelected.length === 0) {
-        console.log("PAS DE SELECTION");
 
         if ($('#deactivateUsers').hasClass('btn-secondary')) {
             // RESTE INACTIF
@@ -52,13 +51,10 @@ function gererButtons()
         var nonActif = false;
         $.each(IDUsersSelected, function(index, value) {
             if ($('#' + value).closest('tr').find('td:eq(7)').text().includes('Non')) {
-                console.log(value + " is non actif");
                 nonActif = true;
             }
         });
-        console.log(nonActif);
         if (nonActif) {
-            console.log("BUTTON DESACTIVER INACTIF");
             if ($('#deactivateUsers').hasClass('btn-secondary')) {
                 // RESTE INACTIF
             }
@@ -73,8 +69,6 @@ function gererButtons()
         }
         else
         {
-
-            console.log("BUTTON DESACTIVER ACTIF");
             if ($('#deactivateUsers').hasClass('btn-warning')) {
                 // RESTE ACTIF
             }
@@ -151,7 +145,6 @@ function deleteUsers()
                 async: true,
                 success: function(result) {
                     // Remove the row from the table
-                    console.log(result);
                     $('#' + value).closest('tr').remove();
                     // empty the array
                     IDUsersSelected = [];
