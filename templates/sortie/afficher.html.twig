@@ -48,7 +48,7 @@
                 {% for user in sortie.participants %}
                     <tr>
                         {% if sortie.organisateur.id == app.user.id and (is_full_view() or is_tablet_view())  %}
-                            <td><a href="{{ path('user_details', {id: user.id}) }}">{{ user.login }}</a></td>
+                            <td><a href="{{ path('user_details_organisateur', {id: user.id}) }}">{{ user.login }}</a></td>
                         {% else  %}
                             <td>{{ user.login }}</td>
                         {% endif %}

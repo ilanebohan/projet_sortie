@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Profil de {{ user.login }}{% endblock %}
+
+{% block body %}
+    <h1 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;">Informations du participant</h1>
+
+<div class="container text-center">
+
+    <div class="card mx-auto" style="width: 18rem;">
+        {% if user.imageFilename and (user.allowImageDiffusion or app.user.id == user.id or is_granted('ROLE_ADMIN')) %}
+            <img class="card-img-top" src="{{ asset('uploads/images/' ~ user.imageFilename)  }}" alt="Card image cap">
+        {% else %}
+            <img class="card-img-top" src="{{ asset('uploads/images/defaultImage.jpg')  }}" alt="Card image cap">
+        {% endif %}
+
+        <div class="card-body">
+            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
+            <h5 class="card-title">{{ user.login }}</h5>
+            <p class="card-title">Email : {{ user.email }}</p>
+            {% if user.telephone is not empty %}
+            <p class="card-title">Telephone : {{ user.telephone }}</p>
+            {% endif %}
+        </div>
+        {% if (app.user.id == user.id or app.user.administrateur == true) %}
+        <div class="card-footer">
+            <a href="{{ path('user_edit', {'id': user.id}) }}" class="btn btn-primary">Modifier</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -42,6 +42,15 @@ class UserController extends AbstractController
             'user' => $user
         ]);
     }
+    #[Route('/user/detailsOrganisateur/{id}', name: 'user_details_organisateur', requirements: ['id' => '\d+'])]
+    public function detailsOrganisateur(int $id, UserRepository $userRepository): Response
+    {
+        $user = $userRepository->findUserById($id);
+        return $this->render('user/detailsOrganisateur.html.twig', [
+            'controller_name' => 'UserController',
+            'user' => $user
+        ]);
+    }
 
     #[Route('/user/delete/{id}', name: 'user_delete', requirements: ['id' => '\d+'])]
     public function deleteUser(int $id = null,
@@ -223,7 +232,7 @@ class UserController extends AbstractController
                 $entityManager->flush();
                 return $this->redirectToRoute('app_disconnect');
             } else {
-                $form->addError(new FormError("Mot de passe incorrect"));
+                $form->addError(new FormError("Données incorrectes"));
             }
         }
         return $this->render('user/resetPassword.html.twig', [
@@ -258,7 +267,7 @@ class UserController extends AbstractController
                 $entityManager->flush();
                 return $this->redirectToRoute('app_disconnect');
             } else {
-                $form->addError(new FormError("Mot de passe incorrect"));
+                $form->addError(new FormError("Données incorrectes"));
             }
         }
         return $this->render('user/resetPasswordLogin.html.twig', [
@@ -328,4 +337,5 @@ class UserController extends AbstractController
             'user' => $user
         ]);
     }
+
 }
