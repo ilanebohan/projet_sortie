@@ -1,4 +1,4 @@
-var IDUsersSelected = [];
+let IDUsersSelected = [];
 
 $(document).ready(function() {
 });
@@ -37,18 +37,11 @@ function gererButtons()
 
         $(document).off('click', '#deactivateUsers');
         $(document).off('click', '#deleteUsers');
-        /*
-        $(document).on('click', '#deactivateUsers', function() {
-            // NOTHING
-        });
-        $(document).on('click', '#deleteUsers', function() {
-            // NOTHING
-        });*/
     }
     else if (IDUsersSelected.length > 0)
     {
         // foreach element in IDUsersSelected if the field "Actif ?" is "Non" then disable the "deactivateUsers" button
-        var nonActif = false;
+        let nonActif = false;
         $.each(IDUsersSelected, function(index, value) {
             if ($('#' + value).closest('tr').find('td:eq(7)').text().includes('Non')) {
                 nonActif = true;
@@ -63,9 +56,7 @@ function gererButtons()
                 handleStyleButton('deactivateUsers');
             }
             $(document).off('click', '#deactivateUsers');
-            /*$(document).on('click', '#deactivateUsers', function() {
-                // NOTHING
-            });*/
+
         }
         else
         {
@@ -165,7 +156,7 @@ function deleteUsers()
 function desactivationUser()
 {
     // if any of the field "Actif ?" from the selected users is "Non" then alert smth
-    var nonActif = false;
+    let nonActif = false;
     $.each(IDUsersSelected, function(index, value) {
         if ($('#' + value).closest('tr').find('td:eq(7)').text().includes('Non')) {
             nonActif = true;

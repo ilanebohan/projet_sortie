@@ -30,16 +30,38 @@ class ExceptionListener
         if ($exception instanceof AccessDeniedException) {
             switch ($request->getRequestUri()){
                 case "/":
-                    $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_login')));
+                    $event->setResponse(
+                        new RedirectResponse(
+                            $this->urlGenerator->generate('app_login')
+                        )
+                    );
                     break;
                 default:
-                    $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_access_denied', ['statusCode' => Response::HTTP_FORBIDDEN])));
+                    $event->setResponse(
+                        new RedirectResponse(
+                            $this->urlGenerator->generate(
+                                'app_access_denied',
+                                [
+                                    'statusCode' => Response::HTTP_FORBIDDEN
+                                ]
+                            )
+                        )
+                    );
                     break;
             };
         }
-        else if ($exception instanceof NotFoundHttpException)
+        elseif ($exception instanceof NotFoundHttpException)
         {
-            $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_access_denied', ['statusCode' => Response::HTTP_NOT_FOUND])));
+            $event->setResponse(
+                new RedirectResponse(
+                    $this->urlGenerator->generate(
+                        'app_access_denied',
+                        [
+                            'statusCode' => Response::HTTP_NOT_FOUND
+                        ]
+                    )
+                )
+            );
         }
         else
         {
@@ -49,7 +71,7 @@ class ExceptionListener
 
         // inspect the exception
         // do whatever else you want, logging, modify the response, etc, etc
-        //$event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_access_denied', ['statusCode' => "404"])));
     }
+
 
 }

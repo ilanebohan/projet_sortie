@@ -13,6 +13,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[UniqueEntity(fields: ['nom','organisateur'] )]
 class Sortie
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -261,5 +262,6 @@ class Sortie
     {
         return "VILLE " . $this->nom;
     }
+
 
 }

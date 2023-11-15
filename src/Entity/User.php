@@ -244,11 +244,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeSortiesOrganise(Sortie $sortiesOrganise): static
     {
-        if ($this->sortiesOrganise->removeElement($sortiesOrganise)) {
+        if ($this->sortiesOrganise->removeElement($sortiesOrganise) && $sortiesOrganise->getOrganisateur() === $this) {
             // set the owning side to null (unless already changed)
-            if ($sortiesOrganise->getOrganisateur() === $this) {
-                $sortiesOrganise->setOrganisateur(null);
-            }
+            $sortiesOrganise->setOrganisateur(null);
         }
 
         return $this;

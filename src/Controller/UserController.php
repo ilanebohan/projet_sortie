@@ -44,7 +44,9 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/delete/{id}', name: 'user_delete', requirements: ['id' => '\d+'])]
-    public function deleteUser(int $id = null, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+    public function deleteUser(int $id = null,
+                               UserRepository $userRepository,
+                               EntityManagerInterface $entityManager): Response
     {
         $user = $userRepository->findUserById($id);
         try {
@@ -55,13 +57,13 @@ class UserController extends AbstractController
             $messageRetour = 'L\'utilisateur ' . $user->getLogin() . ' ne peut pas être supprimé';
         }
 
-        //$messageRetour = 'Erreur de lors de la suppression de ' . $user->getLogin();
-
         return $this->redirectToRoute('user_list', ['messageRetour' => $messageRetour], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/user/deleteMessage/{id}', name: 'user_delete_message', requirements: ['id' => '\d+'])]
-    public function deleteUserMessage(int $id = null, UserRepository $userRepository, EntityManagerInterface $entityManager): string
+    public function deleteUserMessage(int $id = null,
+                                      UserRepository $userRepository,
+                                      EntityManagerInterface $entityManager): string
     {
         $user = $userRepository->findUserById($id);
         try {
@@ -76,7 +78,9 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/desactivate/{id}', name: 'user_desactivate', requirements: ['id' => '\d+'])]
-    public function desactivateUser(int $id = null, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+    public function desactivateUser(int $id = null,
+                                    UserRepository $userRepository,
+                                    EntityManagerInterface $entityManager): Response
     {
         $user = $userRepository->findUserById($id);
         $user->setActif(false);
@@ -95,7 +99,12 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/list', name: 'user_list')]
-    public function listUser(Request $request, UserRepository $userRepository, SluggerInterface $slugger, EntityManagerInterface $entityManager, SiteRepository $siteRepository, UserPasswordHasherInterface $userPasswordHasher): Response
+    public function listUser(Request $request,
+                             UserRepository $userRepository,
+                             SluggerInterface $slugger,
+                             EntityManagerInterface $entityManager,
+                             SiteRepository $siteRepository,
+                             UserPasswordHasherInterface $userPasswordHasher): Response
     {
         $user = $this->getUser();
         $form = $this->createForm(AddUserCsvType::class, $user);
@@ -186,7 +195,12 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/edit/resetPassword/{id}', name: 'user_reset_password')]
-    public function resetPassword(int $id, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): Response
+    public function resetPassword(int $id,
+                                  EntityManagerInterface $entityManager,
+                                  UserPasswordHasherInterface $userPasswordHasher,
+                                  Request $request,
+                                  UserRepository $userRepository,
+                                  UserPasswordHasherInterface $passwordHasher): Response
     {
         $idUserConnected = $userRepository->findUserByLogin($this->getUser()->getUserIdentifier())->getId();
 
@@ -215,7 +229,12 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/edit/resetPasswordLogin/{id}', name: 'user_reset_passwordLogin')]
-    public function resetPasswordLogin(int $id, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): Response
+    public function resetPasswordLogin(int $id,
+                                       EntityManagerInterface $entityManager,
+                                       UserPasswordHasherInterface $userPasswordHasher,
+                                       Request $request,
+                                       UserRepository $userRepository,
+                                       UserPasswordHasherInterface $passwordHasher): Response
     {
         $idUserConnected = $userRepository->findUserByLogin($this->getUser()->getUserIdentifier())->getId();
 
@@ -245,7 +264,11 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/edit/{id}', name: 'user_edit')]
-    public function editUser(int $id, Request $request, SluggerInterface $slugger, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    public function editUser(int $id,
+                             Request $request,
+                             SluggerInterface $slugger,
+                             EntityManagerInterface $entityManager,
+                             UserRepository $userRepository): Response
     {
         $user = $userRepository->findUserById($id);
         $userLogged = $this->getUser();

@@ -14,12 +14,16 @@ use Symfony\Component\Routing\RouterInterface;
 
 class ControllerListener extends AbstractController
 {
+
     private Security $security;
     private UserRepository $userRepository;
     private UserPasswordHasherInterface $passwordHasher;
     private RouterInterface $router;
 
-    public function __construct(Security $security, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, RouterInterface $router){
+    public function __construct(Security $security,
+                                UserRepository $userRepository,
+                                UserPasswordHasherInterface $passwordHasher,
+                                RouterInterface $router){
         $this->security = $security;
         $this->userRepository = $userRepository;
         $this->passwordHasher = $passwordHasher;
@@ -29,18 +33,24 @@ class ControllerListener extends AbstractController
     public function onKernelController(ControllerEvent $event)
     {
         $authorized = [ 'app_disconnect', 'app_login', 'user_reset_passwordLogin'];
-        if(!in_array($event->getRequest()->attributes->get('_route'), $authorized)){
-            if($this->security->getUser()){
+        if(!in_array($event->getRequest()->attributes->get('_route'), $authorized) && $this->security->getUser()){
                 $user = $this->userRepository->findUserByLogin($this->security->getUser()->getUserIdentifier());
                 if ($this->passwordHasher->isPasswordValid($user, 'password'))
                 {
-                    $response = new RedirectResponse($this->generateUrl('user_reset_passwordLogin', ['id' => $user->getId()]));
+                    $response = new RedirectResponse(
+                        $this->generateUrl(
+                            'user_reset_passwordLogin',
+                            [
+                                'id' => $user->getId()
+                            ]
+                        )
+                    );
 
                     $event->setController(function () use ($response) {
                         return $response;
                     });
                 }
-            }
         }
     }
+
 }

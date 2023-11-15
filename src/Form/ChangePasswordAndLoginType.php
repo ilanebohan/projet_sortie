@@ -49,7 +49,6 @@ class ChangePasswordAndLoginType extends AbstractType
                     'class' => 'btn btn-primary',
                 ]
             ]);
-        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

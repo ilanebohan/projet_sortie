@@ -27,8 +27,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class SortieController extends AbstractController
 {
 
+    const ADD_USER_TO_PRIVATE = "sortie/addUserToPrivate.html.twig";
+
+
     #[Route('/getLieuofVille/{idVille}', name: 'app_getlieuofville')]
-    public function getLieuxOfVille(int $idVille, SortieRepository $sortieRepository, EntityManagerInterface $em): Response
+    public function getLieuxOfVille(int $idVille,
+                                    EntityManagerInterface $em): Response
     {
         $ville = $em->getRepository(Ville::class)->findOneBy(['id' => $idVille]);
         $lieu = $em->getRepository(Lieu::class)->findBy(['ville' => $ville]);
@@ -40,7 +44,10 @@ class SortieController extends AbstractController
     }
 
     #[Route('/publish/{id}', name: 'app_sortie_publish')]
-    public function publish(int $id, SortieRepository $sortieRepository, EntityManagerInterface $em, EtatRepository $etatRepository): Response
+    public function publish(int $id,
+                            SortieRepository $sortieRepository,
+                            EntityManagerInterface $em,
+                            EtatRepository $etatRepository): Response
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
@@ -54,7 +61,10 @@ class SortieController extends AbstractController
     }
 
     #[Route('/inscrire/{id}', name: 'app_sortie_inscrire')]
-    public function inscrire(int $id, EtatRepository $etatRepository, SortieRepository $sortieRepository, EntityManagerInterface $em): Response
+    public function inscrire(int $id,
+                             EtatRepository $etatRepository,
+                             SortieRepository $sortieRepository,
+                             EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
@@ -73,7 +83,10 @@ class SortieController extends AbstractController
     }
 
     #[Route('/desister/{id}', name: 'app_sortie_desister')]
-    public function desister(int $id, EtatRepository $etatRepository, SortieRepository $sortieRepository, EntityManagerInterface $em): Response
+    public function desister(int $id,
+                             EtatRepository $etatRepository,
+                             SortieRepository $sortieRepository,
+                             EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
@@ -91,7 +104,8 @@ class SortieController extends AbstractController
     }
 
     #[Route('/afficher/{id}', name: 'app_sortie_afficher')]
-    public function afficher(int $id, Request $request, SortieRepository $sortieRepository, EntityManagerInterface $em) : Response
+    public function afficher(int $id,
+                             SortieRepository $sortieRepository) : Response
     {
         $sortie = $sortieRepository->find($id);
 
@@ -105,11 +119,15 @@ class SortieController extends AbstractController
     }
 
     #[Route('/annuler/{id}', name: 'app_sortie_annuler')]
-    public function annuler(int $id, Request $request, SortieRepository $sortieRepository, EntityManagerInterface $em, EtatRepository $etatRepository): Response
+    public function annuler(int $id,
+                            Request $request,
+                            SortieRepository $sortieRepository,
+                            EntityManagerInterface $em,
+                            EtatRepository $etatRepository): Response
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
-        if (in_array("ROLE_ADMIN", $user->getRoles()) or $user === $sortie->getOrganisateur()
+        if (in_array("ROLE_ADMIN", $user->getRoles()) || $user === $sortie->getOrganisateur()
             && $sortie->getEtat()->getLibelle() == "Ouverte"
             && $sortie->getDateDebut() > new DateTime('now')) {
             $form = $this->createForm(AnnulerSortieType::class,$sortie);
@@ -131,7 +149,12 @@ class SortieController extends AbstractController
     }
 
     #[Route('/create', name: 'app_sortie_create')]
-    public function create(Request $request, EntityManagerInterface $em, EtatRepository $etatRepository, LieuRepository $lieuRepository, VilleRepository $villeRepository, UserRepository $userRepository): Response
+    public function create(Request $request,
+                           EntityManagerInterface $em,
+                           EtatRepository $etatRepository,
+                           LieuRepository $lieuRepository,
+                           VilleRepository $villeRepository,
+                           UserRepository $userRepository): Response
     {
         $sortie = new Sortie();
         $sortie->setOrganisateur($this->getUser());
@@ -161,7 +184,7 @@ class SortieController extends AbstractController
                     $allUser = $userRepository->findAll();
                     $sortie->addParticipant($this->getUser());
 
-                    return $this->render('sortie/addUserToPrivate.html.twig', [
+                    return $this->render(self::ADD_USER_TO_PRIVATE, [
                         'sortie' => $sortie,
                         'allUser' => $allUser,
                         'userAlreadyPresent' => $sortie->getParticipants(),
@@ -192,7 +215,7 @@ class SortieController extends AbstractController
 
                 $sortie->addParticipant($this->getUser());
 
-                return $this->render('sortie/addUserToPrivate.html.twig', [
+                return $this->render(self::ADD_USER_TO_PRIVATE, [
                     'sortie' => $sortie,
                     'allUser' => $allUser,
                     'userAlreadyPresent' => $sortie->getParticipants(),
@@ -209,7 +232,11 @@ class SortieController extends AbstractController
     }
 
     #[Route('/addUserToPrivateSortie/{id}', name: 'app_sortie_addUserToPrivateSortie')]
-    public function addUserToPrivateSortie(int $id, Request $request, EntityManagerInterface $em, SortieRepository $sortieRepository, UserRepository $userRepository) : Response
+    public function addUserToPrivateSortie(int $id,
+                                           Request $request,
+                                           EntityManagerInterface $em,
+                                           SortieRepository $sortieRepository,
+                                           UserRepository $userRepository) : Response
     {
         $sortie = $sortieRepository->find($id);
 
@@ -233,7 +260,9 @@ class SortieController extends AbstractController
 
 
     #[Route('/sortie/edit/{id}', name: 'app_sortie_edit')]
-    public function edit(int $id, Request $request, SortieRepository $sortieRepository , EntityManagerInterface $entityManager): Response
+    public function edit(int $id, Request $request,
+                         SortieRepository $sortieRepository,
+                         EntityManagerInterface $entityManager): Response
     {
         $sortie = $sortieRepository->find($id);
         $etat = $sortie->getEtat()->getLibelle();
@@ -256,13 +285,17 @@ class SortieController extends AbstractController
     }
 
     #[Route('/sortie/editPrivateListe/{id}', name: 'app_sortie_editPrivateListe')]
-    public function redirectToPrivate(int $id,Request $request, EntityManagerInterface $em, SortieRepository $sortieRepository, UserRepository $userRepository):Response
+    public function redirectToPrivate(int $id,
+                                      Request $request,
+                                      EntityManagerInterface $em,
+                                      SortieRepository $sortieRepository,
+                                      UserRepository $userRepository):Response
     {
         $sortie = $sortieRepository->find($id);
         $allUser = $userRepository->findAll();
         $sortie->addParticipant($this->getUser());
 
-        return $this->render('sortie/addUserToPrivate.html.twig', [
+        return $this->render(self::ADD_USER_TO_PRIVATE, [
             'sortie' => $sortie,
             'allUser' => $allUser,
             'userAlreadyPresent' => $sortie->getParticipants(),

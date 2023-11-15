@@ -16,8 +16,12 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[IsGranted('ROLE_ADMIN')]
 class RegistrationController extends AbstractController
 {
+
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
+    public function register(Request $request,
+                             UserPasswordHasherInterface $userPasswordHasher,
+                             SluggerInterface $slugger,
+                             EntityManagerInterface $entityManager): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -29,7 +33,10 @@ class RegistrationController extends AbstractController
                 . '0123456789!@#$%^&*()');
             shuffle($seed);
             $login = "";
-            foreach (array_rand($seed, 10) as $k) $login .= $seed[$k];
+            foreach (array_rand($seed, 10) as $k)
+            {
+                $login .= $seed[$k];
+            }
             $user->setLogin($login);
 
             // encode the plain password
@@ -43,7 +50,15 @@ class RegistrationController extends AbstractController
             $phone = $user->getTelephone();
             // put spaces every 2 number if there is none
             if ($phone != null && strlen($phone) == 10) {
-                $phone = substr($phone, 0, 2) . ' ' . substr($phone, 2, 2) . ' ' . substr($phone, 4, 2) . ' ' . substr($phone, 6, 2) . ' ' . substr($phone, 8, 2);
+                $phone = substr($phone, 0, 2)
+                    . ' ' .
+                    substr($phone, 2, 2)
+                    . ' ' .
+                    substr($phone, 4, 2)
+                    . ' ' .
+                    substr($phone, 6, 2)
+                    . ' ' .
+                    substr($phone, 8, 2);
             }
 
             // make telephone nullable in database
@@ -66,4 +81,5 @@ class RegistrationController extends AbstractController
             'registrationForm' => $form->createView(),
         ]);
     }
+
 }
