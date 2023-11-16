@@ -15,7 +15,7 @@ class AddUserCsvType extends AbstractType
     {
         $builder
             ->add('file', FileType::class, [
-                'label' => 'Ajouter des utilisateurs depuis un CSV :',
+                'label' => 'Ajouter des utilisateurs depuis un CSV ou un XML:',
                 'mapped' => false,
                 'required' => false,
 
@@ -23,9 +23,10 @@ class AddUserCsvType extends AbstractType
                     new File([
                         'mimeTypes' => [
                             'text/csv',
+                            'application/xml',
                             'text/plain'
                         ],
-                        'mimeTypesMessage' => 'Merci de donner un fichier Csv correct',
+                        'mimeTypesMessage' => 'Merci de donner un fichier Csv ou XML correct',
                     ])
                 ],
             ])

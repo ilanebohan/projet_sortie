@@ -13,6 +13,7 @@ use App\Repository\UserRepository;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Reader;
+use Monolog\Handler\Curl\Util;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\FormError;
@@ -125,6 +126,9 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $file = $form->get('file')->getData();
+            $error = false;
+
+            $extension = $file->getClientOriginalExtension();
 
             $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             // this is needed to safely include the file name as part of the URL
@@ -142,60 +146,155 @@ class UserController extends AbstractController
                 // ... handle exception if something happens during file upload
             }
 
-            $reader = Reader::createFromPath($projectDir, 'r');
+            if($extension == "xml"){
+                $xml = simplexml_load_file($projectDir, 'SimpleXMLElement');
 
-            for ($i = 0; $i <= $reader->count() - 1; $i++) {
-                if ($i == 0) {
-                    $i++;
-                }
-                $row = $reader->fetchOne($i);
-                $userReader = new User();
-                $util = explode(";", $row[0]);
+                foreach ($xml->utilisateur as $utilisateurXml) {
 
-                $userReader->setNom($util[0]);
-                $userReader->setPrenom($util[1]);
-                $userReader->setTelephone($util[2]);
-                $userReader->setEmail($util[3]);
-                if ($util[4] == 'oui') {
-                    $userReader->setAdministrateur(true);
-                } else {
-                    $userReader->setAdministrateur(false);
-                }
-                $seed = str_split('abcdefghijklmnopqrstuvwxyz'
-                    . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-                    . '0123456789!@#$%^&*()');
-                shuffle($seed);
-                $login = "";
-                foreach (array_rand($seed, 10) as $k) {
-                    $login .= $seed[$k];
-                }
-                $userReader->setLogin($login);
-                $userReader->setPassword($userPasswordHasher->hashPassword(
-                    $userReader, 'password'
-                ));
-                $userReader->setAllowImageDiffusion(false);
+                    $utilReader = new User();
 
-                $site = $siteRepository->findSiteByNom($util[5]);
-                if ($site) {
-                    $userReader->setSite($site[0]);
-                } else {
-                    $entitySite = new Site();
-                    $entitySite->setNom($util[5]);
-                    $entityManager->persist($entitySite);
+                    $utilReader->setNom($utilisateurXml->nom);
+                    $utilReader->setPrenom($utilisateurXml->prenom);
+
+                    if(preg_match("/^0[1-9]\d{8}$/", $utilisateurXml->telephone)){
+                        $utilReader->setTelephone($utilisateurXml->telephone);
+                    }
+                    else{
+                        $form->addError(new FormError("Telephone incorrect pour l'utilisateur ".$utilisateurXml->nom." ".$utilisateurXml->prenom));
+                        $error = true;
+                        continue;
+                    }
+
+                    if($userRepository->findUserByMail($utilisateurXml->email)){
+                        $form->addError(new FormError("Email déjà utilisé pour l'utilisateur ".$utilisateurXml->nom." ".$utilisateurXml->prenom));
+                        $error = true;
+                        continue;
+                    }
+
+                    if(preg_match("/^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/", $utilisateurXml->email) && !$userRepository->findUserByMail($utilisateurXml->email)){
+                        $utilReader->setEmail($utilisateurXml->email);
+                    }
+                    else{
+                        $form->addError(new FormError("Email incorrect pour l'utilisateur ".$utilisateurXml->nom." ".$utilisateurXml->prenom));
+                        $error = true;
+                        continue;
+                    }
+
+                    $utilReader->setAdministrateur($utilisateurXml->administrateur == 1);
+                    $utilReader->setActif($utilisateurXml->actif == 1);
+
+                    $site = $siteRepository->findSiteByNom($utilisateurXml->site);
+
+                    if ($site) {
+                        $utilReader->setSite($site[0]);
+                    } else {
+                        $form->addError(new FormError("Site inexistant pour l'utilisateur ".$utilisateurXml->nom." ".$utilisateurXml->prenom));
+                        $error = true;
+                        continue;
+                    }
+
+                    $seed = str_split('abcdefghijklmnopqrstuvwxyz'
+                        . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                        . '0123456789!@#$%^&*()');
+                    shuffle($seed);
+                    $login = "";
+                    foreach (array_rand($seed, 10) as $k) {
+                        $login .= $seed[$k];
+                    }
+                    $utilReader->setLogin($login);
+                    $utilReader->setPassword($userPasswordHasher->hashPassword(
+                        $utilReader, 'password'
+                    ));
+                    $utilReader->setAllowImageDiffusion(false);
+
+                    $entityManager->persist($utilReader);
                     $entityManager->flush();
-                    $userReader->setSite($entitySite);
-                }
-                $userReader->setActif(true);
-                $entityManager->persist($userReader);
-                $entityManager->flush();
-
-                $fileSystem = new Filesystem();
-                if ($fileSystem->exists($projectDir)) {
-                    $fileSystem->remove($projectDir);
                 }
             }
+            else{
+                $reader = Reader::createFromPath($projectDir, 'r');
 
-            return $this->redirectToRoute('user_list');
+                for ($i = 0; $i <= $reader->count() - 1; $i++) {
+                    $row = $reader->fetchOne($i);
+                    $util = explode(",", str_replace("\"", "", $row[0]));
+
+                    $utilReader = new User();
+                    $utilReader->setNom($util[0]);
+                    $utilReader->setPrenom($util[1]);
+                    if(preg_match("/^0[1-9]\d{8}$/", $util[2])){
+                        $utilReader->setTelephone($util[2]);
+                    }
+                    else{
+                        $form->addError(new FormError("Telephone incorrect pour l'utilisateur ".$util[0]." ".$util[1]));
+                        $error = true;
+                        continue;
+                    }
+
+                    if($userRepository->findUserByMail($util[3])){
+                        $form->addError(new FormError("Email déjà utilisé pour l'utilisateur ".$util[0]." ".$util[1]));
+                        $error = true;
+                        continue;
+                    }
+
+                    if(preg_match("/^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/", $util[3]) && !$userRepository->findUserByMail($util[3])){
+                        $utilReader->setEmail($util[3]);
+                    }
+                    else{
+                        $form->addError(new FormError("Email incorrect pour l'utilisateur ".$util[0]." ".$util[1]));
+                        $error = true;
+                        continue;
+                    }
+
+                    if ($util[4] == 1) {
+                        $utilReader->setAdministrateur(true);
+                    } else {
+                        $utilReader->setAdministrateur(false);
+                    }
+
+                    if ($util[5] == 1) {
+                        $utilReader->setActif(true);
+                    } else {
+                        $utilReader->setActif(false);
+                    }
+
+                    $site = $siteRepository->findSiteByNom($util[6]);
+                    if ($site) {
+                        $utilReader->setSite($site[0]);
+                    } else {
+                        $form->addError(new FormError("Site inexistant pour l'utilisateur ".$util[0]." ".$util[1]));
+                        $error = true;
+                        continue;
+                    }
+
+                    $seed = str_split('abcdefghijklmnopqrstuvwxyz'
+                        . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                        . '0123456789!@#$%^&*()');
+                    shuffle($seed);
+                    $login = "";
+                    foreach (array_rand($seed, 10) as $k) {
+                        $login .= $seed[$k];
+                    }
+                    $utilReader->setLogin($login);
+                    $utilReader->setPassword($userPasswordHasher->hashPassword(
+                        $utilReader, 'password'
+                    ));
+                    $utilReader->setAllowImageDiffusion(false);
+
+                    $entityManager->persist($utilReader);
+                    $entityManager->flush();
+                }
+
+            }
+
+            $fileSystem = new Filesystem();
+            if ($fileSystem->exists($projectDir)) {
+                $fileSystem->remove($projectDir);
+            }
+
+            if(!$error){
+                return $this->redirectToRoute('user_list');
+            }
+
         }
 
         return $this->render('user/list.html.twig', [
