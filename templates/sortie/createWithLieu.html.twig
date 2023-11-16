@@ -3,7 +3,8 @@
 {% block title %}{{ parent() }} | Créer une sortie{% endblock %}
 
 {% block body %}
-    <h1 style="font-family: Avanta Garde; font-style: italic; text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;">Créer une sortie</h1>
+    <h1 style="font-family: Avanta Garde; font-style: italic; text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;">
+        Créer une sortie</h1>
 
     {{ form_errors(sortieForm) }}
     {{ form_start(sortieForm) }}
@@ -20,13 +21,48 @@
                 <div class="card mx-auto" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title ">Lieu</h5>
-                        <p class="card-text">{{ form_label(sortieForm.lieu.ville) }}</p>
-                        <p class="card-text">{{ form_widget(sortieForm.lieu.ville, { 'attr' : { 'class': 'form-control' } }) }}</p>
-                        <p class="card-text">{{ form_row(sortieForm.lieu.nom, { 'attr' : { 'class': 'form-control' } }) }}</p>
-                        <p class="card-text">{{ form_row(sortieForm.lieu.rue, { 'attr' : { 'class': 'form-control' } }) }}</p>
-                        <p class="card-text">{{ form_row(sortieForm.lieu.latitude, { 'attr' : { 'class': 'form-control' } }) }}</p>
-                        <p class="card-text">{{ form_row(sortieForm.lieu.longitude, { 'attr' : { 'class': 'form-control' } }) }}</p>
-                    </div>
+                        <div class="erreursInscription">
+                            {{ form_errors(sortieForm.lieu.nom) }}
+                        </div>
+                        <div class="form-outline mb-4">
+                            {{ form_label(sortieForm.lieu.nom) }}
+                            {{ form_widget(sortieForm.lieu.nom, { 'attr' : { 'class': 'form-control' } }) }}
+                        </div>
+
+                        <div class="erreursInscription">
+                            {{ form_errors(sortieForm.lieu.rue) }}
+                        </div>
+                        <div class="form-outline mb-4">
+                            {{ form_label(sortieForm.lieu.rue) }}
+                            {{ form_widget(sortieForm.lieu.rue, { 'attr' : { 'class': 'form-control' } }) }}
+                        </div>
+
+                        <div class="erreursInscription">
+                            {{ form_errors(sortieForm.lieu.latitude) }}
+                        </div>
+                        <div class="form-outline mb-4">
+                            {{ form_label(sortieForm.lieu.latitude) }}
+                            {{ form_widget(sortieForm.lieu.latitude, { 'attr' : { 'class': 'form-control'} }) }}
+                        </div>
+
+                        <div class="erreursInscription">
+                            {{ form_errors(sortieForm.lieu.longitude) }}
+                        </div>
+                        <div class="form-outline mb-4">
+                            {{ form_label(sortieForm.lieu.longitude) }}
+                            {{ form_widget(sortieForm.lieu.longitude, { 'attr' : { 'class': 'form-control' } }) }}
+                        </div>
+
+                        <div class="erreursInscription">
+                            {{ form_errors(sortieForm.lieu.ville) }}
+                        </div>
+                        <div class="form-outline mb-4">
+                            {{ form_label(sortieForm.lieu.ville) }}
+                            {{ form_widget(sortieForm.lieu.ville, { 'attr' : { 'class': 'form-select' }}) }}
+                            <datalist style="display: none" id="autocompleteRue">
+
+                            </datalist>
+                        </div></div>
                 </div>
             </div>
 
@@ -59,4 +95,84 @@
     </div>
 
     {{ form_end(sortieForm) }}
+{% endblock %}
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+
+<script>
+
+    // https://geocode.maps.co/search?q={address}
+    let latitude = '';
+    let longitude = '';
+    // every time we put something into input with id="lieu_rue", we update the "lieu_latitude" and "lieu_longitude" fields
+    $(document).on('input', 'input[id="create_sortie_with_lieu_lieu_rue"]', function() {
+        // get the address
+        let address = $(this).val();
+        // if the address is not empty
+        if (address !== '') {
+            // we send a request to the geocode api
+            $.ajax({
+                url: 'https://geocode.maps.co/search',
+                data: {
+                    street: address,
+                    country: 'FR'
+                },
+                success: function(response) {
+                    console.log(response);
+                    $.each(response, function(index, element) {
+                        $('#autocompleteRue').append('<option value="' + element.display_name + '" data-latitude="' + element.lat + '" data-longitude="' + element.lon + '">' + element.display_name + '</option>');
+                        // define latitude and longitude
+                        latitude = element.lat;
+                        longitude = element.lon;
+                        // update the "lieu_latitude" and "lieu_longitude" fields
+                        //$('input[id="lieu_latitude"]').val(latitude);
+                        //$('input[id="lieu_longitude"]').val(longitude);
+                    });
+
+                    // when we click on an option and update "lieu_longitude" and "lieu_latitude" fields with the "lat" and "lon" of the option
+                }
+            });
+        }
+    });
+
+    // when we select an option in we update "lieu_latitude" and "lieu_longitude" fields with the "lat" and "lon" of the option
+    $(document).on('change', 'input[id="create_sortie_with_lieu_lieu_rue"]', function() {
+        // take value of element and delete everything after the 4th comma
+        let address = $(this).val();
+        let addressArray = address.split(',');
+        console.log(addressArray);
+        // set value of input to the new address (0 & 1 element of array)
+        if (addressArray[0] !== undefined && addressArray[1] !== undefined)
+        {
+            $(this).val(addressArray[0] + ', ' + addressArray[1]);
+
+            $('#lieu_ville option').each(function() {
+                console.log("OPTION HTML",$(this).html());
+                console.log("TROUVE",$(this).html().includes(addressArray[2].toUpperCase().trim()));
+                if ($(this).html().toUpperCase() === addressArray[2].toUpperCase().trim())
+                {
+                    console.log("OPTION HTML",$(this).html());
+                    $(this).attr('selected', 'selected');
+                }
+            });
+
+            $('input[id="create_sortie_with_lieu_lieu_latitude"]').val(latitude);
+            $('input[id="create_sortie_with_lieu_lieu_longitude"]').val(longitude);
+
+        }
+        else if (addressArray[0] !== undefined)
+        {
+            $(this).val(addressArray[0]);
+            // clear latitude and longitude fields
+            $('input[id="create_sortie_with_lieu_lieu_latitude"]').val('');
+            $('input[id="create_sortie_with_lieu_lieu_longitude"]').val('');
+        }
+        else
+        {
+            $(this).val('');
+            $('input[id="create_sortie_with_lieu_lieu_latitude"]').val('');
+            $('input[id="create_sortie_with_lieu_lieu_longitude"]').val('');
+        }
+    });
+</script>
 {% endblock %}

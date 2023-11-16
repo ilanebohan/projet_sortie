@@ -8,7 +8,9 @@
     <div class="container text-center">
         <h1>Sites</h1>
     </div>
-
+    <div class="text-center">
+        <a href="{{ path('app_site_new') }}" class="btn btn-outline-info center">Ajouter un Site</a>
+    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead>
@@ -41,5 +43,5 @@
     </div>
 
 
-    <a href="{{ path('app_site_new') }}" class="btn btn-primary">Ajouter un Site</a>
+
 {% endblock %}

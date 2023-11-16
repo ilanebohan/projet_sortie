@@ -17,12 +17,13 @@ use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use App\Repository\VilleRepository;
 use DateTime;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
 #[Route('/sortie')]
 class SortieController extends AbstractController
 {
@@ -31,7 +32,7 @@ class SortieController extends AbstractController
 
 
     #[Route('/getLieuofVille/{idVille}', name: 'app_getlieuofville')]
-    public function getLieuxOfVille(int $idVille,
+    public function getLieuxOfVille(int                    $idVille,
                                     EntityManagerInterface $em): Response
     {
         $ville = $em->getRepository(Ville::class)->findOneBy(['id' => $idVille]);
@@ -44,10 +45,10 @@ class SortieController extends AbstractController
     }
 
     #[Route('/publish/{id}', name: 'app_sortie_publish')]
-    public function publish(int $id,
-                            SortieRepository $sortieRepository,
+    public function publish(int                    $id,
+                            SortieRepository       $sortieRepository,
                             EntityManagerInterface $em,
-                            EtatRepository $etatRepository): Response
+                            EtatRepository         $etatRepository): Response
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
@@ -61,9 +62,9 @@ class SortieController extends AbstractController
     }
 
     #[Route('/inscrire/{id}', name: 'app_sortie_inscrire')]
-    public function inscrire(int $id,
-                             EtatRepository $etatRepository,
-                             SortieRepository $sortieRepository,
+    public function inscrire(int                    $id,
+                             EtatRepository         $etatRepository,
+                             SortieRepository       $sortieRepository,
                              EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
@@ -73,7 +74,7 @@ class SortieController extends AbstractController
             && $sortie->getEtat()->getLibelle() == "Ouverte"
             && $sortie->getDateCloture() > new DateTime('now')) {
             $sortie->addParticipant($user);
-            if($sortie->getNbInscriptionsMax() == count($sortie->getParticipants())){
+            if ($sortie->getNbInscriptionsMax() == count($sortie->getParticipants())) {
                 $sortie->setEtat($etatRepository->find(3));
             }
             $em->persist($sortie);
@@ -83,16 +84,16 @@ class SortieController extends AbstractController
     }
 
     #[Route('/desister/{id}', name: 'app_sortie_desister')]
-    public function desister(int $id,
-                             EtatRepository $etatRepository,
-                             SortieRepository $sortieRepository,
+    public function desister(int                    $id,
+                             EtatRepository         $etatRepository,
+                             SortieRepository       $sortieRepository,
                              EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
         if ($sortie->getEtat()->getLibelle() == "Ouverte"
             || $sortie->getEtat()->getLibelle() == "Clôturée") {
-            if($sortie->getNbInscriptionsMax() == count($sortie->getParticipants())){
+            if ($sortie->getNbInscriptionsMax() == count($sortie->getParticipants())) {
                 $sortie->setEtat($etatRepository->find(2));
             }
             $sortie->removeParticipant($user);
@@ -104,13 +105,12 @@ class SortieController extends AbstractController
     }
 
     #[Route('/afficher/{id}', name: 'app_sortie_afficher')]
-    public function afficher(int $id,
-                             SortieRepository $sortieRepository) : Response
+    public function afficher(int              $id,
+                             SortieRepository $sortieRepository): Response
     {
         $sortie = $sortieRepository->find($id);
 
-        if($sortie)
-        {
+        if ($sortie) {
             return $this->render('sortie/afficher.html.twig', [
                 'sortie' => $sortie
             ]);
@@ -119,18 +119,18 @@ class SortieController extends AbstractController
     }
 
     #[Route('/annuler/{id}', name: 'app_sortie_annuler')]
-    public function annuler(int $id,
-                            Request $request,
-                            SortieRepository $sortieRepository,
+    public function annuler(int                    $id,
+                            Request                $request,
+                            SortieRepository       $sortieRepository,
                             EntityManagerInterface $em,
-                            EtatRepository $etatRepository): Response
+                            EtatRepository         $etatRepository): Response
     {
         $user = $this->getUser();
         $sortie = $sortieRepository->find($id);
         if (in_array("ROLE_ADMIN", $user->getRoles()) || $user === $sortie->getOrganisateur()
             && $sortie->getEtat()->getLibelle() == "Ouverte"
             && $sortie->getDateDebut() > new DateTime('now')) {
-            $form = $this->createForm(AnnulerSortieType::class,$sortie);
+            $form = $this->createForm(AnnulerSortieType::class, $sortie);
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 $sortie->setEtat($etatRepository->find(6));
@@ -149,12 +149,12 @@ class SortieController extends AbstractController
     }
 
     #[Route('/create', name: 'app_sortie_create')]
-    public function create(Request $request,
+    public function create(Request                $request,
                            EntityManagerInterface $em,
-                           EtatRepository $etatRepository,
-                           LieuRepository $lieuRepository,
-                           VilleRepository $villeRepository,
-                           UserRepository $userRepository): Response
+                           EtatRepository         $etatRepository,
+                           LieuRepository         $lieuRepository,
+                           VilleRepository        $villeRepository,
+                           UserRepository         $userRepository): Response
     {
         $sortie = new Sortie();
         $sortie->setOrganisateur($this->getUser());
@@ -165,54 +165,45 @@ class SortieController extends AbstractController
         $formWithLieu = $this->createForm(CreateSortieWithLieuType::class, $sortie);
         $formWithLieu->handleRequest($request);
         $lieux = $lieuRepository->findAll();
-        if ($form->get('addLieu')->isClicked() || $formWithLieu->isSubmitted()) {
-            if ($formWithLieu->isSubmitted() && $formWithLieu->isValid()
-                && $sortie->getDateCloture() < $sortie->getDateDebut()
-                && $sortie->getDateDebut() > new DateTime('now')
-                && $sortie->getDateCloture() > new DateTime('now')) {
-
-                if($form->get('publier')->isClicked()){
-                    $sortie->setEtat($etatRepository->find(2));
-                }
-                else{
-                    $sortie->setEtat($etatRepository->find(1));
-                }
-
-                $this->save($sortie, $em);
-
-                if($formWithLieu->get('estPrivee')->getData()) {
-                    $allUser = $userRepository->findAll();
-                    $sortie->addParticipant($this->getUser());
-
-                    return $this->render(self::ADD_USER_TO_PRIVATE, [
-                        'sortie' => $sortie,
-                        'allUser' => $allUser,
-                        'userAlreadyPresent' => $sortie->getParticipants(),
-                        'CurrentUser' => $this->getUser()
-                    ]);
-                }
-
-                return $this->redirectToRoute('app_main');
-            }
+        if ($form->get('addLieu')->isClicked()) {
+            $sortie->setLieu(null);
+            $formWithLieu = $this->createForm(CreateSortieWithLieuType::class, $sortie);
+            $formWithLieu->handleRequest($request);
             return $this->render('sortie/createWithLieu.html.twig', [
                 'sortieForm' => $formWithLieu->createView(),
             ]);
         }
+        if ($formWithLieu->isSubmitted() && $formWithLieu->isValid()
+            && $sortie->getDateCloture() < $sortie->getDateDebut()
+            && $sortie->getDateDebut() > new DateTime('now')
+            && $sortie->getDateCloture() > new DateTime('now')) {
+
+            $this->save($sortie, $em, $form, $etatRepository);
+
+            if ($formWithLieu->get('estPrivee')->getData()) {
+                $allUser = $userRepository->findAll();
+                $sortie->addParticipant($this->getUser());
+
+                return $this->render(self::ADD_USER_TO_PRIVATE, [
+                    'sortie' => $sortie,
+                    'allUser' => $allUser,
+                    'userAlreadyPresent' => $sortie->getParticipants(),
+                    'CurrentUser' => $this->getUser()
+                ]);
+            }
+
+            return $this->redirectToRoute('app_main');
+        }
+
         if ($form->isSubmitted() && $form->isValid()
             && $sortie->getDateCloture() < $sortie->getDateDebut()
             && $sortie->getDateDebut() > new DateTime('now')
             && $sortie->getDateCloture() > new DateTime('now')) {
-            if($form->get('publier')->isClicked()){
-                $sortie->setEtat($etatRepository->find(2));
-            }
-            else{
-                $sortie->setEtat($etatRepository->find(1));
-            }
-            $this->save($sortie, $em);
 
-            if($form->get('estPrivee')->getData()) {
+            $this->save($sortie, $em,$form,$etatRepository);
+
+            if ($form->get('estPrivee')->getData()) {
                 $allUser = $userRepository->findAll();
-
                 $sortie->addParticipant($this->getUser());
 
                 return $this->render(self::ADD_USER_TO_PRIVATE, [
@@ -232,15 +223,15 @@ class SortieController extends AbstractController
     }
 
     #[Route('/addUserToPrivateSortie/{id}', name: 'app_sortie_addUserToPrivateSortie')]
-    public function addUserToPrivateSortie(int $id,
-                                           Request $request,
+    public function addUserToPrivateSortie(int                    $id,
+                                           Request                $request,
                                            EntityManagerInterface $em,
-                                           SortieRepository $sortieRepository,
-                                           UserRepository $userRepository) : Response
+                                           SortieRepository       $sortieRepository,
+                                           UserRepository         $userRepository): Response
     {
         $sortie = $sortieRepository->find($id);
 
-        if($sortie) {
+        if ($sortie) {
 
             $json = $request->request->get('ListUser');
 
@@ -260,8 +251,8 @@ class SortieController extends AbstractController
 
 
     #[Route('/sortie/edit/{id}', name: 'app_sortie_edit')]
-    public function edit(int $id, Request $request,
-                         SortieRepository $sortieRepository,
+    public function edit(int                    $id, Request $request,
+                         SortieRepository       $sortieRepository,
                          EntityManagerInterface $entityManager): Response
     {
         $sortie = $sortieRepository->find($id);
@@ -285,11 +276,11 @@ class SortieController extends AbstractController
     }
 
     #[Route('/sortie/editPrivateListe/{id}', name: 'app_sortie_editPrivateListe')]
-    public function redirectToPrivate(int $id,
-                                      Request $request,
+    public function redirectToPrivate(int                    $id,
+                                      Request                $request,
                                       EntityManagerInterface $em,
-                                      SortieRepository $sortieRepository,
-                                      UserRepository $userRepository):Response
+                                      SortieRepository       $sortieRepository,
+                                      UserRepository         $userRepository): Response
     {
         $sortie = $sortieRepository->find($id);
         $allUser = $userRepository->findAll();
@@ -304,14 +295,19 @@ class SortieController extends AbstractController
     }
 
 
-
     /**
      * @param Sortie $sortie
      * @param EntityManagerInterface $em
      * @return void
      */
-    public function save(Sortie $sortie, EntityManagerInterface $em): void
+    public function save(Sortie $sortie, EntityManagerInterface $em, FormInterface $form, EtatRepository $etatRepository): void
     {
+        if ($form->get('publier')->isClicked()) {
+            $sortie->setEtat($etatRepository->find(2));
+        } else {
+            $sortie->setEtat($etatRepository->find(1));
+        }
+
         $user = $this->getUser();
         $sortie->setOrganisateur($user);
         $em->persist($sortie);
