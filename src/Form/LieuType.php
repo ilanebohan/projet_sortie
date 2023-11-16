@@ -38,7 +38,8 @@ class LieuType extends AbstractType
             ->add('rue', null, [
                 'label' => 'Rue *',
                 'attr' => [
-                    'placeholder' => 'Rue du lieu'
+                    'placeholder' => 'Rue du lieu',
+                    'list'=> 'autocompleteRue'
                 ],
                 'row_attr' => [
                     'class' => 'input-group mb-3'

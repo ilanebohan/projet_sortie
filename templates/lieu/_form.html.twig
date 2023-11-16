@@ -1,5 +1,86 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+
+{% endblock %}
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+
+    <script>
+
+    // https://geocode.maps.co/search?q={address}
+
+    // every time we put something into input with id="lieu_rue", we update the "lieu_latitude" and "lieu_longitude" fields
+    $(document).on('input', 'input[id="lieu_rue"]', function() {
+        // get the address
+        let address = $(this).val();
+        // if the address is not empty
+        if (address !== '') {
+            // we send a request to the geocode api
+            $.ajax({
+                url: 'https://geocode.maps.co/search',
+                data: {
+                    q: address
+                },
+                success: function(response) {
+                    console.log(response);
+                     $.each(response, function(index, element) {
+                        $('#autocompleteRue').append('<option value="' + element.display_name + '" data-latitude="' + element.lat + '" data-longitude="' + element.lon + '">' + element.display_name + '</option>');
+                        // define latitude and longitude
+                        let latitude = element.lat;
+                        let longitude = element.lon;
+                        // update the "lieu_latitude" and "lieu_longitude" fields
+                        $('input[id="lieu_latitude"]').val(latitude);
+                        $('input[id="lieu_longitude"]').val(longitude);
+                     });
+
+                    // when we click on an option and update "lieu_longitude" and "lieu_latitude" fields with the "lat" and "lon" of the option
+                }
+            });
+        }
+    });
+
+    // when we select an option in we update "lieu_latitude" and "lieu_longitude" fields with the "lat" and "lon" of the option
+    $(document).on('change', 'input[id="lieu_rue"]', function() {
+        // take value of element and delete everything after the 4th comma
+        let address = $(this).val();
+        let addressArray = address.split(',');
+        console.log(addressArray);
+        // set value of input to the new address (0 & 1 element of array)
+        $(this).val(addressArray[0] + ', ' + addressArray[1]);
+        // add option in "lieu_ville" select with the 2nd element of array as a new city
+    });
+        // only if the and option with the same value property doesn't already exist
+    /* console.log("ALREADY EXISTING OPTIONS",$(this).html());
+     if (!$('#lieu_ville option').filter(function () { return $(this).html() === " " + addressArray[2]; }).length) {
+         $('#lieu_ville').append('<option value="' + addressArray[2] + '" data-latitude="' + addressArray[2] + '" data-longitude="' + addressArray[3] + '">' + addressArray[2]  + '</option>');
+         $('#lieu_ville option:last-child').attr('selected', 'selected');
+         $.ajax({
+             url: 'https://geocode.maps.co/search?city=' + addressArray[2],
+             async:true,
+             success: function(response) {
+                 newLieu = response[0].display_name;
+                 //newLieu = newLieu.split(',');
+                 // take the code postal : the only 4 or 5 numbers suite in the string
+                 let codePostal = newLieu.match(/\d{4,5}/g);
+                 $.ajax({
+                     url: '/ville/newVille/' + addressArray[2] + '/' + codePostal ,
+                     success: function(response) {
+                         console.log(response);
+                     }
+                 });
+
+             }
+         });
+
+     }
+     else
+     {
+         // only select it if it already exists
+         $('#lieu_ville option').filter(function () { return $(this).html() === addressArray[2]; }).attr('selected', 'selected');
+     }
+ });*/
+</script>
+
 {% endblock %}
 {% if form_errors(form) %}
     <div class="alert alert-danger text-center">
@@ -33,7 +114,7 @@
             </div>
             <div class="form-outline mb-4">
                 {{ form_label(form.latitude) }}
-                {{ form_widget(form.latitude, { 'attr' : { 'class': 'form-control' } }) }}
+                {{ form_widget(form.latitude, { 'attr' : { 'class': 'form-control'} }) }}
             </div>
 
             <div class="erreursInscription">
@@ -49,8 +130,12 @@
             </div>
             <div class="form-outline mb-4">
                 {{ form_label(form.ville) }}
-                {{ form_widget(form.ville, { 'attr' : { 'class': 'form-select' } }) }}
+                {{ form_widget(form.ville, { 'attr' : { 'class': 'form-select' }}) }}
+                <datalist style="display: none" id="autocompleteRue">
+
+                </datalist>
             </div>
+
 
             <button class="btn btn-primary">{{ button_label|default('Ajouter') }}</button>
             <a href="{{ path('app_lieu_index') }}" class="btn btn-primary">Retour à la liste</a>
