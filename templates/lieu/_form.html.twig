@@ -19,7 +19,8 @@
                 $.ajax({
                     url: 'https://geocode.maps.co/search',
                     data: {
-                        q: address,
+                        street: address,
+                        country: 'FR'
                     },
                     success: function(response) {
                         console.log(response);
