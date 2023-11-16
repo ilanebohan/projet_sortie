@@ -51,17 +51,24 @@
         if (addressArray[0] !== undefined && addressArray[1] !== undefined)
         {
             $(this).val(addressArray[0] + ', ' + addressArray[1]);
+            elementSelected = false;
 
-            $('#lieu_ville option').each(function() {
-                console.log("OPTION HTML",$(this).html());
-                console.log("TROUVE",$(this).html().includes(addressArray[2].toUpperCase().trim()));
-                if ($(this).html().toUpperCase() === addressArray[2].toUpperCase().trim())
-                {
-                    console.log("OPTION HTML",$(this).html());
-                    $(this).attr('selected', 'selected');
-                }
-            });
+                $('#lieu_ville option').each(function() {
+                    if (!elementSelected)
+                    {
+                        for (let i = 0; i < addressArray.length; i++)
+                        {
+                            if ($(this).html().toUpperCase() === addressArray[i].toUpperCase().trim())
+                            {
+                                console.log("OPTION HTML",$(this).html());
+                                $(this).attr('selected', 'selected');
+                                elementSelected=true;
+                                break;
+                            }
 
+                        }
+                    }
+                });
             $('input[id="lieu_latitude"]').val(latitude);
             $('input[id="lieu_longitude"]').val(longitude);
 
@@ -79,7 +86,9 @@
             $('input[id="lieu_latitude"]').val('');
             $('input[id="lieu_longitude"]').val('');
         }
+        // add option in "lieu_ville" select with the 2nd element of array as a new city
     });
+
 </script>
 
 {% endblock %}
