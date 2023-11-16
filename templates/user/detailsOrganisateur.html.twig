@@ -15,9 +15,15 @@
         {% endif %}
 
         <div class="card-body">
-            <h5 class="card-title">{{ user.nom }} {{ user.prenom }}</h5>
-            <h5 class="card-title">{{ user.login }}</h5>
-            <p class="card-title">Email : {{ user.email }}</p>
+            <h5 class="card-title">
+                {{ user.nom }} {{ user.prenom }}
+            </h5>
+            <h5 class="card-title">
+                {{ user.login }}
+            </h5>
+            <p class="card-title">
+                Email : {{ user.email }}
+            </p>
             {% if user.telephone is not empty %}
             <p class="card-title">Telephone : {{ user.telephone }}</p>
             {% endif %}

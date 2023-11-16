@@ -8,7 +8,7 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped" id="villesTable">
             <thead>
             <tr>
                 <th>Nom</th>
@@ -37,4 +37,12 @@
 
 
     <a href="{{ path('app_ville_new') }}" class="btn btn-primary">Ajouter une Ville</a>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        $(document).ready( function () {
+            $('#villesTable').DataTable();
+        });
+
+    </script>
 {% endblock %}

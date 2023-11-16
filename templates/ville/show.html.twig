@@ -2,6 +2,7 @@
 
 {% block title %}{{ parent() }} | Ville{% endblock %}
 
+
 {% block body %}
     <div class="container text-center">
         <h1>Ville</h1>
@@ -9,18 +10,24 @@
 
 <div class="table-responsive">
     <table class="table table-bordered table-striped">
-        <tbody>
+        <thead>
         <tr>
             <th>Nom</th>
-            <td>{{ ville.nom }}</td>
-        </tr>
-        <tr>
             <th>CodePostal</th>
-            <td>{{ ville.codePostal }}</td>
         </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ ville.nom }}</td>
+            </tr>
+            <tr>
+                <td>{{ ville.codePostal }}</td>
+            </tr>
         </tbody>
     </table>
 </div>
+
+
 
     <div class="container text-center">
         <div class="row justify-content-center">
@@ -35,4 +42,13 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready( function () {
+            $('#villesTable').DataTable();
+        });
+
+    </script>
 {% endblock %}

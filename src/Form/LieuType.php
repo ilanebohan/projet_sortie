@@ -19,6 +19,7 @@ class LieuType extends AbstractType
                 'label' => 'Ville *',
                 'class' => Ville::class,
                 'choice_label' => 'nom',
+                'placeholder' => '=== Choisir une ville ===',
                 'query_builder' => function (VilleRepository $villeRepository) {
                     return $villeRepository->createQueryBuilder("v")->addOrderBy('v.nom');
                 },
