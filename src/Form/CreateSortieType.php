@@ -114,10 +114,10 @@ class CreateSortieType extends AbstractType
                 'class' => Ville::class,
                 'choice_label' => 'nom',
                 'choice_value' => 'id',
+                'placeholder' => '=== Choisir une ville ===',
                 'query_builder' => function (VilleRepository $villeRepository) {
                     return $villeRepository->createQueryBuilder("v")->addOrderBy('v.nom');
                 },
-                'data' => $options['villeId']
             ])
             ->add('addLieu', SubmitType::class, [
                 'label' => '+',
@@ -149,7 +149,7 @@ class CreateSortieType extends AbstractType
             $form->add('lieu', EntityType::class, [
                 'class' => 'App\Entity\Lieu',
                 'label' => 'Lieu *',
-                'placeholder' => '-- Choisir un lieu --',
+                'placeholder' => '=== Choisir un lieu ===',
                 'choices' => $lieux,
             ]);
         };

@@ -8,13 +8,16 @@
     <div class="container text-center">
         <h1>Lieux</h1>
     </div>
-
+    <div class="text-center">
+        <a href="{{ path('app_lieu_new') }}" class="btn btn-outline-info center">Ajouter un Lieu</a>
+    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-striped" aria-describedby="Lieux">
             <thead>
             <tr>
                 <th>Nom</th>
                 <th>Rue</th>
+                <th>Ville</th>
                 <th>Latitude</th>
                 <th>Longitude</th>
                 <th>Actions</th>
@@ -25,6 +28,7 @@
                 <tr>
                     <td>{{ lieu.nom }}</td>
                     <td>{{ lieu.rue }}</td>
+                    <td>{{ lieu.ville.nom }}</td>
                     <td>{{ lieu.latitude }}</td>
                     <td>{{ lieu.longitude }}</td>
                     <td>
@@ -41,6 +45,4 @@
         </table>
     </div>
 
-
-    <a href="{{ path('app_lieu_new') }}" class="btn btn-outline-info">Ajouter un Lieu</a>
 {% endblock %}
