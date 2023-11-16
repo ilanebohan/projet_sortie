@@ -20,8 +20,8 @@
 
                 <p class="card-text">Organisateur : {{ sortie.organisateur.nom }}</p>
                 <p class="card-text">Site : {{ sortie.siteOrganisateur.nom }}</p>
-                <p class="card-text">nombre d'inscription maximum : {{ sortie.nbInscriptionsMax }}</p>
-                <p class="card-text">nombre d'inscrit : {{ sortie.participants.count }}</p>
+                <p class="card-text">Nombre d'inscription maximum : {{ sortie.nbInscriptionsMax }}</p>
+                <p class="card-text">Nombre d'inscrit : {{ sortie.participants.count }}</p>
                 <p class="card-text">Description : {{ sortie.descriptionInfos }}</p>
                 <p class="card-text">Lieu : {{ sortie.lieu.nom }}</p>
                 <p class="card-text">Durée : {{ sortie.duree }} minute(s)</p>
@@ -36,7 +36,7 @@
         <div class="table-responsive">
             <h2 style="font-family: Avanta Garde;font-style: italic;text-shadow: 1px 1px 2px cyan, 0 0 1em Teal, 0 0 0.2em Teal;">Liste des participants inscrits</h2>
 
-            <table class="table table-bordered table-striped" style="text-align: center;">
+            <table class="table table-bordered table-striped" style="text-align: center;" aria-describedby="afficherSortie">
                 <thead>
                 <tr>
                     <th>Login</th>
