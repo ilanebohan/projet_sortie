@@ -20,7 +20,12 @@
             <tbody>
             {% for site in sites %}
                 <tr>
-                    <td>Campus {{ site.nom }}</td>
+                    {% if('Campus' in site.nom) %}
+                        <td>{{ site.nom }}</td>
+                    {% else %}
+                        <td>Campus {{ site.nom }}</td>
+                    {% endif %}
+
                     <td>
                         <a href="{{ path('app_site_show', {'id': site.id}) }}" class="btn btn-secondary">Afficher</a>
                         <a href="{{ path('app_site_edit', {'id': site.id}) }}" class="btn btn-secondary">Modifier</a>
