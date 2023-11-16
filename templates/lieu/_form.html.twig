@@ -8,7 +8,8 @@
     <script>
 
     // https://geocode.maps.co/search?q={address}
-
+    let latitude = '';
+    let longitude = '';
     // every time we put something into input with id="lieu_rue", we update the "lieu_latitude" and "lieu_longitude" fields
     $(document).on('input', 'input[id="lieu_rue"]', function() {
         // get the address
@@ -27,11 +28,11 @@
                          $.each(response, function(index, element) {
                             $('#autocompleteRue').append('<option value="' + element.display_name + '" data-latitude="' + element.lat + '" data-longitude="' + element.lon + '">' + element.display_name + '</option>');
                             // define latitude and longitude
-                            let latitude = element.lat;
-                            let longitude = element.lon;
+                            latitude = element.lat;
+                            longitude = element.lon;
                             // update the "lieu_latitude" and "lieu_longitude" fields
-                            $('input[id="lieu_latitude"]').val(latitude);
-                            $('input[id="lieu_longitude"]').val(longitude);
+                            //$('input[id="lieu_latitude"]').val(latitude);
+                            //$('input[id="lieu_longitude"]').val(longitude);
                          });
 
                         // when we click on an option and update "lieu_longitude" and "lieu_latitude" fields with the "lat" and "lon" of the option
@@ -50,14 +51,33 @@
         if (addressArray[0] !== undefined && addressArray[1] !== undefined)
         {
             $(this).val(addressArray[0] + ', ' + addressArray[1]);
+
+            $('#lieu_ville option').each(function() {
+                console.log("OPTION HTML",$(this).html());
+                console.log("TROUVE",$(this).html().includes(addressArray[2].toUpperCase().trim()));
+                if ($(this).html().toUpperCase() === addressArray[2].toUpperCase().trim())
+                {
+                    console.log("OPTION HTML",$(this).html());
+                    $(this).attr('selected', 'selected');
+                }
+            });
+
+            $('input[id="lieu_latitude"]').val(latitude);
+            $('input[id="lieu_longitude"]').val(longitude);
+
         }
         else if (addressArray[0] !== undefined)
         {
             $(this).val(addressArray[0]);
+            // clear latitude and longitude fields
+            $('input[id="lieu_latitude"]').val('');
+            $('input[id="lieu_longitude"]').val('');
         }
         else
         {
             $(this).val('');
+            $('input[id="lieu_latitude"]').val('');
+            $('input[id="lieu_longitude"]').val('');
         }
         // add option in "lieu_ville" select with the 2nd element of array as a new city
     });
