@@ -51,17 +51,24 @@
         if (addressArray[0] !== undefined && addressArray[1] !== undefined)
         {
             $(this).val(addressArray[0] + ', ' + addressArray[1]);
+            elementSelected = false;
 
-            $('#lieu_ville option').each(function() {
-                console.log("OPTION HTML",$(this).html());
-                console.log("TROUVE",$(this).html().includes(addressArray[2].toUpperCase().trim()));
-                if ($(this).html().toUpperCase() === addressArray[2].toUpperCase().trim())
-                {
-                    console.log("OPTION HTML",$(this).html());
-                    $(this).attr('selected', 'selected');
-                }
-            });
+                $('#lieu_ville option').each(function() {
+                    if (!elementSelected)
+                    {
+                        for (let i = 0; i < addressArray.length; i++)
+                        {
+                            if ($(this).html().toUpperCase() === addressArray[i].toUpperCase().trim())
+                            {
+                                console.log("OPTION HTML",$(this).html());
+                                $(this).attr('selected', 'selected');
+                                elementSelected=true;
+                                break;
+                            }
 
+                        }
+                    }
+                });
             $('input[id="lieu_latitude"]').val(latitude);
             $('input[id="lieu_longitude"]').val(longitude);
 
@@ -81,36 +88,7 @@
         }
         // add option in "lieu_ville" select with the 2nd element of array as a new city
     });
-        // only if the and option with the same value property doesn't already exist
-    /* console.log("ALREADY EXISTING OPTIONS",$(this).html());
-     if (!$('#lieu_ville option').filter(function () { return $(this).html() === " " + addressArray[2]; }).length) {
-         $('#lieu_ville').append('<option value="' + addressArray[2] + '" data-latitude="' + addressArray[2] + '" data-longitude="' + addressArray[3] + '">' + addressArray[2]  + '</option>');
-         $('#lieu_ville option:last-child').attr('selected', 'selected');
-         $.ajax({
-             url: 'https://geocode.maps.co/search?city=' + addressArray[2],
-             async:true,
-             success: function(response) {
-                 newLieu = response[0].display_name;
-                 //newLieu = newLieu.split(',');
-                 // take the code postal : the only 4 or 5 numbers suite in the string
-                 let codePostal = newLieu.match(/\d{4,5}/g);
-                 $.ajax({
-                     url: '/ville/newVille/' + addressArray[2] + '/' + codePostal ,
-                     success: function(response) {
-                         console.log(response);
-                     }
-                 });
 
-             }
-         });
-
-     }
-     else
-     {
-         // only select it if it already exists
-         $('#lieu_ville option').filter(function () { return $(this).html() === addressArray[2]; }).attr('selected', 'selected');
-     }
- });*/
 </script>
 
 {% endblock %}
