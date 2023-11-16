@@ -23,14 +23,15 @@ class LieuController extends AbstractController
     }
 
     #[Route('/new', name: 'app_lieu_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $em): Response
     {
         $lieu = new Lieu();
         $form = $this->createForm(LieuType::class, $lieu);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            $em->persist($lieu);
+            $em->flush();
             return $this->redirectToRoute('app_lieu_index', [], Response::HTTP_SEE_OTHER);
         }
 
