@@ -258,7 +258,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
         $user = $userRepository->findUserById($id);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($passwordHasher->isPasswordValid($user, $form->get("previousPassword")->getData())) {
+            if ($passwordHasher->isPasswordValid($user, $form->get("previousPassword")->getData()) && !$userRepository->findUserByLogin($form->get("login")->getData())  ) {
                 $user->setPassword($userPasswordHasher->hashPassword(
                     $user, $form->get("plainPassword")->getData()
                 ));
@@ -267,7 +267,10 @@ class UserController extends AbstractController
                 $entityManager->flush();
                 return $this->redirectToRoute('app_disconnect');
             } else {
-                $form->addError(new FormError("Données incorrectes"));
+                if($userRepository->findUserByLogin($form->get("login")->getData()))
+                    $form->addError(new FormError("Login déjà utilisé"));
+                else
+                    $form->addError(new FormError("Données incorrectes"));
             }
         }
         return $this->render('user/resetPasswordLogin.html.twig', [
