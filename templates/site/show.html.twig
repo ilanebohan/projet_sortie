@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} | {{ site.nom }}{% endblock %}
+{% block title %}{{ parent() }} | Campus {{ site.nom }}{% endblock %}
 
 {% block body %}
     <div class="container text-center">
@@ -12,7 +12,7 @@
             <tbody>
             <tr>
                 <th>Nom</th>
-                <td>{{ site.nom }}</td>
+                <td>Campus {{ site.nom }}</td>
             </tr>
             </tbody>
         </table>
