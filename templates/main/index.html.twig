@@ -62,9 +62,9 @@
                         <option value="0">Choisir un site</option>
                         {% for site in sites %}
                             {% if idSiteUtilisateur == site.id and FirstConnexionAfterLogIn %}
-                                <option value="{{ site.id }}" selected="true">{{ site.nom }}</option>
+                                <option value="{{ site.id }}" selected="true">Campus {{ site.nom }}</option>
                             {% else %}
-                                <option value="{{ site.id }}">{{ site.nom }}</option>
+                                <option value="{{ site.id }}">Campus {{ site.nom }}</option>
                             {% endif %}
                         {% endfor %}
                     </select><br>
