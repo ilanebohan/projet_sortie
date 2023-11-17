@@ -80,10 +80,7 @@ class ResetPasswordController extends AbstractController
                           string $token = null): Response
     {
         if ($token) {
-            // We store the token in session and remove it from the URL, to avoid the URL being
-            // loaded in a browser and potentially leaking the token to 3rd party JavaScript.
             $this->storeTokenInSession($token);
-
             return $this->redirectToRoute('app_reset_password');
         }
 
@@ -108,15 +105,12 @@ class ResetPasswordController extends AbstractController
             return $this->redirectToRoute('app_forgot_password_request');
         }
 
-        // The token is valid; allow the user to change their password.
         $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // A password reset token should be used only once, remove it.
             $this->resetPasswordHelper->removeResetRequest($token);
 
-            // Encode(hash) the plain password, and set it.
             $encodedPassword = $passwordHasher->hashPassword(
                 $user,
                 $form->get('plainPassword')->getData()
@@ -125,7 +119,6 @@ class ResetPasswordController extends AbstractController
             $user->setPassword($encodedPassword);
             $this->entityManager->flush();
 
-            // The session is cleaned up after the password has been changed.
             $this->cleanSessionAfterReset();
 
             return $this->redirectToRoute('app_login');
@@ -155,7 +148,7 @@ class ResetPasswordController extends AbstractController
 
         #region préparation du mail
         $to  = $user->getEmail();
-        $subject = 'Your password reset request';
+        $subject = 'Votre demande de réinitialisation de mot de passe';
         $message = $this->renderView('reset_password/email.html.twig', [
             'resetToken' => $resetToken,
         ]);
@@ -165,7 +158,6 @@ class ResetPasswordController extends AbstractController
 
         mail($to, $subject, $message, implode("\r\n", $headers));
 
-        // Store the token object in session for retrieval in check-email route.
         $this->setTokenObjectInSession($resetToken);
 
         return $this->redirectToRoute('app_check_email');
