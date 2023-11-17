@@ -211,7 +211,8 @@ class UserController extends AbstractController
                     $entityManager->flush();
                 }
             }
-            else{
+
+            if($extension == "csv"){
                 $reader = Reader::createFromPath($projectDir, 'r');
 
                 for ($i = 0; $i <= $reader->count() - 1; $i++) {

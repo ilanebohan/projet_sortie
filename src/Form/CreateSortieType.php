@@ -89,8 +89,11 @@ class CreateSortieType extends AbstractType
             ->add('nbInscriptionsMax', NumberType::class, [
                 'label' => 'Nombres de places *',
                 'constraints' => [
+                    new Positive([
+                        'message' => 'Le nombre doit être positif'
+                    ]),
                     new NotBlank([
-                        'message' => 'Vous devez mettre un nom'
+                        'message' => 'Vous devez mettre un nombre'
                     ])
                 ]
             ])
